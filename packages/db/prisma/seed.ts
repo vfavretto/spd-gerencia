@@ -66,7 +66,7 @@ async function main() {
       titulo: 'Requalificação do Distrito Industrial',
       objeto: 'Modernização de vias e iluminação',
       descricao: 'Melhorias estruturais prioritárias',
-      status: ConvenioStatus.EM_ANDAMENTO,
+      status: ConvenioStatus.EM_EXECUCAO,
       valorGlobal: 5000000,
       valorRepasse: 3500000,
       valorContrapartida: 1500000,

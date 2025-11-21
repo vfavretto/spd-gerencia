@@ -18,7 +18,7 @@ Monorepo contendo o backend (Node.js + Express + Prisma), frontend (React + Vite
 ## Pré-requisitos
 
 - Node.js 18+
-- MySQL (local ou remoto)
+- PostgreSQL (local ou remoto)
 
 ## Configuração inicial
 
@@ -28,7 +28,11 @@ Monorepo contendo o backend (Node.js + Express + Prisma), frontend (React + Vite
 cp .env.example .env
 ```
 
-2. Configure a string `DATABASE_URL` com as credenciais do MySQL.
+2. Configure a string `DATABASE_URL` com as credenciais do PostgreSQL:
+
+```
+DATABASE_URL="postgresql://usuario:senha@localhost:5432/spd_gerencia?schema=public"
+```
 
 3. Instale as dependências do monorepo:
 

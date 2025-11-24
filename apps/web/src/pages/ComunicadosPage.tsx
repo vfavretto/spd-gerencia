@@ -60,6 +60,9 @@ export const ComunicadosPage = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['comunicados'] });
       reset({ tipo: 'ENTRADA' } as ComunicadoForm);
+    },
+    onError: (error: any) => {
+      console.error('Erro ao criar comunicado:', error);
     }
   });
 
@@ -225,7 +228,12 @@ export const ComunicadosPage = () => {
             </div>
             {createMutation.isSuccess && (
               <p className="text-sm text-emerald-600">
-                Comunicado registrado com sucesso!
+                ✓ Comunicado registrado com sucesso!
+              </p>
+            )}
+            {createMutation.isError && (
+              <p className="text-sm text-rose-600">
+                ✗ Erro ao registrar comunicado. Verifique os dados e tente novamente.
               </p>
             )}
           </form>

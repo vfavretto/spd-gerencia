@@ -18,6 +18,11 @@ export const convenioService = {
     return data;
   },
 
+  async getById(id: number): Promise<Convenio> {
+    const { data } = await api.get<Convenio>(`/convenios/${id}`);
+    return data;
+  },
+
   async create(payload: Record<string, unknown>): Promise<Convenio> {
     const { data } = await api.post<Convenio>('/convenios', payload);
     return data;

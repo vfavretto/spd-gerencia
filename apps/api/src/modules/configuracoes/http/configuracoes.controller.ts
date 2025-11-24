@@ -2,15 +2,19 @@ import type { Request, Response } from 'express';
 import { z } from 'zod';
 import { prisma } from '@spd/db';
 
+// Transforma strings vazias em undefined para que o Prisma as salve como null
+const transformEmptyToUndefined = (val: string | undefined) => 
+  val === '' ? undefined : val;
+
 const baseSchema = z.object({
   nome: z.string().min(2),
-  sigla: z.string().optional(),
-  responsavel: z.string().optional(),
-  descricao: z.string().optional(),
-  codigo: z.string().optional(),
-  tipo: z.string().optional(),
-  contato: z.string().optional(),
-  esfera: z.string().optional()
+  sigla: z.string().optional().transform(transformEmptyToUndefined),
+  responsavel: z.string().optional().transform(transformEmptyToUndefined),
+  descricao: z.string().optional().transform(transformEmptyToUndefined),
+  codigo: z.string().optional().transform(transformEmptyToUndefined),
+  tipo: z.string().optional().transform(transformEmptyToUndefined),
+  contato: z.string().optional().transform(transformEmptyToUndefined),
+  esfera: z.string().optional().transform(transformEmptyToUndefined)
 });
 
 export class ConfiguracoesController {

@@ -58,7 +58,7 @@ async function main() {
     throw new Error('Falha ao preparar dados básicos para convênios');
   }
 
-  await prisma.convenio.upsert({
+  const convenio = await prisma.convenio.upsert({
     where: { codigo: 'CONV-001/2024' },
     update: {},
     create: {

@@ -16,7 +16,7 @@ const createSchema = z.object({
   origem: z.string().optional(),
   destino: z.string().optional(),
   responsavel: z.string().optional(),
-  arquivoUrl: z.string().url().optional(),
+  arquivoUrl: z.string().url().optional().or(z.literal('')).transform(val => val === '' ? undefined : val),
   convenioId: z.number().int().nullable().optional()
 });
 

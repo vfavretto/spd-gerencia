@@ -136,6 +136,9 @@ const ConfigSection: React.FC<ConfigSectionProps> = ({ section, data = [] }) => 
       queryClient.invalidateQueries({ queryKey: ['catalogs'] });
       setEditing(null);
       reset(defaultValues);
+    },
+    onError: (error: any) => {
+      console.error('Erro ao salvar configuração:', error);
     }
   });
 
@@ -143,6 +146,10 @@ const ConfigSection: React.FC<ConfigSectionProps> = ({ section, data = [] }) => 
     mutationFn: (id: number) => configService.remove(section.key, id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['catalogs'] });
+    },
+    onError: (error: any) => {
+      console.error('Erro ao remover registro:', error);
+      alert('Erro ao remover registro. Este item pode estar sendo usado em outro lugar.');
     }
   });
 
@@ -205,7 +212,12 @@ const ConfigSection: React.FC<ConfigSectionProps> = ({ section, data = [] }) => 
         </div>
         {mutation.isSuccess && (
           <p className="text-sm text-emerald-600">
-            Registro {editing ? 'atualizado' : 'criado'} com sucesso.
+            ✓ Registro {editing ? 'atualizado' : 'criado'} com sucesso.
+          </p>
+        )}
+        {mutation.isError && (
+          <p className="text-sm text-rose-600">
+            ✗ Erro ao salvar. Verifique os dados e tente novamente.
           </p>
         )}
       </form>

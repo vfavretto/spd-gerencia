@@ -8,7 +8,7 @@ import {
   Megaphone,
   Settings
 } from 'lucide-react';
-import { useState } from 'react';
+// useState removido - não utilizado
 import { NavLink } from 'react-router-dom';
 
 const navItems = [

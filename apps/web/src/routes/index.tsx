@@ -4,7 +4,7 @@ import { CalendarioPage } from '../pages/CalendarioPage';
 import { ComunicadosPage } from '../pages/ComunicadosPage';
 import { ConfiguracoesPage } from '../pages/ConfiguracoesPage';
 import { ConveniosCadastroPage } from '../pages/ConveniosCadastroPage';
-import { ConveniosEdicaoPage } from '../pages/ConveniosEdicaoPage';
+import { ConvenioDetalhesPage } from '../pages/ConvenioDetalhesPage';
 import { ConveniosListaPage } from '../pages/ConveniosListaPage';
 import { DashboardPage } from '../pages/DashboardPage';
 import { LoginPage } from '../pages/LoginPage';
@@ -20,7 +20,8 @@ export const AppRoutes = () => (
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/convenios" element={<ConveniosListaPage />} />
         <Route path="/convenios/cadastrar" element={<ConveniosCadastroPage />} />
-        <Route path="/convenios/:id/editar" element={<ConveniosEdicaoPage />} />
+        <Route path="/convenios/:id" element={<ConvenioDetalhesPage />} />
+        <Route path="/convenios/:id/editar" element={<ConvenioDetalhesPage />} />
         <Route path="/calendario" element={<CalendarioPage />} />
         <Route path="/comunicados" element={<ComunicadosPage />} />
         <Route path="/configuracoes" element={<ConfiguracoesPage />} />

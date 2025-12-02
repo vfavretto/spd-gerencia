@@ -1,4 +1,4 @@
-import { prisma, type Convenio } from '@spd/db';
+import { prisma, type Convenio, StatusPendencia } from '@spd/db';
 import type {
   ConvenioFilters,
   ConvenioRepository
@@ -14,7 +14,19 @@ const defaultIncludes = {
   programa: true,
   fonte: true,
   anexos: true,
-  etapas: true
+  etapas: true,
+  emendas: true,
+  financeiroContas: true,
+  contratos: {
+    include: {
+      medicoes: { orderBy: { numeroMedicao: 'asc' as const } }
+    }
+  },
+  pendencias: {
+    where: { status: { in: [StatusPendencia.ABERTA, StatusPendencia.EM_ANDAMENTO] } },
+    orderBy: { prioridade: 'asc' as const }
+  },
+  aditivos: { orderBy: { numeroAditivo: 'asc' as const } }
 };
 
 export class PrismaConvenioRepository implements ConvenioRepository {

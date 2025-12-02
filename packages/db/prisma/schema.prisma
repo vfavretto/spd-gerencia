@@ -7,6 +7,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ==================== ENUMS ====================
+
 enum UsuarioRole {
   ADMINISTRADOR
   ANALISTA
@@ -35,86 +37,154 @@ enum TipoEvento {
   OUTROS
 }
 
+enum ModalidadeRepasse {
+  CONVENIO
+  CONTRATO_REPASSE
+  TERMO_FOMENTO
+  TERMO_COLABORACAO
+}
+
+enum EsferaGoverno {
+  FEDERAL
+  ESTADUAL
+}
+
+enum ModalidadeLicitacao {
+  PREGAO
+  TOMADA_PRECOS
+  CONCORRENCIA
+  DISPENSA
+  INEXIGIBILIDADE
+}
+
+enum StatusPendencia {
+  ABERTA
+  EM_ANDAMENTO
+  RESOLVIDA
+  CANCELADA
+}
+
+enum TipoAditivo {
+  PRAZO
+  VALOR
+  PRAZO_E_VALOR
+  SUPRESSAO
+  ACRESCIMO
+}
+
+// ==================== MODELS ====================
+
 model Usuario {
-  id          Int        @id @default(autoincrement())
-  nome        String
-  email       String     @unique
-  senha       String
-  role        UsuarioRole @default(ANALISTA)
-  ativo       Boolean    @default(true)
-  criadoEm    DateTime   @default(now())
-  atualizadoEm DateTime  @updatedAt
-  comunicados Comunicado[] @relation("ComunicadosCriados")
+  id           Int           @id @default(autoincrement())
+  nome         String
+  email        String        @unique
+  senha        String
+  role         UsuarioRole   @default(ANALISTA)
+  ativo        Boolean       @default(true)
+  criadoEm     DateTime      @default(now())
+  atualizadoEm DateTime      @updatedAt
+  comunicados  Comunicado[]  @relation("ComunicadosCriados")
+  pendencias   Pendencia[]   @relation("PendenciasCriadas")
 }
 
 model Secretaria {
-  id          Int        @id @default(autoincrement())
-  nome        String     @unique
-  sigla       String?    @unique
-  responsavel String?
-  convenios   Convenio[]
-  criadoEm    DateTime   @default(now())
-  atualizadoEm DateTime  @updatedAt
+  id           Int        @id @default(autoincrement())
+  nome         String     @unique
+  sigla        String?    @unique
+  responsavel  String?
+  convenios    Convenio[]
+  criadoEm     DateTime   @default(now())
+  atualizadoEm DateTime   @updatedAt
 }
 
 model OrgaoConcedente {
-  id        Int       @id @default(autoincrement())
-  nome      String     @unique
-  esfera    String?
-  contato   String?
-  convenios Convenio[]
-  criadoEm  DateTime  @default(now())
-  atualizadoEm DateTime @updatedAt
+  id           Int        @id @default(autoincrement())
+  nome         String     @unique
+  esfera       String?
+  contato      String?
+  convenios    Convenio[]
+  criadoEm     DateTime   @default(now())
+  atualizadoEm DateTime   @updatedAt
 }
 
 model Programa {
-  id        Int       @id @default(autoincrement())
-  nome      String     @unique
-  codigo    String?   @unique
-  descricao String?
-  convenios Convenio[]
-  criadoEm  DateTime  @default(now())
-  atualizadoEm DateTime @updatedAt
+  id           Int        @id @default(autoincrement())
+  nome         String     @unique
+  codigo       String?    @unique
+  descricao    String?
+  convenios    Convenio[]
+  criadoEm     DateTime   @default(now())
+  atualizadoEm DateTime   @updatedAt
 }
 
 model FonteRecurso {
-  id        Int       @id @default(autoincrement())
-  nome      String     @unique
-  tipo      String?
-  convenios Convenio[]
-  criadoEm  DateTime  @default(now())
-  atualizadoEm DateTime @updatedAt
+  id           Int        @id @default(autoincrement())
+  nome         String     @unique
+  tipo         String?
+  convenios    Convenio[]
+  criadoEm     DateTime   @default(now())
+  atualizadoEm DateTime   @updatedAt
 }
 
 model Convenio {
-  id                   Int              @id @default(autoincrement())
-  codigo               String           @unique
+  id                   Int                @id @default(autoincrement())
+  codigo               String             @unique
   titulo               String
   objeto               String
-  status               ConvenioStatus   @default(RASCUNHO)
+  status               ConvenioStatus     @default(RASCUNHO)
   descricao            String?
   observacoes          String?
-  valorGlobal          Decimal          @db.Decimal(14, 2)
-  valorRepasse         Decimal?         @db.Decimal(14, 2)
-  valorContrapartida   Decimal?         @db.Decimal(14, 2)
+  
+  // Novos campos de identificação
+  numeroProposta       String?
+  dataInicioProcesso   DateTime?
+  modalidadeRepasse    ModalidadeRepasse?
+  termoFormalizacao    String?
+  numeroTermo          String?
+  clausulaSuspensiva   Boolean            @default(false)
+  esfera               EsferaGoverno?
+  ministerioOrgao      String?
+  objetoDescricao      String?            @db.Text
+  
+  // Valores financeiros
+  valorGlobal          Decimal            @db.Decimal(14, 2)
+  valorRepasse         Decimal?           @db.Decimal(14, 2)
+  valorContrapartida   Decimal?           @db.Decimal(14, 2)
+  
+  // Datas importantes
   dataAssinatura       DateTime?
   dataInicioVigencia   DateTime?
   dataFimVigencia      DateTime?
   dataPrestacaoContas  DateTime?
+  
+  // Relacionamentos obrigatórios
   secretariaId         Int
-  secretaria           Secretaria       @relation(fields: [secretariaId], references: [id])
+  secretaria           Secretaria         @relation(fields: [secretariaId], references: [id])
+  
+  // Relacionamentos opcionais
   orgaoId              Int?
-  orgao                OrgaoConcedente? @relation(fields: [orgaoId], references: [id])
+  orgao                OrgaoConcedente?   @relation(fields: [orgaoId], references: [id])
   programaId           Int?
-  programa             Programa?        @relation(fields: [programaId], references: [id])
+  programa             Programa?          @relation(fields: [programaId], references: [id])
   fonteId              Int?
-  fonte                FonteRecurso?    @relation(fields: [fonteId], references: [id])
+  fonte                FonteRecurso?      @relation(fields: [fonteId], references: [id])
+  
+  // Relacionamentos 1:N
   anexos               ConvenioAnexo[]
   etapas               EtapaConvenio[]
   comunicados          Comunicado[]
   eventos              EventoAgenda[]
-  criadoEm             DateTime         @default(now())
-  atualizadoEm         DateTime         @updatedAt
+  emendas              EmendaParlamentar[]
+  contratos            ContratoExecucao[]
+  pendencias           Pendencia[]
+  aditivos             Aditivo[]
+  
+  // Relacionamento 1:1
+  financeiroContas     FinanceiroContas?
+  
+  // Timestamps
+  criadoEm             DateTime           @default(now())
+  atualizadoEm         DateTime           @updatedAt
 }
 
 model ConvenioAnexo {
@@ -128,49 +198,161 @@ model ConvenioAnexo {
 }
 
 model EtapaConvenio {
-  id             Int      @id @default(autoincrement())
-  titulo         String
-  descricao      String?
-  dataPrevista   DateTime?
-  dataRealizada  DateTime?
-  responsavel    String?
-  situacao       String?  // texto livre (ex: concluído, pendente)
-  convenioId     Int
-  convenio       Convenio @relation(fields: [convenioId], references: [id], onDelete: Cascade)
-  criadoEm       DateTime @default(now())
-  atualizadoEm   DateTime @updatedAt
+  id            Int       @id @default(autoincrement())
+  titulo        String
+  descricao     String?
+  dataPrevista  DateTime?
+  dataRealizada DateTime?
+  responsavel   String?
+  situacao      String?
+  convenioId    Int
+  convenio      Convenio  @relation(fields: [convenioId], references: [id], onDelete: Cascade)
+  criadoEm      DateTime  @default(now())
+  atualizadoEm  DateTime  @updatedAt
 }
 
 model Comunicado {
-  id           Int           @id @default(autoincrement())
-  protocolo    String        @unique
+  id           Int            @id @default(autoincrement())
+  protocolo    String         @unique
   assunto      String
   conteudo     String?
   tipo         TipoComunicado
   status       String?
-  dataRegistro DateTime      @default(now())
+  dataRegistro DateTime       @default(now())
   origem       String?
   destino      String?
   responsavel  String?
   arquivoUrl   String?
   convenioId   Int?
-  convenio     Convenio?     @relation(fields: [convenioId], references: [id])
+  convenio     Convenio?      @relation(fields: [convenioId], references: [id])
   criadoPorId  Int?
-  criadoPor    Usuario?      @relation("ComunicadosCriados", fields: [criadoPorId], references: [id])
-  atualizadoEm DateTime      @updatedAt
+  criadoPor    Usuario?       @relation("ComunicadosCriados", fields: [criadoPorId], references: [id])
+  atualizadoEm DateTime       @updatedAt
 }
 
 model EventoAgenda {
-  id           Int         @id @default(autoincrement())
+  id           Int        @id @default(autoincrement())
   titulo       String
   descricao    String?
-  tipo         TipoEvento  @default(OUTROS)
+  tipo         TipoEvento @default(OUTROS)
   dataInicio   DateTime
   dataFim      DateTime?
   local        String?
   responsavel  String?
   convenioId   Int?
-  convenio     Convenio?   @relation(fields: [convenioId], references: [id])
-  criadoEm     DateTime    @default(now())
-  atualizadoEm DateTime    @updatedAt
+  convenio     Convenio?  @relation(fields: [convenioId], references: [id])
+  criadoEm     DateTime   @default(now())
+  atualizadoEm DateTime   @updatedAt
+}
+
+// ==================== NOVAS TABELAS ====================
+
+model EmendaParlamentar {
+  id              Int       @id @default(autoincrement())
+  nomeParlamentar String
+  partido         String?
+  codigoEmenda    String?
+  funcao          String?
+  subfuncao       String?
+  programa        String?
+  valorIndicado   Decimal?  @db.Decimal(14, 2)
+  anoEmenda       Int?
+  convenioId      Int
+  convenio        Convenio  @relation(fields: [convenioId], references: [id], onDelete: Cascade)
+  criadoEm        DateTime  @default(now())
+  atualizadoEm    DateTime  @updatedAt
+}
+
+model FinanceiroContas {
+  id                  Int       @id @default(autoincrement())
+  banco               String?
+  agencia             String?
+  contaBancaria       String?
+  valorLiberadoTotal  Decimal?  @db.Decimal(14, 2)
+  saldoRendimentos    Decimal?  @db.Decimal(14, 2)
+  fichasOrcamentarias String?   @db.Text
+  observacoes         String?   @db.Text
+  convenioId          Int       @unique
+  convenio            Convenio  @relation(fields: [convenioId], references: [id], onDelete: Cascade)
+  criadoEm            DateTime  @default(now())
+  atualizadoEm        DateTime  @updatedAt
+}
+
+model ContratoExecucao {
+  id                    Int                 @id @default(autoincrement())
+  numProcessoLicitatorio String?
+  modalidadeLicitacao   ModalidadeLicitacao?
+  numeroContrato        String?
+  contratadaCnpj        String?
+  contratadaNome        String?
+  dataAssinatura        DateTime?
+  dataVigenciaInicio    DateTime?
+  dataVigenciaFim       DateTime?
+  dataOIS               DateTime?           // Ordem de Início de Serviço
+  valorContrato         Decimal?            @db.Decimal(14, 2)
+  valorExecutado        Decimal?            @db.Decimal(14, 2)
+  engenheiroResponsavel String?
+  creaEngenheiro        String?
+  artRrt                String?             // ART ou RRT
+  situacao              String?
+  observacoes           String?             @db.Text
+  convenioId            Int
+  convenio              Convenio            @relation(fields: [convenioId], references: [id], onDelete: Cascade)
+  medicoes              Medicao[]
+  criadoEm              DateTime            @default(now())
+  atualizadoEm          DateTime            @updatedAt
+}
+
+model Medicao {
+  id               Int               @id @default(autoincrement())
+  numeroMedicao    Int
+  dataMedicao      DateTime
+  percentualFisico Decimal?          @db.Decimal(5, 2)
+  valorMedido      Decimal           @db.Decimal(14, 2)
+  dataPagamento    DateTime?
+  valorPago        Decimal?          @db.Decimal(14, 2)
+  observacoes      String?           @db.Text
+  situacao         String?           // aprovada, em análise, rejeitada
+  contratoId       Int
+  contrato         ContratoExecucao  @relation(fields: [contratoId], references: [id], onDelete: Cascade)
+  criadoEm         DateTime          @default(now())
+  atualizadoEm     DateTime          @updatedAt
+
+  @@unique([contratoId, numeroMedicao])
+}
+
+model Pendencia {
+  id           Int             @id @default(autoincrement())
+  descricao    String          @db.Text
+  responsavel  String?
+  prazo        DateTime?
+  status       StatusPendencia @default(ABERTA)
+  prioridade   Int?            @default(2) // 1=alta, 2=média, 3=baixa
+  resolucao    String?         @db.Text
+  dataResolucao DateTime?
+  convenioId   Int
+  convenio     Convenio        @relation(fields: [convenioId], references: [id], onDelete: Cascade)
+  criadoPorId  Int?
+  criadoPor    Usuario?        @relation("PendenciasCriadas", fields: [criadoPorId], references: [id])
+  criadoEm     DateTime        @default(now())
+  atualizadoEm DateTime        @updatedAt
+}
+
+model Aditivo {
+  id               Int         @id @default(autoincrement())
+  numeroAditivo    Int
+  tipoAditivo      TipoAditivo
+  dataAssinatura   DateTime?
+  novaVigencia     DateTime?
+  valorAcrescimo   Decimal?    @db.Decimal(14, 2)
+  valorSupressao   Decimal?    @db.Decimal(14, 2)
+  motivo           String?     @db.Text
+  justificativa    String?     @db.Text
+  observacoes      String?     @db.Text
+  convenioId       Int
+  convenio         Convenio    @relation(fields: [convenioId], references: [id], onDelete: Cascade)
+  criadoEm         DateTime    @default(now())
+  atualizadoEm     DateTime    @updatedAt
+
+  @@unique([convenioId, numeroAditivo])
 }

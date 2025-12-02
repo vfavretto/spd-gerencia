@@ -4,11 +4,11 @@ export type CreateConvenioDTO = {
   codigo: string;
   titulo: string;
   objeto: string;
-  descricao?: string;
-  observacoes?: string;
+  descricao?: string | null;
+  observacoes?: string | null;
   valorGlobal: number;
-  valorRepasse?: number;
-  valorContrapartida?: number;
+  valorRepasse?: number | null;
+  valorContrapartida?: number | null;
   dataAssinatura?: Date | null;
   dataInicioVigencia?: Date | null;
   dataFimVigencia?: Date | null;

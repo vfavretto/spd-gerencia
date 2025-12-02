@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import {
   ChevronLeft,
   ChevronRight,
@@ -23,7 +23,6 @@ import { formatCurrency, formatDate } from '../utils/format';
 const ITEMS_PER_PAGE = 10;
 
 export const ConveniosListaPage = () => {
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [filters, setFilters] = useState<ConvenioFilters>({});
   const [currentPage, setCurrentPage] = useState(1);
@@ -195,12 +194,12 @@ export const ConveniosListaPage = () => {
                   <td className="px-4 py-4">
                     <div className="flex items-center justify-center gap-2">
                       <button
-                        onClick={() => navigate(`/convenios/${convenio.id}/editar`)}
+                        onClick={() => navigate(`/convenios/${convenio.id}`)}
                         className="inline-flex items-center gap-1 rounded-xl bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-600 transition hover:bg-blue-100"
-                        title="Editar convênio"
+                        title="Ver detalhes"
                       >
                         <Edit className="h-3.5 w-3.5" />
-                        Editar
+                        Detalhes
                       </button>
                       <button
                         onClick={() => {

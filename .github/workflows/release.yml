@@ -154,4 +154,3 @@ jobs:
             **Tipo de atualização:** ${{ steps.version_bump.outputs.bump_type }}
           draft: false
           prerelease: false
-

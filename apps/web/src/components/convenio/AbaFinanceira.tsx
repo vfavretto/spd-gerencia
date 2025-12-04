@@ -2,10 +2,13 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Edit2, Save, X, Wallet, Building2 } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import type { Convenio } from '../../types';
-import { financeiroService } from '../../services/financeiroService';
-import { formatCurrency } from '../../utils/format';
-// MaskedInput removido - usando inputs nativos
+import type { Convenio } from '@/types';
+import { financeiroService } from '@/services/financeiroService';
+import { formatCurrency } from '@/components/ui/currency-input';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { toast } from '@/components/ui/toaster';
 
 type Props = {
   convenio: Convenio;
@@ -34,11 +37,15 @@ export function AbaFinanceira({ convenio, onUpdate }: Props) {
   });
 
   const upsertMutation = useMutation({
-    mutationFn: (data: any) => financeiroService.upsert(convenio.id, data),
+    mutationFn: (data: Record<string, unknown>) => financeiroService.upsert(convenio.id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['convenio', String(convenio.id)] });
+      toast.success('Dados financeiros salvos!');
       setIsEditing(false);
       onUpdate();
+    },
+    onError: () => {
+      toast.error('Erro ao salvar dados');
     }
   });
 
@@ -75,73 +82,63 @@ export function AbaFinanceira({ convenio, onUpdate }: Props) {
     return (
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-slate-900">Dados Financeiros</h3>
+          <h3 className="text-lg font-semibold">Dados Financeiros</h3>
           <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={handleCancel}
-              className="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50"
-            >
-              <X className="h-4 w-4" />
+            <Button type="button" variant="outline" onClick={handleCancel}>
+              <X className="h-4 w-4 mr-2" />
               Cancelar
-            </button>
-            <button
-              type="submit"
-              disabled={upsertMutation.isPending}
-              className="inline-flex items-center gap-2 rounded-xl bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-500 disabled:opacity-70"
-            >
-              <Save className="h-4 w-4" />
+            </Button>
+            <Button type="submit" disabled={upsertMutation.isPending}>
+              <Save className="h-4 w-4 mr-2" />
               {upsertMutation.isPending ? 'Salvando...' : 'Salvar'}
-            </button>
+            </Button>
           </div>
         </div>
 
         {/* Dados Bancários */}
         <div className="space-y-4">
-          <h4 className="font-medium text-slate-700 flex items-center gap-2">
+          <h4 className="font-medium flex items-center gap-2">
             <Building2 className="h-4 w-4" />
             Dados Bancários
           </h4>
           <div className="grid gap-4 md:grid-cols-3">
-            <div>
-              <label className="form-label">Banco</label>
-              <input className="form-input" {...register('banco')} placeholder="Ex: Caixa Econômica" />
+            <div className="space-y-2">
+              <Label>Banco</Label>
+              <Input {...register('banco')} placeholder="Ex: Caixa Econômica" />
             </div>
-            <div>
-              <label className="form-label">Agência</label>
-              <input className="form-input" {...register('agencia')} placeholder="0000" />
+            <div className="space-y-2">
+              <Label>Agência</Label>
+              <Input {...register('agencia')} placeholder="0000" />
             </div>
-            <div>
-              <label className="form-label">Conta</label>
-              <input className="form-input" {...register('contaBancaria')} placeholder="00000-0" />
+            <div className="space-y-2">
+              <Label>Conta</Label>
+              <Input {...register('contaBancaria')} placeholder="00000-0" />
             </div>
           </div>
         </div>
 
         {/* Valores */}
         <div className="space-y-4">
-          <h4 className="font-medium text-slate-700 flex items-center gap-2">
+          <h4 className="font-medium flex items-center gap-2">
             <Wallet className="h-4 w-4" />
             Valores
           </h4>
           <div className="grid gap-4 md:grid-cols-2">
-            <div>
-              <label className="form-label">Valor Liberado Total</label>
-              <input
+            <div className="space-y-2">
+              <Label>Valor Liberado Total</Label>
+              <Input
                 type="number"
                 step="0.01"
-                className="form-input"
                 {...register('valorLiberadoTotal', {
                   setValueAs: (v) => (v === '' ? undefined : Number(v))
                 })}
               />
             </div>
-            <div>
-              <label className="form-label">Saldo de Rendimentos</label>
-              <input
+            <div className="space-y-2">
+              <Label>Saldo de Rendimentos</Label>
+              <Input
                 type="number"
                 step="0.01"
-                className="form-input"
                 {...register('saldoRendimentos', {
                   setValueAs: (v) => (v === '' ? undefined : Number(v))
                 })}
@@ -151,20 +148,20 @@ export function AbaFinanceira({ convenio, onUpdate }: Props) {
         </div>
 
         {/* Fichas Orçamentárias */}
-        <div>
-          <label className="form-label">Fichas Orçamentárias</label>
+        <div className="space-y-2">
+          <Label>Fichas Orçamentárias</Label>
           <textarea
-            className="form-input"
+            className="flex min-h-[60px] w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
             rows={2}
             {...register('fichasOrcamentarias')}
             placeholder="Informe as fichas orçamentárias vinculadas"
           />
         </div>
 
-        <div>
-          <label className="form-label">Observações</label>
+        <div className="space-y-2">
+          <Label>Observações</Label>
           <textarea
-            className="form-input"
+            className="flex min-h-[60px] w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
             rows={2}
             {...register('observacoes')}
           />
@@ -176,14 +173,11 @@ export function AbaFinanceira({ convenio, onUpdate }: Props) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-slate-900">Dados Financeiros</h3>
-        <button
-          onClick={() => setIsEditing(true)}
-          className="inline-flex items-center gap-2 rounded-xl bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-200"
-        >
-          <Edit2 className="h-4 w-4" />
+        <h3 className="text-lg font-semibold">Dados Financeiros</h3>
+        <Button variant="secondary" onClick={() => setIsEditing(true)}>
+          <Edit2 className="h-4 w-4 mr-2" />
           Editar
-        </button>
+        </Button>
       </div>
 
       {/* Cards de Valores */}

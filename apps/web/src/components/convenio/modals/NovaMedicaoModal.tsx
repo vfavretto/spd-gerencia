@@ -3,11 +3,23 @@ import { BarChart3, AlertCircle } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Modal, ModalButton } from '../../ui/Modal';
-import { MaskedInput } from '../../ui/MaskedInput';
-import { medicaoService } from '../../../services/medicaoService';
-import { formatCurrency } from '../../../utils/format';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { CurrencyInput, formatCurrency } from '@/components/ui/currency-input';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { medicaoService } from '@/services/medicaoService';
+import { toast } from '@/components/ui/toaster';
+import { formatDateBR } from '@/lib/date';
 
 const schema = z.object({
   dataMedicao: z.string().min(1, 'Informe a data da medição'),
@@ -32,8 +44,6 @@ type Props = {
 
 export function NovaMedicaoModal({ isOpen, onClose, contratoId, convenioId, dataOIS, onSuccess }: Props) {
   const queryClient = useQueryClient();
-  const [valorMedido, setValorMedido] = useState('');
-  const [valorPago, setValorPago] = useState('');
 
   // Buscar saldo disponível do contrato
   const { data: saldoInfo } = useQuery({
@@ -70,14 +80,14 @@ export function NovaMedicaoModal({ isOpen, onClose, contratoId, convenioId, data
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['convenio', String(convenioId)] });
       queryClient.invalidateQueries({ queryKey: ['saldo-contrato', contratoId] });
+      toast.success('Medição registrada com sucesso!');
       reset();
-      setValorMedido('');
-      setValorPago('');
       onClose();
       onSuccess();
     },
-    onError: (error: any) => {
+    onError: (error: Error & { response?: { data?: { message?: string } } }) => {
       const message = error.response?.data?.message || 'Erro ao criar medição';
+      toast.error(message);
       setError('valorMedido', { message });
     }
   });
@@ -104,21 +114,7 @@ export function NovaMedicaoModal({ isOpen, onClose, contratoId, convenioId, data
 
   const handleClose = () => {
     reset();
-    setValorMedido('');
-    setValorPago('');
     onClose();
-  };
-
-  const handleValorMedidoChange = (_: string, rawValue: string) => {
-    const numericValue = parseFloat(rawValue) || 0;
-    setValue('valorMedido', numericValue);
-    setValorMedido(rawValue);
-  };
-
-  const handleValorPagoChange = (_: string, rawValue: string) => {
-    const numericValue = parseFloat(rawValue) || 0;
-    setValue('valorPago', numericValue);
-    setValorPago(rawValue);
   };
 
   // Calcular percentual automaticamente
@@ -130,156 +126,156 @@ export function NovaMedicaoModal({ isOpen, onClose, contratoId, convenioId, data
   }, [watchedValorMedido, saldoInfo, setValue]);
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={handleClose}
-      title="Nova Medição"
-      description="Registre uma nova medição de execução"
-      size="lg"
-      footer={
-        <>
-          <ModalButton variant="secondary" onClick={handleClose}>
-            Cancelar
-          </ModalButton>
-          <ModalButton
-            variant="primary"
-            onClick={handleSubmit(onSubmit)}
-            loading={mutation.isPending}
-          >
-            <BarChart3 className="h-4 w-4" />
-            Registrar Medição
-          </ModalButton>
-        </>
-      }
-    >
-      <form className="space-y-6">
-        {/* Card de Saldo Disponível */}
-        {saldoInfo && (
-          <div className="rounded-xl bg-slate-50 p-4">
-            <h4 className="text-sm font-semibold text-slate-700 mb-3">
-              Saldo do Contrato
-            </h4>
-            <div className="grid gap-3 md:grid-cols-3 text-sm">
+    <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
+      <DialogContent className="sm:max-w-lg">
+        <DialogHeader>
+          <DialogTitle>Nova Medição</DialogTitle>
+          <DialogDescription>
+            Registre uma nova medição de execução
+          </DialogDescription>
+        </DialogHeader>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          {/* Card de Saldo Disponível */}
+          {saldoInfo && (
+            <Card className="bg-muted/50">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm">Saldo do Contrato</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid gap-3 md:grid-cols-3 text-sm">
+                  <div>
+                    <p className="text-muted-foreground">Valor do Contrato</p>
+                    <p className="font-semibold">{formatCurrency(saldoInfo.valorContrato)}</p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground">Já Medido</p>
+                    <p className="font-semibold text-primary">{formatCurrency(saldoInfo.totalMedido)}</p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground">Saldo Disponível</p>
+                    <p className="font-bold text-emerald-600">{formatCurrency(saldoInfo.saldoMedir)}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Aviso sobre OIS */}
+          {dataOIS && (
+            <div className="rounded-lg bg-amber-50 p-3 text-sm text-amber-700 flex items-start gap-2">
+              <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
               <div>
-                <p className="text-slate-500">Valor do Contrato</p>
-                <p className="font-semibold text-slate-900">
-                  {formatCurrency(saldoInfo.valorContrato)}
-                </p>
-              </div>
-              <div>
-                <p className="text-slate-500">Já Medido</p>
-                <p className="font-semibold text-primary-600">
-                  {formatCurrency(saldoInfo.totalMedido)}
-                </p>
-              </div>
-              <div>
-                <p className="text-slate-500">Saldo Disponível</p>
-                <p className="font-bold text-emerald-600">
-                  {formatCurrency(saldoInfo.saldoMedir)}
-                </p>
+                <strong>Atenção:</strong> A data da medição não pode ser anterior à OIS ({formatDateBR(dataOIS)}).
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Aviso sobre OIS */}
-        {dataOIS && (
-          <div className="rounded-xl bg-amber-50 p-3 text-sm text-amber-700 flex items-start gap-2">
-            <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
-            <div>
-              <strong>Atenção:</strong> A data da medição não pode ser anterior à OIS (
-              {new Date(dataOIS).toLocaleDateString('pt-BR')}).
-            </div>
-          </div>
-        )}
-
-        {/* Data e Valor */}
-        <div className="grid gap-4 md:grid-cols-2">
-          <div>
-            <label className="form-label">Data da Medição *</label>
-            <input
-              type="date"
-              className="form-input"
-              {...register('dataMedicao')}
-              min={dataOIS ? dataOIS.split('T')[0] : undefined}
-            />
-            {errors.dataMedicao && (
-              <p className="mt-1 text-xs text-rose-500">{errors.dataMedicao.message}</p>
-            )}
-          </div>
-          <div>
-            <MaskedInput
-              mask="currency"
-              label="Valor Medido *"
-              placeholder="R$ 0,00"
-              value={valorMedido}
-              onChange={handleValorMedidoChange}
-              error={errors.valorMedido?.message}
-            />
-          </div>
-        </div>
-
-        {/* Percentual (calculado automaticamente) */}
-        <div>
-          <label className="form-label">Percentual Físico Acumulado</label>
-          <div className="flex items-center gap-2">
-            <input
-              type="number"
-              step="0.01"
-              min="0"
-              max="100"
-              className="form-input flex-1"
-              {...register('percentualFisico', {
-                setValueAs: (v) => (v === '' ? undefined : Number(v))
-              })}
-            />
-            <span className="text-slate-500">%</span>
-          </div>
-          <p className="mt-1 text-xs text-slate-500">Calculado automaticamente com base no valor</p>
-        </div>
-
-        {/* Pagamento */}
-        <div className="space-y-4">
-          <h4 className="font-medium text-slate-700">Dados do Pagamento (opcional)</h4>
+          {/* Data e Valor */}
           <div className="grid gap-4 md:grid-cols-2">
-            <div>
-              <label className="form-label">Data do Pagamento</label>
-              <input type="date" className="form-input" {...register('dataPagamento')} />
-            </div>
-            <div>
-              <MaskedInput
-                mask="currency"
-                label="Valor Pago"
-                placeholder="R$ 0,00"
-                value={valorPago}
-                onChange={handleValorPagoChange}
+            <div className="space-y-2">
+              <Label htmlFor="dataMedicao">Data da Medição *</Label>
+              <Input
+                type="date"
+                id="dataMedicao"
+                {...register('dataMedicao')}
+                min={dataOIS ? dataOIS.split('T')[0] : undefined}
               />
+              {errors.dataMedicao && (
+                <p className="text-xs text-destructive">{errors.dataMedicao.message}</p>
+              )}
+            </div>
+            <div className="space-y-2">
+              <Label>Valor Medido *</Label>
+              <CurrencyInput
+                value={watch('valorMedido')}
+                onValueChange={(value) => setValue('valorMedido', value ?? 0)}
+                placeholder="R$ 0,00"
+              />
+              {errors.valorMedido && (
+                <p className="text-xs text-destructive">{errors.valorMedido.message}</p>
+              )}
             </div>
           </div>
-        </div>
 
-        {/* Situação */}
-        <div>
-          <label className="form-label">Situação</label>
-          <select className="form-input" {...register('situacao')}>
-            <option value="em análise">Em Análise</option>
-            <option value="aprovada">Aprovada</option>
-            <option value="rejeitada">Rejeitada</option>
-          </select>
-        </div>
+          {/* Percentual (calculado automaticamente) */}
+          <div className="space-y-2">
+            <Label htmlFor="percentualFisico">Percentual Físico Acumulado</Label>
+            <div className="flex items-center gap-2">
+              <Input
+                type="number"
+                id="percentualFisico"
+                step="0.01"
+                min="0"
+                max="100"
+                className="flex-1"
+                {...register('percentualFisico', {
+                  setValueAs: (v) => (v === '' ? undefined : Number(v))
+                })}
+              />
+              <span className="text-muted-foreground">%</span>
+            </div>
+            <p className="text-xs text-muted-foreground">Calculado automaticamente com base no valor</p>
+          </div>
 
-        {/* Observações */}
-        <div>
-          <label className="form-label">Observações</label>
-          <textarea
-            className="form-input"
-            rows={2}
-            {...register('observacoes')}
-            placeholder="Observações sobre a medição..."
-          />
-        </div>
-      </form>
-    </Modal>
+          {/* Pagamento */}
+          <div className="space-y-4">
+            <h4 className="font-medium text-sm">Dados do Pagamento (opcional)</h4>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="dataPagamento">Data do Pagamento</Label>
+                <Input type="date" id="dataPagamento" {...register('dataPagamento')} />
+              </div>
+              <div className="space-y-2">
+                <Label>Valor Pago</Label>
+                <CurrencyInput
+                  value={watch('valorPago')}
+                  onValueChange={(value) => setValue('valorPago', value ?? undefined)}
+                  placeholder="R$ 0,00"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Situação */}
+          <div className="space-y-2">
+            <Label htmlFor="situacao">Situação</Label>
+            <select className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm" {...register('situacao')}>
+              <option value="em análise">Em Análise</option>
+              <option value="aprovada">Aprovada</option>
+              <option value="rejeitada">Rejeitada</option>
+            </select>
+          </div>
+
+          {/* Observações */}
+          <div className="space-y-2">
+            <Label htmlFor="observacoes">Observações</Label>
+            <textarea
+              id="observacoes"
+              className="flex min-h-[60px] w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
+              rows={2}
+              {...register('observacoes')}
+              placeholder="Observações sobre a medição..."
+            />
+          </div>
+
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button type="button" variant="outline" onClick={handleClose}>
+              Cancelar
+            </Button>
+            <Button type="submit" disabled={mutation.isPending}>
+              {mutation.isPending ? (
+                'Registrando...'
+              ) : (
+                <>
+                  <BarChart3 className="h-4 w-4 mr-2" />
+                  Registrar Medição
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }
-

@@ -1,14 +1,14 @@
-import type { Pendencia } from '@spd/db';
 import type { UpdatePendenciaDTO } from '../dto/PendenciaDTO';
 import type { PendenciaRepository } from '../repositories/PendenciaRepository';
 
 export class UpdatePendenciaUseCase {
-  constructor(private readonly repository: PendenciaRepository) {}
+  constructor(private repository: PendenciaRepository) {}
 
-  execute(id: number, data: UpdatePendenciaDTO): Promise<Pendencia> {
-    // Se está resolvendo a pendência, definir dataResolucao automaticamente
-    if (data.status === 'RESOLVIDA' && !data.dataResolucao) {
-      data.dataResolucao = new Date();
+  async execute(id: number, data: UpdatePendenciaDTO) {
+    // Verificar se existe
+    const existing = await this.repository.findById(id);
+    if (!existing) {
+      throw new Error('Pendência não encontrada');
     }
     return this.repository.update(id, data);
   }

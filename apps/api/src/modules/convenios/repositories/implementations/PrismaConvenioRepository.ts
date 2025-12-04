@@ -1,7 +1,8 @@
 import { prisma, type Convenio, StatusPendencia } from '@spd/db';
 import type {
   ConvenioFilters,
-  ConvenioRepository
+  ConvenioRepository,
+  ConvenioLite
 } from '../ConvenioRepository';
 import type {
   CreateConvenioDTO,
@@ -30,10 +31,54 @@ const defaultIncludes = {
 };
 
 export class PrismaConvenioRepository implements ConvenioRepository {
+  // Método otimizado para listagem (sem relacionamentos pesados)
+  async listLite(filters?: ConvenioFilters): Promise<ConvenioLite[]> {
+    const result = await prisma.convenio.findMany({
+      where: {
+        status: filters?.status as Convenio['status'],
+        secretariaId: filters?.secretariaId,
+        OR: filters?.search
+          ? [
+              { titulo: { contains: filters.search, mode: 'insensitive' } },
+              { codigo: { contains: filters.search, mode: 'insensitive' } }
+            ]
+          : undefined
+      },
+      orderBy: {
+        atualizadoEm: 'desc'
+      },
+      select: {
+        id: true,
+        codigo: true,
+        titulo: true,
+        objeto: true,
+        status: true,
+        valorGlobal: true,
+        dataFimVigencia: true,
+        atualizadoEm: true,
+        secretaria: {
+          select: { nome: true, sigla: true }
+        },
+        _count: {
+          select: {
+            pendencias: true,
+            contratos: true
+          }
+        }
+      }
+    });
+    
+    // Converter Decimal para number
+    return result.map(conv => ({
+      ...conv,
+      valorGlobal: Number(conv.valorGlobal)
+    }));
+  }
+
   async list(filters?: ConvenioFilters): Promise<Convenio[]> {
     return prisma.convenio.findMany({
       where: {
-        status: filters?.status as any,
+        status: filters?.status as Convenio['status'],
         secretariaId: filters?.secretariaId,
         OR: filters?.search
           ? [

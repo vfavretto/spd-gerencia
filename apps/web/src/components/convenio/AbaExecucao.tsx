@@ -1,11 +1,11 @@
 import { BarChart3, TrendingUp, Calendar, DollarSign } from 'lucide-react';
-import type { Convenio } from '../../types';
-import { formatCurrency, formatDate } from '../../utils/format';
-import { ProgressBar, ProgressCircle } from '../ui/ProgressBar';
+import type { Convenio } from '@/types';
+import { formatDateBR } from '@/lib/date';
+import { formatCurrency } from '@/components/ui/currency-input';
+import { Progress, ProgressCircle } from '@/components/ui/progress';
 
 type Props = {
   convenio: Convenio;
-  onUpdate: () => void;
 };
 
 export function AbaExecucao({ convenio }: Props) {
@@ -100,9 +100,9 @@ export function AbaExecucao({ convenio }: Props) {
               <p className="text-xl font-bold text-slate-900 mt-1">
                 {diasSemMedicao !== null ? diasSemMedicao : '—'}
               </p>
-              <p className="text-xs text-slate-500 mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 {ultimaMedicao
-                  ? `Última: ${formatDate(ultimaMedicao.dataMedicao)}`
+                  ? `Última: ${formatDateBR(ultimaMedicao.dataMedicao)}`
                   : 'Nenhuma medição'}
               </p>
             </div>
@@ -120,24 +120,27 @@ export function AbaExecucao({ convenio }: Props) {
           Progresso Geral
         </h4>
         <div className="space-y-4">
-          <ProgressBar
-            value={percentualContratado}
-            label="Contratação"
-            showLabel
-            variant="default"
-          />
-          <ProgressBar
-            value={percentualMedido}
-            label="Execução Física"
-            showLabel
-            variant="success"
-          />
-          <ProgressBar
-            value={percentualPago}
-            label="Execução Financeira"
-            showLabel
-            variant="success"
-          />
+          <div className="space-y-1">
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">Contratação</span>
+              <span>{percentualContratado.toFixed(1)}%</span>
+            </div>
+            <Progress value={percentualContratado} />
+          </div>
+          <div className="space-y-1">
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">Execução Física</span>
+              <span>{percentualMedido.toFixed(1)}%</span>
+            </div>
+            <Progress value={percentualMedido} variant="success" />
+          </div>
+          <div className="space-y-1">
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">Execução Financeira</span>
+              <span>{percentualPago.toFixed(1)}%</span>
+            </div>
+            <Progress value={percentualPago} variant="success" />
+          </div>
         </div>
       </div>
 
@@ -182,8 +185,8 @@ export function AbaExecucao({ convenio }: Props) {
                       <p className="font-medium text-slate-900">
                         Medição Nº {medicao.numeroMedicao}
                       </p>
-                      <p className="text-sm text-slate-500">
-                        {(medicao as any).contratoNumero} • {formatDate(medicao.dataMedicao)}
+                      <p className="text-sm text-muted-foreground">
+                        {(medicao as { contratoNumero: string }).contratoNumero} • {formatDateBR(medicao.dataMedicao)}
                       </p>
                     </div>
                     <div className="text-right">
@@ -201,7 +204,7 @@ export function AbaExecucao({ convenio }: Props) {
                   {/* Barra de progresso individual */}
                   {medicao.percentualFisico && (
                     <div className="mt-2">
-                      <ProgressBar
+                      <Progress
                         value={Number(medicao.percentualFisico)}
                         size="sm"
                         showLabel

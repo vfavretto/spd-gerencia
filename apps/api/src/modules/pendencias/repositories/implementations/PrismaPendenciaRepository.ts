@@ -7,7 +7,7 @@ export class PrismaPendenciaRepository implements PendenciaRepository {
     return prisma.pendencia.findMany({
       where: {
         convenioId,
-        status: filters?.status as any,
+        status: filters?.status as Pendencia['status'],
         prioridade: filters?.prioridade
       },
       include: { criadoPor: { select: { id: true, nome: true } } },
@@ -41,9 +41,15 @@ export class PrismaPendenciaRepository implements PendenciaRepository {
   async create(data: CreatePendenciaDTO): Promise<Pendencia> {
     return prisma.pendencia.create({
       data: {
-        ...data,
+        descricao: data.descricao,
+        responsavel: data.responsavel,
         prazo: data.prazo ?? undefined,
-        dataResolucao: data.dataResolucao ?? undefined
+        status: (data.status as Pendencia['status']) ?? 'ABERTA',
+        prioridade: data.prioridade ?? 2,
+        resolucao: data.resolucao,
+        dataResolucao: data.dataResolucao ?? undefined,
+        convenioId: data.convenioId,
+        criadoPorId: data.criadoPorId
       },
       include: { criadoPor: { select: { id: true, nome: true } } }
     });
@@ -53,8 +59,12 @@ export class PrismaPendenciaRepository implements PendenciaRepository {
     return prisma.pendencia.update({
       where: { id },
       data: {
-        ...data,
+        descricao: data.descricao,
+        responsavel: data.responsavel,
         prazo: data.prazo === null ? null : data.prazo,
+        status: data.status as Pendencia['status'],
+        prioridade: data.prioridade,
+        resolucao: data.resolucao,
         dataResolucao: data.dataResolucao === null ? null : data.dataResolucao
       },
       include: { criadoPor: { select: { id: true, nome: true } } }

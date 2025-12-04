@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
 import { z } from 'zod';
 import { PrismaConvenioRepository } from '../repositories/implementations/PrismaConvenioRepository';
-import { ListConveniosUseCase } from '../useCases/ListConveniosUseCase';
+import { ListConveniosLiteUseCase } from '../useCases/ListConveniosLiteUseCase';
 import { GetConvenioUseCase } from '../useCases/GetConvenioUseCase';
 import { CreateConvenioUseCase } from '../useCases/CreateConvenioUseCase';
 import { UpdateConvenioUseCase } from '../useCases/UpdateConvenioUseCase';
@@ -49,7 +49,8 @@ export class ConvenioController {
       ? Number(req.query.secretariaId)
       : undefined;
 
-    const useCase = new ListConveniosUseCase(this.repository);
+    // Usa listLite para performance na listagem
+    const useCase = new ListConveniosLiteUseCase(this.repository);
     const convenios = await useCase.execute({ search, status, secretariaId });
     return res.json(convenios);
   }

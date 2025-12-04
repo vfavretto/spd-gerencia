@@ -3,10 +3,20 @@ import { Building, FileText } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Modal, ModalButton } from '../../ui/Modal';
-import { MaskedInput } from '../../ui/MaskedInput';
-import { contratoService } from '../../../services/contratoService';
-import { useState } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { CurrencyInput } from '@/components/ui/currency-input';
+import { contratoService } from '@/services/contratoService';
+import { toast } from '@/components/ui/toaster';
 
 const schema = z.object({
   numProcessoLicitatorio: z.string().optional(),
@@ -49,14 +59,13 @@ const modalidadeOptions = [
 
 export function VincularContratoModal({ isOpen, onClose, convenioId, onSuccess }: Props) {
   const queryClient = useQueryClient();
-  const [valorContrato, setValorContrato] = useState('');
-  const [cnpjValue, setCnpjValue] = useState('');
 
   const {
     register,
     handleSubmit,
     reset,
     setValue,
+    watch,
     formState: { errors }
   } = useForm<FormData>({
     resolver: zodResolver(schema)
@@ -79,11 +88,13 @@ export function VincularContratoModal({ isOpen, onClose, convenioId, onSuccess }
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['convenio', String(convenioId)] });
+      toast.success('Contrato vinculado com sucesso!');
       reset();
-      setValorContrato('');
-      setCnpjValue('');
       onClose();
       onSuccess();
+    },
+    onError: () => {
+      toast.error('Erro ao vincular contrato');
     }
   });
 
@@ -93,189 +104,183 @@ export function VincularContratoModal({ isOpen, onClose, convenioId, onSuccess }
 
   const handleClose = () => {
     reset();
-    setValorContrato('');
-    setCnpjValue('');
     onClose();
   };
 
-  const handleCurrencyChange = (_: string, rawValue: string) => {
-    const numericValue = parseFloat(rawValue) || 0;
-    setValue('valorContrato', numericValue);
-    setValorContrato(rawValue);
-  };
-
-  const handleCnpjChange = (maskedValue: string, _rawValue: string) => {
-    setValue('contratadaCnpj', maskedValue);
-    setCnpjValue(maskedValue);
-  };
-
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={handleClose}
-      title="Vincular Contrato"
-      description="Cadastre o contrato de execução vinculado ao convênio"
-      size="lg"
-      footer={
-        <>
-          <ModalButton variant="secondary" onClick={handleClose}>
-            Cancelar
-          </ModalButton>
-          <ModalButton
-            variant="primary"
-            onClick={handleSubmit(onSubmit)}
-            loading={mutation.isPending}
-          >
-            <Building className="h-4 w-4" />
-            Vincular Contrato
-          </ModalButton>
-        </>
-      }
-    >
-      <form className="space-y-6">
-        {/* Seção: Licitação */}
-        <div className="space-y-4">
-          <h4 className="font-medium text-slate-700 flex items-center gap-2">
-            <FileText className="h-4 w-4" />
-            Dados da Licitação
-          </h4>
-          <div className="grid gap-4 md:grid-cols-2">
-            <div>
-              <label className="form-label">Nº Processo Licitatório</label>
-              <input
-                className="form-input"
-                {...register('numProcessoLicitatorio')}
-                placeholder="Ex: PL 001/2025"
-              />
-            </div>
-            <div>
-              <label className="form-label">Modalidade</label>
-              <select className="form-input" {...register('modalidadeLicitacao')}>
-                <option value="">Selecione</option>
-                {modalidadeOptions.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
+      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Vincular Contrato</DialogTitle>
+          <DialogDescription>
+            Cadastre o contrato de execução vinculado ao convênio
+          </DialogDescription>
+        </DialogHeader>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          {/* Seção: Licitação */}
+          <div className="space-y-4">
+            <h4 className="font-medium flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              Dados da Licitação
+            </h4>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="numProcessoLicitatorio">Nº Processo Licitatório</Label>
+                <Input
+                  id="numProcessoLicitatorio"
+                  {...register('numProcessoLicitatorio')}
+                  placeholder="Ex: PL 001/2025"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="modalidadeLicitacao">Modalidade</Label>
+                <select
+                  id="modalidadeLicitacao"
+                  className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
+                  {...register('modalidadeLicitacao')}
+                >
+                  <option value="">Selecione</option>
+                  {modalidadeOptions.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Seção: Contrato */}
-        <div className="space-y-4">
-          <h4 className="font-medium text-slate-700 flex items-center gap-2">
-            <Building className="h-4 w-4" />
-            Dados do Contrato
-          </h4>
-          <div className="grid gap-4 md:grid-cols-2">
-            <div>
-              <label className="form-label">Número do Contrato *</label>
-              <input
-                className="form-input"
-                {...register('numeroContrato')}
-                placeholder="Ex: CT 001/2025"
-              />
-              {errors.numeroContrato && (
-                <p className="mt-1 text-xs text-rose-500">{errors.numeroContrato.message}</p>
+          {/* Seção: Contrato */}
+          <div className="space-y-4">
+            <h4 className="font-medium flex items-center gap-2">
+              <Building className="h-4 w-4" />
+              Dados do Contrato
+            </h4>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="numeroContrato">Número do Contrato *</Label>
+                <Input
+                  id="numeroContrato"
+                  {...register('numeroContrato')}
+                  placeholder="Ex: CT 001/2025"
+                />
+                {errors.numeroContrato && (
+                  <p className="text-xs text-destructive">{errors.numeroContrato.message}</p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label>Valor do Contrato *</Label>
+                <CurrencyInput
+                  value={watch('valorContrato')}
+                  onValueChange={(value) => setValue('valorContrato', value ?? 0)}
+                  placeholder="R$ 0,00"
+                />
+                {errors.valorContrato && (
+                  <p className="text-xs text-destructive">{errors.valorContrato.message}</p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Seção: Contratada */}
+          <div className="space-y-4">
+            <h4 className="font-medium">Empresa Contratada</h4>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="contratadaNome">Nome/Razão Social *</Label>
+                <Input
+                  id="contratadaNome"
+                  {...register('contratadaNome')}
+                  placeholder="Nome da empresa"
+                />
+                {errors.contratadaNome && (
+                  <p className="text-xs text-destructive">{errors.contratadaNome.message}</p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="contratadaCnpj">CNPJ</Label>
+                <Input
+                  id="contratadaCnpj"
+                  {...register('contratadaCnpj')}
+                  placeholder="00.000.000/0000-00"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Seção: Datas */}
+          <div className="space-y-4">
+            <h4 className="font-medium">Datas Importantes</h4>
+            <div className="grid gap-4 md:grid-cols-4">
+              <div className="space-y-2">
+                <Label htmlFor="dataAssinatura">Assinatura</Label>
+                <Input type="date" id="dataAssinatura" {...register('dataAssinatura')} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="dataVigenciaInicio">Início Vigência</Label>
+                <Input type="date" id="dataVigenciaInicio" {...register('dataVigenciaInicio')} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="dataVigenciaFim">Fim Vigência</Label>
+                <Input type="date" id="dataVigenciaFim" {...register('dataVigenciaFim')} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="dataOIS">OIS</Label>
+                <Input type="date" id="dataOIS" {...register('dataOIS')} />
+                <p className="text-xs text-muted-foreground">Ordem de Início de Serviço</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Seção: Engenharia */}
+          <div className="space-y-4">
+            <h4 className="font-medium">Responsável Técnico</h4>
+            <div className="grid gap-4 md:grid-cols-3">
+              <div className="space-y-2">
+                <Label htmlFor="engenheiroResponsavel">Engenheiro</Label>
+                <Input
+                  id="engenheiroResponsavel"
+                  {...register('engenheiroResponsavel')}
+                  placeholder="Nome completo"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="creaEngenheiro">CREA</Label>
+                <Input
+                  id="creaEngenheiro"
+                  {...register('creaEngenheiro')}
+                  placeholder="Nº do CREA"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="artRrt">ART/RRT</Label>
+                <Input
+                  id="artRrt"
+                  {...register('artRrt')}
+                  placeholder="Nº da ART ou RRT"
+                />
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button type="button" variant="outline" onClick={handleClose}>
+              Cancelar
+            </Button>
+            <Button type="submit" disabled={mutation.isPending}>
+              {mutation.isPending ? (
+                'Vinculando...'
+              ) : (
+                <>
+                  <Building className="h-4 w-4 mr-2" />
+                  Vincular Contrato
+                </>
               )}
-            </div>
-            <div>
-              <MaskedInput
-                mask="currency"
-                label="Valor do Contrato *"
-                placeholder="R$ 0,00"
-                value={valorContrato}
-                onChange={handleCurrencyChange}
-                error={errors.valorContrato?.message}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Seção: Contratada */}
-        <div className="space-y-4">
-          <h4 className="font-medium text-slate-700">Empresa Contratada</h4>
-          <div className="grid gap-4 md:grid-cols-2">
-            <div>
-              <label className="form-label">Nome/Razão Social *</label>
-              <input
-                className="form-input"
-                {...register('contratadaNome')}
-                placeholder="Nome da empresa"
-              />
-              {errors.contratadaNome && (
-                <p className="mt-1 text-xs text-rose-500">{errors.contratadaNome.message}</p>
-              )}
-            </div>
-            <div>
-              <MaskedInput
-                mask="cnpj"
-                label="CNPJ"
-                placeholder="00.000.000/0000-00"
-                value={cnpjValue}
-                onChange={handleCnpjChange}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Seção: Datas */}
-        <div className="space-y-4">
-          <h4 className="font-medium text-slate-700">Datas Importantes</h4>
-          <div className="grid gap-4 md:grid-cols-4">
-            <div>
-              <label className="form-label">Assinatura</label>
-              <input type="date" className="form-input" {...register('dataAssinatura')} />
-            </div>
-            <div>
-              <label className="form-label">Início Vigência</label>
-              <input type="date" className="form-input" {...register('dataVigenciaInicio')} />
-            </div>
-            <div>
-              <label className="form-label">Fim Vigência</label>
-              <input type="date" className="form-input" {...register('dataVigenciaFim')} />
-            </div>
-            <div>
-              <label className="form-label">OIS</label>
-              <input type="date" className="form-input" {...register('dataOIS')} />
-              <p className="mt-1 text-xs text-slate-500">Ordem de Início de Serviço</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Seção: Engenharia */}
-        <div className="space-y-4">
-          <h4 className="font-medium text-slate-700">Responsável Técnico</h4>
-          <div className="grid gap-4 md:grid-cols-3">
-            <div>
-              <label className="form-label">Engenheiro</label>
-              <input
-                className="form-input"
-                {...register('engenheiroResponsavel')}
-                placeholder="Nome completo"
-              />
-            </div>
-            <div>
-              <label className="form-label">CREA</label>
-              <input
-                className="form-input"
-                {...register('creaEngenheiro')}
-                placeholder="Nº do CREA"
-              />
-            </div>
-            <div>
-              <label className="form-label">ART/RRT</label>
-              <input
-                className="form-input"
-                {...register('artRrt')}
-                placeholder="Nº da ART ou RRT"
-              />
-            </div>
-          </div>
-        </div>
-      </form>
-    </Modal>
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }
-

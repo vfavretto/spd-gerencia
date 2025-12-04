@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { Plus, Building, User, Calendar, FileText, BarChart3 } from 'lucide-react';
-import type { Convenio, ContratoExecucao } from '../../types';
-import { formatCurrency, formatDate } from '../../utils/format';
-import { ProgressBar } from '../ui/ProgressBar';
-import { Badge } from '../ui/Badge';
+import type { Convenio, ContratoExecucao } from '@/types';
+import { formatDateBR } from '@/lib/date';
+import { formatCurrency } from '@/components/ui/currency-input';
+import { Progress } from '@/components/ui/progress';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { VincularContratoModal } from './modals/VincularContratoModal';
 import { NovaMedicaoModal } from './modals/NovaMedicaoModal';
 
@@ -45,36 +47,30 @@ export function AbaEngenharia({ convenio, onUpdate }: Props) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-slate-900">
+        <h3 className="text-lg font-semibold">
           Contratos de Execução
         </h3>
         {contratos.length === 0 && (
-          <button
-            onClick={() => setShowVincularContrato(true)}
-            className="inline-flex items-center gap-2 rounded-xl bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-500"
-          >
-            <Plus className="h-4 w-4" />
+          <Button onClick={() => setShowVincularContrato(true)}>
+            <Plus className="h-4 w-4 mr-2" />
             Vincular Contrato
-          </button>
+          </Button>
         )}
       </div>
 
       {contratos.length === 0 ? (
-        <div className="rounded-2xl border-2 border-dashed border-slate-200 p-8 text-center">
-          <Building className="mx-auto h-12 w-12 text-slate-300" />
-          <h4 className="mt-4 font-medium text-slate-700">
+        <div className="rounded-2xl border-2 border-dashed border-muted p-8 text-center">
+          <Building className="mx-auto h-12 w-12 text-muted-foreground/50" />
+          <h4 className="mt-4 font-medium">
             Nenhum contrato vinculado
           </h4>
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="mt-1 text-sm text-muted-foreground">
             Vincule um contrato de execução para acompanhar as medições
           </p>
-          <button
-            onClick={() => setShowVincularContrato(true)}
-            className="mt-4 inline-flex items-center gap-2 rounded-xl bg-primary-100 px-4 py-2 text-sm font-medium text-primary-700 hover:bg-primary-200"
-          >
-            <Plus className="h-4 w-4" />
+          <Button onClick={() => setShowVincularContrato(true)} variant="secondary" className="mt-4">
+            <Plus className="h-4 w-4 mr-2" />
             Vincular Contrato
-          </button>
+          </Button>
         </div>
       ) : (
         <div className="space-y-4">
@@ -99,7 +95,7 @@ export function AbaEngenharia({ convenio, onUpdate }: Props) {
                         {contrato.numeroContrato || 'Contrato sem número'}
                       </h4>
                       {contrato.modalidadeLicitacao && (
-                        <Badge variant="neutral" size="sm">
+                        <Badge variant="secondary">
                           {modalidadeLabel[contrato.modalidadeLicitacao]}
                         </Badge>
                       )}
@@ -129,7 +125,7 @@ export function AbaEngenharia({ convenio, onUpdate }: Props) {
                         {formatCurrency(totalMedido)} de {formatCurrency(valorContrato)}
                       </span>
                     </div>
-                    <ProgressBar value={percentual} showLabel size="md" />
+                    <Progress value={percentual} showLabel size="md" />
                   </div>
 
                   {/* Informações em Grid */}
@@ -147,22 +143,22 @@ export function AbaEngenharia({ convenio, onUpdate }: Props) {
                     )}
                     {contrato.dataOIS && (
                       <div className="flex items-start gap-2">
-                        <Calendar className="h-4 w-4 text-slate-400 mt-0.5" />
+                        <Calendar className="h-4 w-4 text-muted-foreground mt-0.5" />
                         <div>
-                          <p className="text-xs text-slate-500">OIS</p>
-                          <p className="text-sm font-medium text-slate-900">
-                            {formatDate(contrato.dataOIS)}
+                          <p className="text-xs text-muted-foreground">OIS</p>
+                          <p className="text-sm font-medium">
+                            {formatDateBR(contrato.dataOIS)}
                           </p>
                         </div>
                       </div>
                     )}
                     {contrato.dataVigenciaFim && (
                       <div className="flex items-start gap-2">
-                        <Calendar className="h-4 w-4 text-slate-400 mt-0.5" />
+                        <Calendar className="h-4 w-4 text-muted-foreground mt-0.5" />
                         <div>
-                          <p className="text-xs text-slate-500">Vigência</p>
-                          <p className="text-sm font-medium text-slate-900">
-                            {formatDate(contrato.dataVigenciaFim)}
+                          <p className="text-xs text-muted-foreground">Vigência</p>
+                          <p className="text-sm font-medium">
+                            {formatDateBR(contrato.dataVigenciaFim)}
                           </p>
                         </div>
                       </div>
@@ -191,13 +187,14 @@ export function AbaEngenharia({ convenio, onUpdate }: Props) {
                       <h5 className="text-sm font-medium text-slate-700">
                         Medições ({contrato.medicoes?.length || 0})
                       </h5>
-                      <button
+                      <Button
+                        size="sm"
+                        variant="secondary"
                         onClick={() => handleNovaMedicao(contrato.id, contrato.dataOIS)}
-                        className="inline-flex items-center gap-1.5 rounded-lg bg-primary-100 px-3 py-1.5 text-xs font-medium text-primary-700 hover:bg-primary-200"
                       >
-                        <BarChart3 className="h-3.5 w-3.5" />
+                        <BarChart3 className="h-3.5 w-3.5 mr-1.5" />
                         Nova Medição
-                      </button>
+                      </Button>
                     </div>
                     {contrato.medicoes && contrato.medicoes.length > 0 ? (
                       <div className="overflow-x-auto">
@@ -227,8 +224,8 @@ export function AbaEngenharia({ convenio, onUpdate }: Props) {
                                 <td className="px-3 py-2 font-medium text-slate-900">
                                   {medicao.numeroMedicao}
                                 </td>
-                                <td className="px-3 py-2 text-slate-600">
-                                  {formatDate(medicao.dataMedicao)}
+                                <td className="px-3 py-2 text-muted-foreground">
+                                  {formatDateBR(medicao.dataMedicao)}
                                 </td>
                                 <td className="px-3 py-2 text-right text-slate-900">
                                   {formatCurrency(Number(medicao.valorMedido))}

@@ -1,10 +1,9 @@
-import type { Pendencia } from '@spd/db';
 import type { PendenciaFilters, PendenciaRepository } from '../repositories/PendenciaRepository';
 
 export class ListPendenciasUseCase {
-  constructor(private readonly repository: PendenciaRepository) {}
+  constructor(private repository: PendenciaRepository) {}
 
-  execute(convenioId: number, filters?: PendenciaFilters): Promise<Pendencia[]> {
+  async execute(convenioId: number, filters?: PendenciaFilters) {
     return this.repository.listByConvenio(convenioId, filters);
   }
 }

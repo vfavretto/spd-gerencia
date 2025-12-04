@@ -1,10 +1,14 @@
 import type { PendenciaRepository } from '../repositories/PendenciaRepository';
 
 export class DeletePendenciaUseCase {
-  constructor(private readonly repository: PendenciaRepository) {}
+  constructor(private repository: PendenciaRepository) {}
 
-  execute(id: number): Promise<void> {
-    return this.repository.delete(id);
+  async execute(id: number) {
+    const existing = await this.repository.findById(id);
+    if (!existing) {
+      throw new Error('Pendência não encontrada');
+    }
+    await this.repository.delete(id);
   }
 }
 

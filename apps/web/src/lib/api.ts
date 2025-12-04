@@ -12,6 +12,24 @@ export const api = axios.create({
   timeout: 15000
 });
 
+// Interceptor para tratar erros de autenticação (401)
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Limpa o token e redireciona para login
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      
+      // Só redireciona se não estiver já na página de login
+      if (!window.location.pathname.includes('/login')) {
+        window.location.href = '/login';
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 export const setAuthToken = (token?: string | null) => {
   if (token) {
     api.defaults.headers.common.Authorization = `Bearer ${token}`;

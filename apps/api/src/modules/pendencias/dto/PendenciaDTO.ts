@@ -1,12 +1,10 @@
-import type { StatusPendencia } from '@spd/db';
-
 export type CreatePendenciaDTO = {
   descricao: string;
-  responsavel?: string;
+  responsavel?: string | null;
   prazo?: Date | null;
-  status?: StatusPendencia;
+  status?: string;
   prioridade?: number;
-  resolucao?: string;
+  resolucao?: string | null;
   dataResolucao?: Date | null;
   convenioId: number;
   criadoPorId?: number;

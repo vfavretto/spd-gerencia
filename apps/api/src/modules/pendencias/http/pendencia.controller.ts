@@ -11,16 +11,15 @@ const statusEnum = z.enum(['ABERTA', 'EM_ANDAMENTO', 'RESOLVIDA', 'CANCELADA']);
 
 const createSchema = z.object({
   descricao: z.string().min(1),
-  responsavel: z.string().optional(),
+  responsavel: z.string().nullable().optional(),
   prazo: z.coerce.date().nullable().optional(),
   status: statusEnum.optional(),
   prioridade: z.number().int().min(1).max(3).optional(),
-  resolucao: z.string().optional(),
-  dataResolucao: z.coerce.date().nullable().optional(),
-  convenioId: z.number().int()
+  resolucao: z.string().nullable().optional(),
+  dataResolucao: z.coerce.date().nullable().optional()
 });
 
-const updateSchema = createSchema.omit({ convenioId: true }).partial();
+const updateSchema = createSchema.partial();
 
 export class PendenciaController {
   private readonly repository = new PrismaPendenciaRepository();
@@ -45,9 +44,15 @@ export class PendenciaController {
   async create(req: Request, res: Response) {
     const convenioId = Number(req.params.convenioId);
     const userId = (req as any).user?.id;
-    const payload = createSchema.parse({ ...req.body, convenioId });
+    const payload = createSchema.parse(req.body);
     const useCase = new CreatePendenciaUseCase(this.repository);
-    const pendencia = await useCase.execute({ ...payload, criadoPorId: userId });
+    // Converte userId para número, pois o JWT pode retornar como string
+    const criadoPorId = userId ? Number(userId) : undefined;
+    const pendencia = await useCase.execute({ 
+      ...payload, 
+      convenioId, 
+      criadoPorId 
+    });
     return res.status(201).json(pendencia);
   }
 

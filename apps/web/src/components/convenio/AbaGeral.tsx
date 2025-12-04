@@ -2,10 +2,14 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Edit2, Save, X, CalendarCheck, FileSignature } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import type { Convenio } from '../../types';
-import { convenioService } from '../../services/convenioService';
-import { configService } from '../../services/configService';
-import { formatDate } from '../../utils/format';
+import type { Convenio } from '@/types';
+import { convenioService } from '@/services/convenioService';
+import { configService } from '@/services/configService';
+import { formatDateBR } from '@/lib/date';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { toast } from '@/components/ui/toaster';
 import { RegistrarAssinaturaModal } from './modals/RegistrarAssinaturaModal';
 import { AditivarModal } from './modals/AditivarModal';
 
@@ -51,7 +55,7 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
   });
 
   const updateMutation = useMutation({
-    mutationFn: (data: any) => convenioService.update(convenio.id, {
+    mutationFn: (data: Record<string, unknown>) => convenioService.update(convenio.id, {
       ...data,
       dataAssinatura: data.dataAssinatura || null,
       dataInicioVigencia: data.dataInicioVigencia || null,
@@ -61,8 +65,12 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
     }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['convenio', String(convenio.id)] });
+      toast.success('Dados salvos com sucesso!');
       setIsEditing(false);
       onUpdate();
+    },
+    onError: () => {
+      toast.error('Erro ao salvar dados');
     }
   });
 
@@ -91,75 +99,67 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
     return (
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-slate-900">Dados Gerais</h3>
+          <h3 className="text-lg font-semibold">Dados Gerais</h3>
           <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={handleCancel}
-              className="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50"
-            >
-              <X className="h-4 w-4" />
+            <Button type="button" variant="outline" onClick={handleCancel}>
+              <X className="h-4 w-4 mr-2" />
               Cancelar
-            </button>
-            <button
-              type="submit"
-              disabled={updateMutation.isPending}
-              className="inline-flex items-center gap-2 rounded-xl bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-500 disabled:opacity-70"
-            >
-              <Save className="h-4 w-4" />
+            </Button>
+            <Button type="submit" disabled={updateMutation.isPending}>
+              <Save className="h-4 w-4 mr-2" />
               {updateMutation.isPending ? 'Salvando...' : 'Salvar'}
-            </button>
+            </Button>
           </div>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
-          <div>
-            <label className="form-label">Código</label>
-            <input className="form-input" {...register('codigo')} />
+          <div className="space-y-2">
+            <Label>Código</Label>
+            <Input {...register('codigo')} />
           </div>
-          <div>
-            <label className="form-label">Nº do Termo</label>
-            <input className="form-input" {...register('numeroTermo')} />
+          <div className="space-y-2">
+            <Label>Nº do Termo</Label>
+            <Input {...register('numeroTermo')} />
           </div>
         </div>
 
-        <div>
-          <label className="form-label">Título</label>
-          <input className="form-input" {...register('titulo')} />
+        <div className="space-y-2">
+          <Label>Título</Label>
+          <Input {...register('titulo')} />
         </div>
 
-        <div>
-          <label className="form-label">Objeto</label>
-          <textarea className="form-input" rows={3} {...register('objeto')} />
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-3">
-          <div>
-            <label className="form-label">Data Assinatura</label>
-            <input type="date" className="form-input" {...register('dataAssinatura')} />
-          </div>
-          <div>
-            <label className="form-label">Início Vigência</label>
-            <input type="date" className="form-input" {...register('dataInicioVigencia')} />
-          </div>
-          <div>
-            <label className="form-label">Fim Vigência</label>
-            <input type="date" className="form-input" {...register('dataFimVigencia')} />
-          </div>
+        <div className="space-y-2">
+          <Label>Objeto</Label>
+          <textarea className="flex min-h-[80px] w-full rounded-lg border border-input bg-background px-3 py-2 text-sm" rows={3} {...register('objeto')} />
         </div>
 
         <div className="grid gap-4 md:grid-cols-3">
-          <div>
-            <label className="form-label">Esfera</label>
-            <select className="form-input" {...register('esfera')}>
+          <div className="space-y-2">
+            <Label>Data Assinatura</Label>
+            <Input type="date" {...register('dataAssinatura')} />
+          </div>
+          <div className="space-y-2">
+            <Label>Início Vigência</Label>
+            <Input type="date" {...register('dataInicioVigencia')} />
+          </div>
+          <div className="space-y-2">
+            <Label>Fim Vigência</Label>
+            <Input type="date" {...register('dataFimVigencia')} />
+          </div>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-3">
+          <div className="space-y-2">
+            <Label>Esfera</Label>
+            <select className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm" {...register('esfera')}>
               <option value="">Selecione</option>
               <option value="FEDERAL">Federal</option>
               <option value="ESTADUAL">Estadual</option>
             </select>
           </div>
-          <div>
-            <label className="form-label">Modalidade</label>
-            <select className="form-input" {...register('modalidadeRepasse')}>
+          <div className="space-y-2">
+            <Label>Modalidade</Label>
+            <select className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm" {...register('modalidadeRepasse')}>
               <option value="">Selecione</option>
               <option value="CONVENIO">Convênio</option>
               <option value="CONTRATO_REPASSE">Contrato de Repasse</option>
@@ -167,10 +167,10 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
               <option value="TERMO_COLABORACAO">Termo de Colaboração</option>
             </select>
           </div>
-          <div>
-            <label className="form-label">Órgão Concedente</label>
+          <div className="space-y-2">
+            <Label>Órgão Concedente</Label>
             <select
-              className="form-input"
+              className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
               {...register('orgaoId', {
                 setValueAs: (v) => (v === '' ? undefined : Number(v))
               })}
@@ -192,33 +192,24 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-slate-900">Dados Gerais</h3>
+        <h3 className="text-lg font-semibold">Dados Gerais</h3>
         <div className="flex gap-2">
           {podeRegistrarAssinatura && (
-            <button
-              onClick={() => setShowAssinaturaModal(true)}
-              className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-500"
-            >
-              <CalendarCheck className="h-4 w-4" />
+            <Button onClick={() => setShowAssinaturaModal(true)} className="bg-emerald-600 hover:bg-emerald-500">
+              <CalendarCheck className="h-4 w-4 mr-2" />
               Registrar Assinatura
-            </button>
+            </Button>
           )}
           {convenio.dataAssinatura && (
-            <button
-              onClick={() => setShowAditivoModal(true)}
-              className="inline-flex items-center gap-2 rounded-xl bg-amber-100 px-4 py-2 text-sm font-medium text-amber-700 hover:bg-amber-200"
-            >
-              <FileSignature className="h-4 w-4" />
+            <Button onClick={() => setShowAditivoModal(true)} variant="outline" className="border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100">
+              <FileSignature className="h-4 w-4 mr-2" />
               Aditivar
-            </button>
+            </Button>
           )}
-          <button
-            onClick={() => setIsEditing(true)}
-            className="inline-flex items-center gap-2 rounded-xl bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-200"
-          >
-            <Edit2 className="h-4 w-4" />
+          <Button variant="secondary" onClick={() => setIsEditing(true)}>
+            <Edit2 className="h-4 w-4 mr-2" />
             Editar
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -266,26 +257,26 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
 
         {/* Vigência */}
         <div className="space-y-4">
-          <h4 className="font-medium text-slate-700 border-b border-slate-100 pb-2">
+          <h4 className="font-medium text-muted-foreground border-b pb-2">
             Vigência
           </h4>
           <dl className="space-y-3 text-sm">
             <div className="flex justify-between">
-              <dt className="text-slate-500">Assinatura:</dt>
-              <dd className="font-medium text-slate-900">
-                {formatDate(convenio.dataAssinatura) || '—'}
+              <dt className="text-muted-foreground">Assinatura:</dt>
+              <dd className="font-medium">
+                {formatDateBR(convenio.dataAssinatura) || '—'}
               </dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-slate-500">Início:</dt>
-              <dd className="font-medium text-slate-900">
-                {formatDate(convenio.dataInicioVigencia) || '—'}
+              <dt className="text-muted-foreground">Início:</dt>
+              <dd className="font-medium">
+                {formatDateBR(convenio.dataInicioVigencia) || '—'}
               </dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-slate-500">Fim:</dt>
-              <dd className="font-medium text-slate-900">
-                {formatDate(convenio.dataFimVigencia) || '—'}
+              <dt className="text-muted-foreground">Fim:</dt>
+              <dd className="font-medium">
+                {formatDateBR(convenio.dataFimVigencia) || '—'}
               </dd>
             </div>
           </dl>
@@ -369,13 +360,13 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
                     {aditivo.numeroAditivo}º Aditivo - {aditivo.tipoAditivo.replace('_', ' ')}
                   </p>
                   <p className="text-xs text-slate-500">
-                    {aditivo.dataAssinatura && formatDate(aditivo.dataAssinatura)}
+                    {aditivo.dataAssinatura && formatDateBR(aditivo.dataAssinatura)}
                     {aditivo.motivo && ` • ${aditivo.motivo}`}
                   </p>
                 </div>
                 {aditivo.novaVigencia && (
                   <span className="text-sm font-medium text-amber-700">
-                    Nova vigência: {formatDate(aditivo.novaVigencia)}
+                    Nova vigência: {formatDateBR(aditivo.novaVigencia)}
                   </span>
                 )}
               </div>

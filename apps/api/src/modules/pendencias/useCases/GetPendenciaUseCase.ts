@@ -1,14 +1,12 @@
-import type { Pendencia } from '@spd/db';
 import type { PendenciaRepository } from '../repositories/PendenciaRepository';
-import { AppError } from '@shared/errors/AppError';
 
 export class GetPendenciaUseCase {
-  constructor(private readonly repository: PendenciaRepository) {}
+  constructor(private repository: PendenciaRepository) {}
 
-  async execute(id: number): Promise<Pendencia> {
+  async execute(id: number) {
     const pendencia = await this.repository.findById(id);
     if (!pendencia) {
-      throw new AppError('Pendência não encontrada', 404);
+      throw new Error('Pendência não encontrada');
     }
     return pendencia;
   }

@@ -11,22 +11,33 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import type { Convenio, StatusPendencia } from '../../types';
-import { pendenciaService } from '../../services/pendenciaService';
-import { formatDate } from '../../utils/format';
-import { Badge } from '../ui/Badge';
-import { Modal, ModalButton } from '../ui/Modal';
+import type { Convenio, StatusPendencia } from '@/types';
+import { pendenciaService } from '@/services/pendenciaService';
+import { formatDateBR } from '@/lib/date';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { toast } from '@/components/ui/toaster';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 type Props = {
   convenio: Convenio;
   onUpdate: () => void;
 };
 
-const statusConfig: Record<StatusPendencia, { label: string; variant: 'danger' | 'warning' | 'success' | 'neutral'; icon: typeof AlertTriangle }> = {
-  ABERTA: { label: 'Aberta', variant: 'danger', icon: AlertTriangle },
+const statusConfig: Record<StatusPendencia, { label: string; variant: 'destructive' | 'warning' | 'success' | 'secondary'; icon: typeof AlertTriangle }> = {
+  ABERTA: { label: 'Aberta', variant: 'destructive', icon: AlertTriangle },
   EM_ANDAMENTO: { label: 'Em Andamento', variant: 'warning', icon: Clock },
   RESOLVIDA: { label: 'Resolvida', variant: 'success', icon: CheckCircle },
-  CANCELADA: { label: 'Cancelada', variant: 'neutral', icon: CheckCircle }
+  CANCELADA: { label: 'Cancelada', variant: 'secondary', icon: CheckCircle }
 };
 
 const prioridadeLabel: Record<number, { label: string; color: string }> = {
@@ -52,12 +63,23 @@ export function AbaDiario({ convenio, onUpdate }: Props) {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: any) => pendenciaService.create(convenio.id, data),
+    mutationFn: (data: { descricao: string; responsavel?: string; prazo?: string; prioridade: number; status: StatusPendencia }) => 
+      pendenciaService.create(convenio.id, {
+        descricao: data.descricao,
+        responsavel: data.responsavel || null,
+        prazo: data.prazo || null,
+        prioridade: data.prioridade,
+        status: data.status
+      }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['convenio', String(convenio.id)] });
+      toast.success('Pendência registrada!');
       setShowNovaPendencia(false);
       reset();
       onUpdate();
+    },
+    onError: () => {
+      toast.error('Erro ao registrar pendência');
     }
   });
 
@@ -66,6 +88,7 @@ export function AbaDiario({ convenio, onUpdate }: Props) {
       pendenciaService.update(convenio.id, id, { status }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['convenio', String(convenio.id)] });
+      toast.success('Status atualizado!');
       onUpdate();
     }
   });
@@ -91,16 +114,13 @@ export function AbaDiario({ convenio, onUpdate }: Props) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-slate-900">
+        <h3 className="text-lg font-semibold">
           Diário de Pendências
         </h3>
-        <button
-          onClick={() => setShowNovaPendencia(true)}
-          className="inline-flex items-center gap-2 rounded-xl bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-500"
-        >
-          <Plus className="h-4 w-4" />
+        <Button onClick={() => setShowNovaPendencia(true)}>
+          <Plus className="h-4 w-4 mr-2" />
           Nova Pendência
-        </button>
+        </Button>
       </div>
 
       {/* Filtros por Status */}
@@ -174,7 +194,7 @@ export function AbaDiario({ convenio, onUpdate }: Props) {
                   {/* Ícone de Status */}
                   <div
                     className={`rounded-full p-2 ${
-                      config.variant === 'danger'
+                      config.variant === 'destructive'
                         ? 'bg-rose-100 text-rose-600'
                         : config.variant === 'warning'
                           ? 'bg-amber-100 text-amber-600'
@@ -198,7 +218,7 @@ export function AbaDiario({ convenio, onUpdate }: Props) {
                         >
                           {prioridade.label}
                         </span>
-                        <Badge variant={config.variant} size="sm">
+                        <Badge variant={config.variant}>
                           {config.label}
                         </Badge>
                       </div>
@@ -214,7 +234,7 @@ export function AbaDiario({ convenio, onUpdate }: Props) {
                       {pendencia.prazo && (
                         <span className="flex items-center gap-1">
                           <Calendar className="h-3.5 w-3.5" />
-                          Prazo: {formatDate(pendencia.prazo)}
+                          Prazo: {formatDateBR(pendencia.prazo)}
                         </span>
                       )}
                       {pendencia.criadoPor && (
@@ -268,63 +288,65 @@ export function AbaDiario({ convenio, onUpdate }: Props) {
       )}
 
       {/* Modal Nova Pendência */}
-      <Modal
-        isOpen={showNovaPendencia}
-        onClose={() => setShowNovaPendencia(false)}
-        title="Nova Pendência"
-        description="Registre um problema ou ação necessária"
-        footer={
-          <>
-            <ModalButton variant="secondary" onClick={() => setShowNovaPendencia(false)}>
-              Cancelar
-            </ModalButton>
-            <ModalButton
-              variant="primary"
-              onClick={handleSubmit(onSubmit)}
-              loading={createMutation.isPending}
-            >
-              <Send className="h-4 w-4" />
-              Registrar
-            </ModalButton>
-          </>
-        }
-      >
-        <form className="space-y-4">
-          <div>
-            <label className="form-label">Descrição *</label>
-            <textarea
-              className="form-input"
-              rows={3}
-              {...register('descricao')}
-              placeholder="Descreva a pendência ou problema..."
-            />
-          </div>
+      <Dialog open={showNovaPendencia} onOpenChange={(open) => !open && setShowNovaPendencia(false)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Nova Pendência</DialogTitle>
+            <DialogDescription>
+              Registre um problema ou ação necessária
+            </DialogDescription>
+          </DialogHeader>
 
-          <div className="grid gap-4 md:grid-cols-2">
-            <div>
-              <label className="form-label">Responsável</label>
-              <input
-                className="form-input"
-                {...register('responsavel')}
-                placeholder="Quem deve resolver?"
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div className="space-y-2">
+              <Label>Descrição *</Label>
+              <textarea
+                className="flex min-h-[80px] w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
+                rows={3}
+                {...register('descricao')}
+                placeholder="Descreva a pendência ou problema..."
               />
             </div>
-            <div>
-              <label className="form-label">Prazo</label>
-              <input type="date" className="form-input" {...register('prazo')} />
-            </div>
-          </div>
 
-          <div>
-            <label className="form-label">Prioridade</label>
-            <select className="form-input" {...register('prioridade')}>
-              <option value={1}>Alta</option>
-              <option value={2}>Média</option>
-              <option value={3}>Baixa</option>
-            </select>
-          </div>
-        </form>
-      </Modal>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label>Responsável</Label>
+                <Input
+                  {...register('responsavel')}
+                  placeholder="Quem deve resolver?"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Prazo</Label>
+                <Input type="date" {...register('prazo')} />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Prioridade</Label>
+              <select className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm" {...register('prioridade')}>
+                <option value={1}>Alta</option>
+                <option value={2}>Média</option>
+                <option value={3}>Baixa</option>
+              </select>
+            </div>
+
+            <DialogFooter className="gap-2 sm:gap-0">
+              <Button type="button" variant="outline" onClick={() => setShowNovaPendencia(false)}>
+                Cancelar
+              </Button>
+              <Button type="submit" disabled={createMutation.isPending}>
+                {createMutation.isPending ? 'Registrando...' : (
+                  <>
+                    <Send className="h-4 w-4 mr-2" />
+                    Registrar
+                  </>
+                )}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

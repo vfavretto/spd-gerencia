@@ -5,11 +5,13 @@ import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
-import { PageHeader } from '../components/PageHeader';
-import { WizardStepper, WizardNavigation, type WizardStep } from '../components/wizard';
-import { MaskedInput } from '../components/ui/MaskedInput';
-import { convenioService } from '../services/convenioService';
-import { configService } from '../services/configService';
+import { PageHeader } from '@/components/PageHeader';
+import { WizardStepper, WizardNavigation, type WizardStep } from '@/components/wizard';
+import { CurrencyInput } from '@/components/ui/currency-input';
+import { Label } from '@/components/ui/label';
+import { toast } from '@/components/ui/toaster';
+import { convenioService } from '@/services/convenioService';
+import { configService } from '@/services/configService';
 
 // Schema de validação para o Wizard
 const wizardSchema = z.object({
@@ -73,11 +75,7 @@ export const ConveniosCadastroPage = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
-  const [currencyValues, setCurrencyValues] = useState({
-    valorGlobal: '',
-    valorRepasse: '',
-    valorContrapartida: ''
-  });
+  const [_currencyTrigger, setCurrencyTrigger] = useState(0);
 
   const { data: catalogs } = useQuery({
     queryKey: ['catalogs'],
@@ -113,7 +111,11 @@ export const ConveniosCadastroPage = () => {
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['convenios'] });
+      toast.success('Convênio criado com sucesso!');
       navigate('/convenios');
+    },
+    onError: () => {
+      toast.error('Erro ao criar convênio');
     }
   });
 
@@ -160,13 +162,9 @@ export const ConveniosCadastroPage = () => {
   };
 
   const handleCurrencyChange = (field: 'valorGlobal' | 'valorRepasse' | 'valorContrapartida') => {
-    return (_: string, rawValue: string) => {
-      const numericValue = parseFloat(rawValue) || 0;
-      setValue(field, numericValue);
-      setCurrencyValues((prev) => ({
-        ...prev,
-        [field]: rawValue
-      }));
+    return (value: number | null) => {
+      setValue(field, value ?? 0);
+      setCurrencyTrigger(prev => prev + 1);
     };
   };
 
@@ -304,20 +302,21 @@ export const ConveniosCadastroPage = () => {
                 </div>
 
                 <div className="grid gap-4 md:grid-cols-2">
-                  <div>
-                    <MaskedInput
-                      mask="currency"
-                      label="Valor Global *"
+                  <div className="space-y-2">
+                    <Label>Valor Global *</Label>
+                    <CurrencyInput
                       placeholder="R$ 0,00"
-                      value={currencyValues.valorGlobal}
-                      onChange={handleCurrencyChange('valorGlobal')}
-                      error={errors.valorGlobal?.message}
+                      value={watchedFields.valorGlobal}
+                      onValueChange={handleCurrencyChange('valorGlobal')}
                     />
+                    {errors.valorGlobal && (
+                      <p className="text-xs text-destructive">{errors.valorGlobal.message}</p>
+                    )}
                   </div>
-                  <div>
-                    <label className="form-label">Esfera</label>
+                  <div className="space-y-2">
+                    <Label>Esfera</Label>
                     <select
-                      className="form-input"
+                      className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
                       {...register('esfera')}
                     >
                       <option value="">Selecione</option>
@@ -331,22 +330,20 @@ export const ConveniosCadastroPage = () => {
                 </div>
 
                 <div className="grid gap-4 md:grid-cols-2">
-                  <div>
-                    <MaskedInput
-                      mask="currency"
-                      label="Valor do Repasse"
+                  <div className="space-y-2">
+                    <Label>Valor do Repasse</Label>
+                    <CurrencyInput
                       placeholder="R$ 0,00"
-                      value={currencyValues.valorRepasse}
-                      onChange={handleCurrencyChange('valorRepasse')}
+                      value={watchedFields.valorRepasse}
+                      onValueChange={handleCurrencyChange('valorRepasse')}
                     />
                   </div>
-                  <div>
-                    <MaskedInput
-                      mask="currency"
-                      label="Valor da Contrapartida"
+                  <div className="space-y-2">
+                    <Label>Valor da Contrapartida</Label>
+                    <CurrencyInput
                       placeholder="R$ 0,00"
-                      value={currencyValues.valorContrapartida}
-                      onChange={handleCurrencyChange('valorContrapartida')}
+                      value={watchedFields.valorContrapartida}
+                      onValueChange={handleCurrencyChange('valorContrapartida')}
                     />
                   </div>
                 </div>

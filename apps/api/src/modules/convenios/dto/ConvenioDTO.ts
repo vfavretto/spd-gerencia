@@ -1,5 +1,3 @@
-import type { ConvenioStatus } from '@spd/db';
-
 export type CreateConvenioDTO = {
   codigo: string;
   titulo: string;
@@ -13,11 +11,11 @@ export type CreateConvenioDTO = {
   dataInicioVigencia?: Date | null;
   dataFimVigencia?: Date | null;
   dataPrestacaoContas?: Date | null;
-  status?: ConvenioStatus;
-  secretariaId: number;
-  orgaoId?: number | null;
-  programaId?: number | null;
-  fonteId?: number | null;
+  status?: 'RASCUNHO' | 'EM_ANALISE' | 'APROVADO' | 'EM_EXECUCAO' | 'CONCLUIDO' | 'CANCELADO';
+  secretariaId: string;
+  orgaoId?: string | null;
+  programaId?: string | null;
+  fonteId?: string | null;
 };
 
 export type UpdateConvenioDTO = Partial<CreateConvenioDTO>;

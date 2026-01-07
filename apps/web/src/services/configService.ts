@@ -47,11 +47,11 @@ export const configService = {
     const { data } = await api.post(endpoints[resource], payload);
     return data;
   },
-  async update(resource: Resource, id: number, payload: Record<string, unknown>) {
+  async update(resource: Resource, id: string, payload: Record<string, unknown>) {
     const { data } = await api.put(`${endpoints[resource]}/${id}`, payload);
     return data;
   },
-  async remove(resource: Resource, id: number) {
+  async remove(resource: Resource, id: string) {
     await api.delete(`${endpoints[resource]}/${id}`);
   }
 };

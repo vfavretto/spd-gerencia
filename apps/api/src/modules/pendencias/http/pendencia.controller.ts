@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { z } from 'zod';
-import { PrismaPendenciaRepository } from '../repositories/implementations/PrismaPendenciaRepository';
+import { MongoosePendenciaRepository } from '../repositories/implementations/MongoosePendenciaRepository';
 import { ListPendenciasUseCase } from '../useCases/ListPendenciasUseCase';
 import { GetPendenciaUseCase } from '../useCases/GetPendenciaUseCase';
 import { CreatePendenciaUseCase } from '../useCases/CreatePendenciaUseCase';
@@ -22,10 +22,10 @@ const createSchema = z.object({
 const updateSchema = createSchema.partial();
 
 export class PendenciaController {
-  private readonly repository = new PrismaPendenciaRepository();
+  private readonly repository = new MongoosePendenciaRepository();
 
   async index(req: Request, res: Response) {
-    const convenioId = Number(req.params.convenioId);
+    const convenioId = req.params.convenioId;
     const status = req.query.status?.toString();
     const prioridade = req.query.prioridade ? Number(req.query.prioridade) : undefined;
 
@@ -35,29 +35,27 @@ export class PendenciaController {
   }
 
   async show(req: Request, res: Response) {
-    const id = Number(req.params.id);
+    const id = req.params.id;
     const useCase = new GetPendenciaUseCase(this.repository);
     const pendencia = await useCase.execute(id);
     return res.json(pendencia);
   }
 
   async create(req: Request, res: Response) {
-    const convenioId = Number(req.params.convenioId);
-    const userId = (req as any).user?.id;
+    const convenioId = req.params.convenioId;
+    const userId = (req as Request & { user?: { id: string } }).user?.id;
     const payload = createSchema.parse(req.body);
     const useCase = new CreatePendenciaUseCase(this.repository);
-    // Converte userId para número, pois o JWT pode retornar como string
-    const criadoPorId = userId ? Number(userId) : undefined;
     const pendencia = await useCase.execute({ 
       ...payload, 
       convenioId, 
-      criadoPorId 
+      criadoPorId: userId 
     });
     return res.status(201).json(pendencia);
   }
 
   async update(req: Request, res: Response) {
-    const id = Number(req.params.id);
+    const id = req.params.id;
     const payload = updateSchema.parse(req.body);
     const useCase = new UpdatePendenciaUseCase(this.repository);
     const pendencia = await useCase.execute(id, payload);
@@ -65,16 +63,15 @@ export class PendenciaController {
   }
 
   async remove(req: Request, res: Response) {
-    const id = Number(req.params.id);
+    const id = req.params.id;
     const useCase = new DeletePendenciaUseCase(this.repository);
     await useCase.execute(id);
     return res.status(204).send();
   }
 
   async countByStatus(req: Request, res: Response) {
-    const convenioId = Number(req.params.convenioId);
+    const convenioId = req.params.convenioId;
     const counts = await this.repository.countByStatus(convenioId);
     return res.json(counts);
   }
 }
-

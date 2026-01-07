@@ -45,7 +45,7 @@ type FormData = z.infer<typeof schema>;
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  convenioId: number;
+  convenioId: string;
   onSuccess: () => void;
 };
 

@@ -1,4 +1,4 @@
-import { prisma, type Medicao } from '@spd/db';
+import { ContratoExecucaoModel, type IMedicao } from '@spd/db';
 import type { UpdateMedicaoDTO } from '../dto/MedicaoDTO';
 import type { MedicaoRepository } from '../repositories/MedicaoRepository';
 import { AppError } from '@shared/errors/AppError';
@@ -6,7 +6,7 @@ import { AppError } from '@shared/errors/AppError';
 export class UpdateMedicaoUseCase {
   constructor(private readonly repository: MedicaoRepository) {}
 
-  async execute(id: number, data: UpdateMedicaoDTO): Promise<Medicao> {
+  async execute(id: string, data: UpdateMedicaoDTO): Promise<IMedicao> {
     const medicaoAtual = await this.repository.findById(id);
     if (!medicaoAtual) {
       throw new AppError('Medição não encontrada', 404);
@@ -14,13 +14,12 @@ export class UpdateMedicaoUseCase {
 
     // Se está atualizando o valor, validar contra o contrato
     if (data.valorMedido !== undefined) {
-      const contrato = await prisma.contratoExecucao.findUnique({
-        where: { id: medicaoAtual.contratoId },
-        select: { valorContrato: true }
-      });
+      const contrato = await ContratoExecucaoModel.findById(medicaoAtual.contratoId)
+        .select('valorContrato')
+        .exec();
 
       if (contrato) {
-        const totalMedido = await this.repository.getTotalMedido(medicaoAtual.contratoId);
+        const totalMedido = await this.repository.getTotalMedido(medicaoAtual.contratoId.toString());
         const valorAtualMedicao = Number(medicaoAtual.valorMedido);
         const valorContrato = Number(contrato.valorContrato ?? 0);
         
@@ -38,10 +37,9 @@ export class UpdateMedicaoUseCase {
 
     // Se está atualizando a data, validar contra OIS
     if (data.dataMedicao) {
-      const contrato = await prisma.contratoExecucao.findUnique({
-        where: { id: medicaoAtual.contratoId },
-        select: { dataOIS: true }
-      });
+      const contrato = await ContratoExecucaoModel.findById(medicaoAtual.contratoId)
+        .select('dataOIS')
+        .exec();
 
       if (contrato?.dataOIS && data.dataMedicao < contrato.dataOIS) {
         throw new AppError(
@@ -54,4 +52,3 @@ export class UpdateMedicaoUseCase {
     return this.repository.update(id, data);
   }
 }
-

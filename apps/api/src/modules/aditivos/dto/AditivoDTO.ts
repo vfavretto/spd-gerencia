@@ -1,8 +1,6 @@
-import type { TipoAditivo } from '@spd/db';
-
 export type CreateAditivoDTO = {
   numeroAditivo?: number;
-  tipoAditivo: TipoAditivo;
+  tipoAditivo: 'PRAZO' | 'VALOR' | 'PRAZO_E_VALOR' | 'SUPRESSAO' | 'ACRESCIMO';
   dataAssinatura?: Date | null;
   novaVigencia?: Date | null;
   valorAcrescimo?: number;
@@ -10,8 +8,7 @@ export type CreateAditivoDTO = {
   motivo?: string;
   justificativa?: string;
   observacoes?: string;
-  convenioId: number;
+  convenioId: string;
 };
 
 export type UpdateAditivoDTO = Partial<Omit<CreateAditivoDTO, 'convenioId' | 'numeroAditivo'>>;
-

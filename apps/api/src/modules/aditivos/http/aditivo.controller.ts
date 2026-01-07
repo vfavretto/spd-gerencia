@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { z } from 'zod';
-import { PrismaAditivoRepository } from '../repositories/implementations/PrismaAditivoRepository';
+import { MongooseAditivoRepository } from '../repositories/implementations/MongooseAditivoRepository';
 import { ListAditivosUseCase } from '../useCases/ListAditivosUseCase';
 import { GetAditivoUseCase } from '../useCases/GetAditivoUseCase';
 import { CreateAditivoUseCase } from '../useCases/CreateAditivoUseCase';
@@ -26,30 +26,30 @@ const createSchema = z.object({
   motivo: z.string().optional(),
   justificativa: z.string().optional(),
   observacoes: z.string().optional(),
-  convenioId: z.number().int()
+  convenioId: z.string()
 });
 
 const updateSchema = createSchema.omit({ convenioId: true, numeroAditivo: true }).partial();
 
 export class AditivoController {
-  private readonly repository = new PrismaAditivoRepository();
+  private readonly repository = new MongooseAditivoRepository();
 
   async index(req: Request, res: Response) {
-    const convenioId = Number(req.params.convenioId);
+    const convenioId = req.params.convenioId;
     const useCase = new ListAditivosUseCase(this.repository);
     const aditivos = await useCase.execute(convenioId);
     return res.json(aditivos);
   }
 
   async show(req: Request, res: Response) {
-    const id = Number(req.params.id);
+    const id = req.params.id;
     const useCase = new GetAditivoUseCase(this.repository);
     const aditivo = await useCase.execute(id);
     return res.json(aditivo);
   }
 
   async create(req: Request, res: Response) {
-    const convenioId = Number(req.params.convenioId);
+    const convenioId = req.params.convenioId;
     const payload = createSchema.parse({ ...req.body, convenioId });
     const useCase = new CreateAditivoUseCase(this.repository);
     const aditivo = await useCase.execute(payload);
@@ -57,7 +57,7 @@ export class AditivoController {
   }
 
   async update(req: Request, res: Response) {
-    const id = Number(req.params.id);
+    const id = req.params.id;
     const payload = updateSchema.parse(req.body);
     const useCase = new UpdateAditivoUseCase(this.repository);
     const aditivo = await useCase.execute(id, payload);
@@ -65,17 +65,16 @@ export class AditivoController {
   }
 
   async remove(req: Request, res: Response) {
-    const id = Number(req.params.id);
+    const id = req.params.id;
     const useCase = new DeleteAditivoUseCase(this.repository);
     await useCase.execute(id);
     return res.status(204).send();
   }
 
   async vigencia(req: Request, res: Response) {
-    const convenioId = Number(req.params.convenioId);
+    const convenioId = req.params.convenioId;
     const useCase = new GetVigenciaAtualUseCase(this.repository);
     const vigencia = await useCase.execute(convenioId);
     return res.json(vigencia);
   }
 }
-

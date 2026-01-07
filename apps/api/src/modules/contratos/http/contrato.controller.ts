@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { z } from 'zod';
-import { PrismaContratoRepository } from '../repositories/implementations/PrismaContratoRepository';
+import { MongooseContratoRepository } from '../repositories/implementations/MongooseContratoRepository';
 import { ListContratosUseCase } from '../useCases/ListContratosUseCase';
 import { GetContratoUseCase } from '../useCases/GetContratoUseCase';
 import { CreateContratoUseCase } from '../useCases/CreateContratoUseCase';
@@ -32,30 +32,30 @@ const createSchema = z.object({
   artRrt: z.string().optional(),
   situacao: z.string().optional(),
   observacoes: z.string().optional(),
-  convenioId: z.number().int()
+  convenioId: z.string()
 });
 
 const updateSchema = createSchema.omit({ convenioId: true }).partial();
 
 export class ContratoController {
-  private readonly repository = new PrismaContratoRepository();
+  private readonly repository = new MongooseContratoRepository();
 
   async index(req: Request, res: Response) {
-    const convenioId = Number(req.params.convenioId);
+    const convenioId = req.params.convenioId;
     const useCase = new ListContratosUseCase(this.repository);
     const contratos = await useCase.execute(convenioId);
     return res.json(contratos);
   }
 
   async show(req: Request, res: Response) {
-    const id = Number(req.params.id);
+    const id = req.params.id;
     const useCase = new GetContratoUseCase(this.repository);
     const contrato = await useCase.execute(id);
     return res.json(contrato);
   }
 
   async create(req: Request, res: Response) {
-    const convenioId = Number(req.params.convenioId);
+    const convenioId = req.params.convenioId;
     const payload = createSchema.parse({ ...req.body, convenioId });
     const useCase = new CreateContratoUseCase(this.repository);
     const contrato = await useCase.execute(payload);
@@ -63,7 +63,7 @@ export class ContratoController {
   }
 
   async update(req: Request, res: Response) {
-    const id = Number(req.params.id);
+    const id = req.params.id;
     const payload = updateSchema.parse(req.body);
     const useCase = new UpdateContratoUseCase(this.repository);
     const contrato = await useCase.execute(id, payload);
@@ -71,10 +71,9 @@ export class ContratoController {
   }
 
   async remove(req: Request, res: Response) {
-    const id = Number(req.params.id);
+    const id = req.params.id;
     const useCase = new DeleteContratoUseCase(this.repository);
     await useCase.execute(id);
     return res.status(204).send();
   }
 }
-

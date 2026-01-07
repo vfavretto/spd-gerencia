@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { z } from 'zod';
-import { PrismaEventoRepository } from '../repositories/implementations/PrismaEventoRepository';
+import { MongooseEventoRepository } from '../repositories/implementations/MongooseEventoRepository';
 import { ListEventosUseCase } from '../useCases/ListEventosUseCase';
 import { GetEventoUseCase } from '../useCases/GetEventoUseCase';
 import { CreateEventoUseCase } from '../useCases/CreateEventoUseCase';
@@ -23,13 +23,13 @@ const createSchema = z.object({
   dataFim: z.coerce.date().nullable().optional(),
   local: z.string().optional(),
   responsavel: z.string().optional(),
-  convenioId: z.number().int().nullable().optional()
+  convenioId: z.string().nullable().optional()
 });
 
 const updateSchema = createSchema.partial();
 
 export class AgendaController {
-  private readonly repository = new PrismaEventoRepository();
+  private readonly repository = new MongooseEventoRepository();
 
   async index(_req: Request, res: Response) {
     const useCase = new ListEventosUseCase(this.repository);
@@ -38,7 +38,7 @@ export class AgendaController {
   }
 
   async show(req: Request, res: Response) {
-    const id = Number(req.params.id);
+    const id = req.params.id;
     const useCase = new GetEventoUseCase(this.repository);
     const evento = await useCase.execute(id);
     return res.json(evento);
@@ -55,7 +55,7 @@ export class AgendaController {
   }
 
   async update(req: Request, res: Response) {
-    const id = Number(req.params.id);
+    const id = req.params.id;
     const payload = updateSchema.parse(req.body);
     const useCase = new UpdateEventoUseCase(this.repository);
     const evento = await useCase.execute(id, payload);
@@ -63,7 +63,7 @@ export class AgendaController {
   }
 
   async remove(req: Request, res: Response) {
-    const id = Number(req.params.id);
+    const id = req.params.id;
     const useCase = new DeleteEventoUseCase(this.repository);
     await useCase.execute(id);
     return res.status(204).send();

@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { z } from 'zod';
-import { PrismaMedicaoRepository } from '../repositories/implementations/PrismaMedicaoRepository';
+import { MongooseMedicaoRepository } from '../repositories/implementations/MongooseMedicaoRepository';
 import { ListMedicoesUseCase } from '../useCases/ListMedicoesUseCase';
 import { GetMedicaoUseCase } from '../useCases/GetMedicaoUseCase';
 import { CreateMedicaoUseCase } from '../useCases/CreateMedicaoUseCase';
@@ -17,30 +17,30 @@ const createSchema = z.object({
   valorPago: z.number().min(0).optional(),
   observacoes: z.string().optional(),
   situacao: z.string().optional(),
-  contratoId: z.number().int()
+  contratoId: z.string()
 });
 
 const updateSchema = createSchema.omit({ contratoId: true, numeroMedicao: true }).partial();
 
 export class MedicaoController {
-  private readonly repository = new PrismaMedicaoRepository();
+  private readonly repository = new MongooseMedicaoRepository();
 
   async index(req: Request, res: Response) {
-    const contratoId = Number(req.params.contratoId);
+    const contratoId = req.params.contratoId;
     const useCase = new ListMedicoesUseCase(this.repository);
     const medicoes = await useCase.execute(contratoId);
     return res.json(medicoes);
   }
 
   async show(req: Request, res: Response) {
-    const id = Number(req.params.id);
+    const id = req.params.id;
     const useCase = new GetMedicaoUseCase(this.repository);
     const medicao = await useCase.execute(id);
     return res.json(medicao);
   }
 
   async create(req: Request, res: Response) {
-    const contratoId = Number(req.params.contratoId);
+    const contratoId = req.params.contratoId;
     const payload = createSchema.parse({ ...req.body, contratoId });
     const useCase = new CreateMedicaoUseCase(this.repository);
     const medicao = await useCase.execute({
@@ -51,7 +51,7 @@ export class MedicaoController {
   }
 
   async update(req: Request, res: Response) {
-    const id = Number(req.params.id);
+    const id = req.params.id;
     const payload = updateSchema.parse(req.body);
     const useCase = new UpdateMedicaoUseCase(this.repository);
     const medicao = await useCase.execute(id, payload);
@@ -59,17 +59,16 @@ export class MedicaoController {
   }
 
   async remove(req: Request, res: Response) {
-    const id = Number(req.params.id);
+    const id = req.params.id;
     const useCase = new DeleteMedicaoUseCase(this.repository);
     await useCase.execute(id);
     return res.status(204).send();
   }
 
   async saldo(req: Request, res: Response) {
-    const contratoId = Number(req.params.contratoId);
+    const contratoId = req.params.contratoId;
     const useCase = new GetSaldoContratoUseCase(this.repository);
     const saldo = await useCase.execute(contratoId);
     return res.json(saldo);
   }
 }
-

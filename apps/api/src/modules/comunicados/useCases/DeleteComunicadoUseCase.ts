@@ -4,7 +4,7 @@ import type { ComunicadoRepository } from '../repositories/ComunicadoRepository'
 export class DeleteComunicadoUseCase {
   constructor(private readonly repository: ComunicadoRepository) {}
 
-  async execute(id: number): Promise<void> {
+  async execute(id: string): Promise<void> {
     const existing = await this.repository.findById(id);
     if (!existing) {
       throw new AppError('Comunicado não encontrado', 404);

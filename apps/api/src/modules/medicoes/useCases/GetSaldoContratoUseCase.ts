@@ -1,4 +1,4 @@
-import { prisma } from '@spd/db';
+import { ContratoExecucaoModel, MedicaoModel } from '@spd/db';
 import type { MedicaoRepository } from '../repositories/MedicaoRepository';
 import { AppError } from '@shared/errors/AppError';
 
@@ -12,28 +12,27 @@ export type SaldoContrato = {
 };
 
 export class GetSaldoContratoUseCase {
-  constructor(private readonly repository: MedicaoRepository) {}
+  constructor(private readonly _repository: MedicaoRepository) {}
 
-  async execute(contratoId: number): Promise<SaldoContrato> {
-    const contrato = await prisma.contratoExecucao.findUnique({
-      where: { id: contratoId },
-      include: {
-        medicoes: {
-          select: { valorMedido: true, valorPago: true }
-        }
-      }
-    });
+  async execute(contratoId: string): Promise<SaldoContrato> {
+    const contrato = await ContratoExecucaoModel.findById(contratoId)
+      .select('valorContrato')
+      .exec();
 
     if (!contrato) {
       throw new AppError('Contrato não encontrado', 404);
     }
 
+    const medicoes = await MedicaoModel.find({ contratoId })
+      .select('valorMedido valorPago')
+      .exec();
+
     const valorContrato = Number(contrato.valorContrato ?? 0);
-    const totalMedido = contrato.medicoes.reduce(
+    const totalMedido = medicoes.reduce(
       (acc, m) => acc + Number(m.valorMedido),
       0
     );
-    const totalPago = contrato.medicoes.reduce(
+    const totalPago = medicoes.reduce(
       (acc, m) => acc + Number(m.valorPago ?? 0),
       0
     );
@@ -48,4 +47,3 @@ export class GetSaldoContratoUseCase {
     };
   }
 }
-

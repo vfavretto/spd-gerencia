@@ -52,13 +52,21 @@ export function AbaDiario({ convenio, onUpdate }: Props) {
   const [filtroStatus, setFiltroStatus] = useState<string>('');
   const pendencias = convenio.pendencias || [];
 
-  const { register, handleSubmit, reset } = useForm({
+  type PendenciaFormData = {
+    descricao: string;
+    responsavel: string;
+    prazo: string;
+    prioridade: number;
+    status: StatusPendencia;
+  };
+
+  const { register, handleSubmit, reset } = useForm<PendenciaFormData>({
     defaultValues: {
       descricao: '',
       responsavel: '',
       prazo: '',
       prioridade: 2,
-      status: 'ABERTA' as StatusPendencia
+      status: 'ABERTA'
     }
   });
 
@@ -84,7 +92,7 @@ export function AbaDiario({ convenio, onUpdate }: Props) {
   });
 
   const updateStatusMutation = useMutation({
-    mutationFn: ({ id, status }: { id: number; status: StatusPendencia }) =>
+    mutationFn: ({ id, status }: { id: string; status: StatusPendencia }) =>
       pendenciaService.update(convenio.id, id, { status }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['convenio', String(convenio.id)] });
@@ -93,10 +101,10 @@ export function AbaDiario({ convenio, onUpdate }: Props) {
     }
   });
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: PendenciaFormData) => {
     createMutation.mutate({
       ...data,
-      prazo: data.prazo || null,
+      prazo: data.prazo || undefined,
       prioridade: Number(data.prioridade)
     });
   };

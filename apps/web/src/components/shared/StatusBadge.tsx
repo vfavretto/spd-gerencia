@@ -1,5 +1,5 @@
-import { statusColors } from '../constants';
-import type { ConvenioStatus } from '../types';
+import { statusColors } from '../../constants';
+import type { ConvenioStatus } from '../../types';
 
 type Props = {
   status: ConvenioStatus;

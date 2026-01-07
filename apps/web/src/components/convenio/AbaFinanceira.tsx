@@ -20,7 +20,17 @@ export function AbaFinanceira({ convenio, onUpdate }: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const financeiro = convenio.financeiroContas;
 
-  const { register, handleSubmit, reset } = useForm({
+  type FinanceiroFormData = {
+    banco: string;
+    agencia: string;
+    contaBancaria: string;
+    valorLiberadoTotal: number | undefined;
+    saldoRendimentos: number | undefined;
+    fichasOrcamentarias: string;
+    observacoes: string;
+  };
+
+  const { register, handleSubmit, reset } = useForm<FinanceiroFormData>({
     defaultValues: {
       banco: financeiro?.banco || '',
       agencia: financeiro?.agencia || '',
@@ -54,7 +64,7 @@ export function AbaFinanceira({ convenio, onUpdate }: Props) {
     setIsEditing(false);
   };
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: FinanceiroFormData) => {
     upsertMutation.mutate(data);
   };
 

@@ -14,11 +14,11 @@ import {
   XAxis,
   YAxis
 } from 'recharts';
-import { PageHeader } from '../components/PageHeader';
-import { StatCard } from '../components/StatCard';
+import { PageHeader } from '../components/shared/PageHeader';
+import { StatCard } from '../components/shared/StatCard';
 import { dashboardService } from '../services/dashboardService';
 import { formatCurrency, formatDate } from '../utils/format';
-import { StatusBadge } from '../components/StatusBadge';
+import { StatusBadge } from '../components/shared/StatusBadge';
 
 export const DashboardPage = () => {
   const { data, isLoading, refetch, isRefetching } = useQuery({
@@ -106,7 +106,7 @@ export const DashboardPage = () => {
                     <XAxis dataKey="status" tick={{ fontSize: 12 }} />
                     <YAxis allowDecimals={false} />
                     <Tooltip
-                      formatter={(value: number) => `${value} convênios`}
+                      formatter={(value) => `${value} convênios`}
                       labelFormatter={(label) => `Status: ${label}`}
                     />
                     <Bar dataKey="_count" fill="#818cf8" radius={[10, 10, 0, 0]} />

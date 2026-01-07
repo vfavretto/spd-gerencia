@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { z } from 'zod';
-import { PrismaComunicadoRepository } from '../repositories/implementations/PrismaComunicadoRepository';
+import { MongooseComunicadoRepository } from '../repositories/implementations/MongooseComunicadoRepository';
 import { ListComunicadosUseCase } from '../useCases/ListComunicadosUseCase';
 import { GetComunicadoUseCase } from '../useCases/GetComunicadoUseCase';
 import { CreateComunicadoUseCase } from '../useCases/CreateComunicadoUseCase';
@@ -17,13 +17,13 @@ const createSchema = z.object({
   destino: z.string().optional(),
   responsavel: z.string().optional(),
   arquivoUrl: z.string().url().optional().or(z.literal('')).transform(val => val === '' ? undefined : val),
-  convenioId: z.number().int().nullable().optional()
+  convenioId: z.string().nullable().optional()
 });
 
 const updateSchema = createSchema.partial();
 
 export class ComunicadoController {
-  private readonly repository = new PrismaComunicadoRepository();
+  private readonly repository = new MongooseComunicadoRepository();
 
   async index(_req: Request, res: Response) {
     const useCase = new ListComunicadosUseCase(this.repository);
@@ -32,7 +32,7 @@ export class ComunicadoController {
   }
 
   async show(req: Request, res: Response) {
-    const id = Number(req.params.id);
+    const id = req.params.id;
     const useCase = new GetComunicadoUseCase(this.repository);
     const comunicado = await useCase.execute(id);
     return res.json(comunicado);
@@ -49,7 +49,7 @@ export class ComunicadoController {
   }
 
   async update(req: Request, res: Response) {
-    const id = Number(req.params.id);
+    const id = req.params.id;
     const payload = updateSchema.parse(req.body);
     const useCase = new UpdateComunicadoUseCase(this.repository);
     const comunicado = await useCase.execute(id, payload);
@@ -57,7 +57,7 @@ export class ComunicadoController {
   }
 
   async remove(req: Request, res: Response) {
-    const id = Number(req.params.id);
+    const id = req.params.id;
     const useCase = new DeleteComunicadoUseCase(this.repository);
     await useCase.execute(id);
     return res.status(204).send();

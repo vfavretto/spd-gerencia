@@ -12,12 +12,12 @@ export const comunicadoService = {
     return data;
   },
 
-  async update(id: number, payload: Record<string, unknown>): Promise<Comunicado> {
+  async update(id: string, payload: Record<string, unknown>): Promise<Comunicado> {
     const { data } = await api.put<Comunicado>(`/comunicados/${id}`, payload);
     return data;
   },
 
-  async remove(id: number): Promise<void> {
+  async remove(id: string): Promise<void> {
     await api.delete(`/comunicados/${id}`);
   }
 };

@@ -5,7 +5,7 @@ import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
-import { PageHeader } from '@/components/PageHeader';
+import { PageHeader } from '@/components/shared/PageHeader';
 import { WizardStepper, WizardNavigation, type WizardStep } from '@/components/wizard';
 import { CurrencyInput } from '@/components/ui/currency-input';
 import { Label } from '@/components/ui/label';
@@ -75,7 +75,8 @@ export const ConveniosCadastroPage = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
-  const [_currencyTrigger, setCurrencyTrigger] = useState(0);
+  // Trigger usado para forçar re-render em campos de moeda
+  const [, setCurrencyTrigger] = useState(0);
 
   const { data: catalogs } = useQuery({
     queryKey: ['catalogs'],

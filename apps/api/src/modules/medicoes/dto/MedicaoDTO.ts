@@ -7,8 +7,7 @@ export type CreateMedicaoDTO = {
   valorPago?: number;
   observacoes?: string;
   situacao?: string;
-  contratoId: number;
+  contratoId: string;
 };
 
 export type UpdateMedicaoDTO = Partial<Omit<CreateMedicaoDTO, 'contratoId' | 'numeroMedicao'>>;
-

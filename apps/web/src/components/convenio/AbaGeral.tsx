@@ -29,7 +29,24 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
     queryFn: () => configService.getCatalogs()
   });
 
-  const { register, handleSubmit, reset } = useForm({
+  type ConvenioFormData = {
+    codigo: string;
+    titulo: string;
+    objeto: string;
+    descricao: string;
+    numeroProposta: string;
+    numeroTermo: string;
+    dataAssinatura: string;
+    dataInicioVigencia: string;
+    dataFimVigencia: string;
+    esfera: string;
+    modalidadeRepasse: string;
+    secretariaId: string | undefined;
+    orgaoId: string | undefined;
+    programaId: string | undefined;
+  };
+
+  const { register, handleSubmit, reset } = useForm<ConvenioFormData>({
     defaultValues: {
       codigo: convenio.codigo,
       titulo: convenio.titulo,
@@ -79,7 +96,7 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
     setIsEditing(false);
   };
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: ConvenioFormData) => {
     updateMutation.mutate(data);
   };
 

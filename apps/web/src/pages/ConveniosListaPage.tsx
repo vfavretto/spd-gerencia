@@ -10,8 +10,8 @@ import {
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PageHeader } from '../components/PageHeader';
-import { StatusBadge } from '../components/StatusBadge';
+import { PageHeader } from '../components/shared/PageHeader';
+import { StatusBadge } from '../components/shared/StatusBadge';
 import { convenioStatusOptions } from '../constants';
 import {
   convenioService,
@@ -138,10 +138,7 @@ export const ConveniosListaPage = () => {
               value={filters.secretariaId || ''}
               onChange={(event) =>
                 handleFilterChange({
-                  secretariaId:
-                    event.target.value === ''
-                      ? ''
-                      : Number(event.target.value)
+                  secretariaId: event.target.value
                 })
               }
             >

@@ -6,9 +6,8 @@ export type CreatePendenciaDTO = {
   prioridade?: number;
   resolucao?: string | null;
   dataResolucao?: Date | null;
-  convenioId: number;
-  criadoPorId?: number;
+  convenioId: string;
+  criadoPorId?: string;
 };
 
 export type UpdatePendenciaDTO = Partial<Omit<CreatePendenciaDTO, 'convenioId' | 'criadoPorId'>>;
-

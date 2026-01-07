@@ -3,8 +3,7 @@ import type { PendenciaFilters, PendenciaRepository } from '../repositories/Pend
 export class ListPendenciasUseCase {
   constructor(private repository: PendenciaRepository) {}
 
-  async execute(convenioId: number, filters?: PendenciaFilters) {
+  async execute(convenioId: string, filters?: PendenciaFilters) {
     return this.repository.listByConvenio(convenioId, filters);
   }
 }
-

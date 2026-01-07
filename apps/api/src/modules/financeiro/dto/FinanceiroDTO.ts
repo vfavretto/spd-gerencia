@@ -6,8 +6,7 @@ export type CreateFinanceiroDTO = {
   saldoRendimentos?: number;
   fichasOrcamentarias?: string;
   observacoes?: string;
-  convenioId: number;
+  convenioId: string;
 };
 
 export type UpdateFinanceiroDTO = Partial<Omit<CreateFinanceiroDTO, 'convenioId'>>;
-

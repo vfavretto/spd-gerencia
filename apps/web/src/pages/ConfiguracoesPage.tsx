@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Pencil, Plus, RefreshCcw, Trash2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { PageHeader } from '../components/PageHeader';
+import { PageHeader } from '../components/shared/PageHeader';
 import { configService } from '../services/configService';
 
 type ResourceKey = 'secretarias' | 'orgaos' | 'programas' | 'fontes';
@@ -22,6 +22,14 @@ type SectionConfig = {
   fields: FieldConfig[];
   columns: Array<{ key: string; label: string }>;
 };
+
+type CatalogItem = {
+  id: string;
+  nome: string;
+  [key: string]: string | number | null | undefined;
+};
+
+type Catalogs = Record<ResourceKey, CatalogItem[]>;
 
 const sections: SectionConfig[] = [
   {
@@ -88,12 +96,12 @@ type FormValues = Record<string, string>;
 
 type ConfigSectionProps = {
   section: SectionConfig;
-  data: Record<string, any>[] | undefined;
+  data: CatalogItem[];
 };
 
 const ConfigSection: React.FC<ConfigSectionProps> = ({ section, data = [] }) => {
   const queryClient = useQueryClient();
-  const [editing, setEditing] = useState<Record<string, any> | null>(null);
+  const [editing, setEditing] = useState<CatalogItem | null>(null);
 
   const defaultValues = useMemo(
     () =>
@@ -117,7 +125,8 @@ const ConfigSection: React.FC<ConfigSectionProps> = ({ section, data = [] }) => 
     if (editing) {
       const values: FormValues = { ...defaultValues };
       section.fields.forEach((field) => {
-        values[field.name] = editing[field.name] ?? '';
+        const value = editing[field.name];
+        values[field.name] = value != null ? String(value) : '';
       });
       reset(values);
     } else {
@@ -137,17 +146,17 @@ const ConfigSection: React.FC<ConfigSectionProps> = ({ section, data = [] }) => 
       setEditing(null);
       reset(defaultValues);
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       console.error('Erro ao salvar configuração:', error);
     }
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: number) => configService.remove(section.key, id),
+    mutationFn: (id: string) => configService.remove(section.key, id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['catalogs'] });
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       console.error('Erro ao remover registro:', error);
       alert('Erro ao remover registro. Este item pode estar sendo usado em outro lugar.');
     }
@@ -301,7 +310,7 @@ export const ConfiguracoesPage = () => {
           <ConfigSection
             key={section.key}
             section={section}
-            data={catalogs ? (catalogs as any)[section.key] : []}
+            data={catalogs ? (catalogs as Catalogs)[section.key] : []}
           />
         ))}
       </div>

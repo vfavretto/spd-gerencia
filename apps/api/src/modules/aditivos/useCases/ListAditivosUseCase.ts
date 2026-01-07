@@ -1,10 +1,10 @@
-import type { Aditivo } from '@spd/db';
+import type { IAditivo } from '@spd/db';
 import type { AditivoRepository } from '../repositories/AditivoRepository';
 
 export class ListAditivosUseCase {
   constructor(private readonly repository: AditivoRepository) {}
 
-  execute(convenioId: number): Promise<Aditivo[]> {
+  execute(convenioId: string): Promise<IAditivo[]> {
     return this.repository.listByConvenio(convenioId);
   }
 }

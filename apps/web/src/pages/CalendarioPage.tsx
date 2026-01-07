@@ -4,7 +4,7 @@ import { CalendarDays, CalendarPlus, RefreshCcw } from 'lucide-react';
 import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { PageHeader } from '../components/PageHeader';
+import { PageHeader } from '../components/shared/PageHeader';
 import { tipoEventoOptions } from '../constants';
 import { agendaService } from '../services/agendaService';
 import { convenioService } from '../services/convenioService';

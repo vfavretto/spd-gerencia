@@ -1,4 +1,4 @@
-import { prisma, type Medicao } from '@spd/db';
+import { ContratoExecucaoModel, type IMedicao } from '@spd/db';
 import type { CreateMedicaoDTO } from '../dto/MedicaoDTO';
 import type { MedicaoRepository } from '../repositories/MedicaoRepository';
 import { AppError } from '@shared/errors/AppError';
@@ -6,12 +6,11 @@ import { AppError } from '@shared/errors/AppError';
 export class CreateMedicaoUseCase {
   constructor(private readonly repository: MedicaoRepository) {}
 
-  async execute(data: CreateMedicaoDTO): Promise<Medicao> {
+  async execute(data: CreateMedicaoDTO): Promise<IMedicao> {
     // Buscar contrato para validações
-    const contrato = await prisma.contratoExecucao.findUnique({
-      where: { id: data.contratoId },
-      select: { dataOIS: true, valorContrato: true }
-    });
+    const contrato = await ContratoExecucaoModel.findById(data.contratoId)
+      .select('dataOIS valorContrato')
+      .exec();
 
     if (!contrato) {
       throw new AppError('Contrato não encontrado', 404);
@@ -46,4 +45,3 @@ export class CreateMedicaoUseCase {
     });
   }
 }
-

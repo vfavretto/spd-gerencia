@@ -4,7 +4,7 @@ import type { PendenciaRepository } from '../repositories/PendenciaRepository';
 export class UpdatePendenciaUseCase {
   constructor(private repository: PendenciaRepository) {}
 
-  async execute(id: number, data: UpdatePendenciaDTO) {
+  async execute(id: string, data: UpdatePendenciaDTO) {
     // Verificar se existe
     const existing = await this.repository.findById(id);
     if (!existing) {
@@ -13,4 +13,3 @@ export class UpdatePendenciaUseCase {
     return this.repository.update(id, data);
   }
 }
-

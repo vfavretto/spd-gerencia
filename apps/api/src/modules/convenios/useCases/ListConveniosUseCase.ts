@@ -1,4 +1,4 @@
-import type { Convenio } from '@spd/db';
+import type { IConvenio } from '@spd/db';
 import type {
   ConvenioFilters,
   ConvenioRepository
@@ -7,7 +7,7 @@ import type {
 export class ListConveniosUseCase {
   constructor(private readonly repository: ConvenioRepository) {}
 
-  execute(filters?: ConvenioFilters): Promise<Convenio[]> {
+  execute(filters?: ConvenioFilters): Promise<IConvenio[]> {
     return this.repository.list(filters);
   }
 }

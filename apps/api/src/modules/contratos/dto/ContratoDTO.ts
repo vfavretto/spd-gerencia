@@ -1,8 +1,6 @@
-import type { ModalidadeLicitacao } from '@spd/db';
-
 export type CreateContratoDTO = {
   numProcessoLicitatorio?: string;
-  modalidadeLicitacao?: ModalidadeLicitacao;
+  modalidadeLicitacao?: 'PREGAO' | 'TOMADA_PRECOS' | 'CONCORRENCIA' | 'DISPENSA' | 'INEXIGIBILIDADE';
   numeroContrato?: string;
   contratadaCnpj?: string;
   contratadaNome?: string;
@@ -17,8 +15,7 @@ export type CreateContratoDTO = {
   artRrt?: string;
   situacao?: string;
   observacoes?: string;
-  convenioId: number;
+  convenioId: string;
 };
 
 export type UpdateContratoDTO = Partial<Omit<CreateContratoDTO, 'convenioId'>>;
-

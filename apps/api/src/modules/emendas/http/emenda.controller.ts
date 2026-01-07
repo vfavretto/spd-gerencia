@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { z } from 'zod';
-import { PrismaEmendaRepository } from '../repositories/implementations/PrismaEmendaRepository';
+import { MongooseEmendaRepository } from '../repositories/implementations/MongooseEmendaRepository';
 import { ListEmendasUseCase } from '../useCases/ListEmendasUseCase';
 import { GetEmendaUseCase } from '../useCases/GetEmendaUseCase';
 import { CreateEmendaUseCase } from '../useCases/CreateEmendaUseCase';
@@ -16,30 +16,30 @@ const createSchema = z.object({
   programa: z.string().optional(),
   valorIndicado: z.number().min(0).optional(),
   anoEmenda: z.number().int().optional(),
-  convenioId: z.number().int()
+  convenioId: z.string()
 });
 
 const updateSchema = createSchema.omit({ convenioId: true }).partial();
 
 export class EmendaController {
-  private readonly repository = new PrismaEmendaRepository();
+  private readonly repository = new MongooseEmendaRepository();
 
   async index(req: Request, res: Response) {
-    const convenioId = Number(req.params.convenioId);
+    const convenioId = req.params.convenioId;
     const useCase = new ListEmendasUseCase(this.repository);
     const emendas = await useCase.execute(convenioId);
     return res.json(emendas);
   }
 
   async show(req: Request, res: Response) {
-    const id = Number(req.params.id);
+    const id = req.params.id;
     const useCase = new GetEmendaUseCase(this.repository);
     const emenda = await useCase.execute(id);
     return res.json(emenda);
   }
 
   async create(req: Request, res: Response) {
-    const convenioId = Number(req.params.convenioId);
+    const convenioId = req.params.convenioId;
     const payload = createSchema.parse({ ...req.body, convenioId });
     const useCase = new CreateEmendaUseCase(this.repository);
     const emenda = await useCase.execute(payload);
@@ -47,7 +47,7 @@ export class EmendaController {
   }
 
   async update(req: Request, res: Response) {
-    const id = Number(req.params.id);
+    const id = req.params.id;
     const payload = updateSchema.parse(req.body);
     const useCase = new UpdateEmendaUseCase(this.repository);
     const emenda = await useCase.execute(id, payload);
@@ -55,10 +55,9 @@ export class EmendaController {
   }
 
   async remove(req: Request, res: Response) {
-    const id = Number(req.params.id);
+    const id = req.params.id;
     const useCase = new DeleteEmendaUseCase(this.repository);
     await useCase.execute(id);
     return res.status(204).send();
   }
 }
-

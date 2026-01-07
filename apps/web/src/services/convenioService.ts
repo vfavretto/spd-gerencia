@@ -4,12 +4,12 @@ import type { Convenio, ConvenioStatus } from '../types';
 export type ConvenioFilters = {
   search?: string;
   status?: ConvenioStatus | '';
-  secretariaId?: number | '';
+  secretariaId?: string | '';
 };
 
 export const convenioService = {
   async list(filters?: ConvenioFilters): Promise<Convenio[]> {
-    const params: Record<string, string | number> = {};
+    const params: Record<string, string> = {};
     if (filters?.search) params.search = filters.search;
     if (filters?.status) params.status = filters.status;
     if (filters?.secretariaId) params.secretariaId = filters.secretariaId;
@@ -18,7 +18,7 @@ export const convenioService = {
     return data;
   },
 
-  async getById(id: number): Promise<Convenio> {
+  async getById(id: string): Promise<Convenio> {
     const { data } = await api.get<Convenio>(`/convenios/${id}`);
     return data;
   },
@@ -28,12 +28,12 @@ export const convenioService = {
     return data;
   },
 
-  async update(id: number, payload: Record<string, unknown>): Promise<Convenio> {
+  async update(id: string, payload: Record<string, unknown>): Promise<Convenio> {
     const { data } = await api.put<Convenio>(`/convenios/${id}`, payload);
     return data;
   },
 
-  async remove(id: number): Promise<void> {
+  async remove(id: string): Promise<void> {
     await api.delete(`/convenios/${id}`);
   }
 };

@@ -31,17 +31,16 @@ import { AbaDiario } from '@/components/convenio/AbaDiario';
 export const ConvenioDetalhesPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const convenioId = Number(id);
 
   const { data: convenio, isLoading, refetch } = useQuery({
     queryKey: ['convenio', id],
-    queryFn: () => convenioService.getById(convenioId),
+    queryFn: () => convenioService.getById(id!),
     enabled: !!id
   });
 
   const { data: vigenciaInfo } = useQuery({
     queryKey: ['vigencia', id],
-    queryFn: () => aditivoService.getVigencia(convenioId),
+    queryFn: () => aditivoService.getVigencia(id!),
     enabled: !!id
   });
 

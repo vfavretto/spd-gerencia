@@ -17,11 +17,11 @@ type Props = {
 export function AbaEngenharia({ convenio, onUpdate }: Props) {
   const [showVincularContrato, setShowVincularContrato] = useState(false);
   const [showNovaMedicao, setShowNovaMedicao] = useState(false);
-  const [selectedContratoId, setSelectedContratoId] = useState<number | null>(null);
+  const [selectedContratoId, setSelectedContratoId] = useState<string | null>(null);
   const [selectedContratoOIS, setSelectedContratoOIS] = useState<string | null>(null);
   const contratos = convenio.contratos || [];
 
-  const handleNovaMedicao = (contratoId: number, dataOIS?: string | null) => {
+  const handleNovaMedicao = (contratoId: string, dataOIS?: string | null) => {
     setSelectedContratoId(contratoId);
     setSelectedContratoOIS(dataOIS || null);
     setShowNovaMedicao(true);

@@ -1,11 +1,11 @@
-import type { EventoAgenda } from '@spd/db';
+import type { IEventoAgenda } from '@spd/db';
 import { AppError } from '@shared/errors/AppError';
 import type { EventoRepository } from '../repositories/EventoRepository';
 
 export class GetEventoUseCase {
   constructor(private readonly repository: EventoRepository) {}
 
-  async execute(id: number): Promise<EventoAgenda> {
+  async execute(id: string): Promise<IEventoAgenda> {
     const evento = await this.repository.findById(id);
     if (!evento) {
       throw new AppError('Evento não encontrado', 404);

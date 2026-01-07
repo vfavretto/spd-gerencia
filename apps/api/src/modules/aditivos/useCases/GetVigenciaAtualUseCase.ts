@@ -9,7 +9,7 @@ export type VigenciaInfo = {
 export class GetVigenciaAtualUseCase {
   constructor(private readonly repository: AditivoRepository) {}
 
-  async execute(convenioId: number): Promise<VigenciaInfo> {
+  async execute(convenioId: string): Promise<VigenciaInfo> {
     const vigenciaAtual = await this.repository.getUltimaVigencia(convenioId);
     
     if (!vigenciaAtual) {

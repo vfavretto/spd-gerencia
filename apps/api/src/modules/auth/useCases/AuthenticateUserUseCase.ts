@@ -12,7 +12,7 @@ type Request = {
 type Response = {
   token: string;
   usuario: {
-    id: number;
+    id: string;
     nome: string;
     email: string;
     role: string;
@@ -39,7 +39,7 @@ export class AuthenticateUserUseCase {
       { email: user.email, role: user.role },
       env.jwtSecret,
       {
-        subject: String(user.id),
+        subject: user._id.toString(),
         expiresIn: '8h'
       }
     );
@@ -47,7 +47,7 @@ export class AuthenticateUserUseCase {
     return {
       token,
       usuario: {
-        id: user.id,
+        id: user._id.toString(),
         nome: user.nome,
         email: user.email,
         role: user.role

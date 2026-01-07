@@ -4,7 +4,7 @@ import { MailPlus, RefreshCcw } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { PageHeader } from '../components/PageHeader';
+import { PageHeader } from '../components/shared/PageHeader';
 import { tipoComunicadoOptions } from '../constants';
 import { comunicadoService } from '../services/comunicadoService';
 import { convenioService } from '../services/convenioService';
@@ -61,7 +61,7 @@ export const ComunicadosPage = () => {
       queryClient.invalidateQueries({ queryKey: ['comunicados'] });
       reset({ tipo: 'ENTRADA' } as ComunicadoForm);
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       console.error('Erro ao criar comunicado:', error);
     }
   });

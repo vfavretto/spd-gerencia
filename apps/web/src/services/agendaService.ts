@@ -13,14 +13,14 @@ export const agendaService = {
   },
 
   async updateEvento(
-    id: number,
+    id: string,
     payload: Record<string, unknown>
   ): Promise<EventoAgenda> {
     const { data } = await api.put<EventoAgenda>(`/agenda/eventos/${id}`, payload);
     return data;
   },
 
-  async removeEvento(id: number): Promise<void> {
+  async removeEvento(id: string): Promise<void> {
     await api.delete(`/agenda/eventos/${id}`);
   }
 };

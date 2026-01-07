@@ -36,8 +36,8 @@ type FormData = z.infer<typeof schema>;
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  contratoId: number;
-  convenioId: number;
+  contratoId: string;
+  convenioId: string;
   dataOIS?: string | null;
   onSuccess: () => void;
 };
@@ -49,7 +49,7 @@ export function NovaMedicaoModal({ isOpen, onClose, contratoId, convenioId, data
   const { data: saldoInfo } = useQuery({
     queryKey: ['saldo-contrato', contratoId],
     queryFn: () => medicaoService.getSaldo(contratoId),
-    enabled: isOpen && contratoId > 0
+    enabled: isOpen && !!contratoId
   });
 
   const {

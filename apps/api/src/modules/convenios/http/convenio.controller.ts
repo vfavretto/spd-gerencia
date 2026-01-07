@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { z } from 'zod';
-import { PrismaConvenioRepository } from '../repositories/implementations/PrismaConvenioRepository';
+import { MongooseConvenioRepository } from '../repositories/implementations/MongooseConvenioRepository';
 import { ListConveniosLiteUseCase } from '../useCases/ListConveniosLiteUseCase';
 import { GetConvenioUseCase } from '../useCases/GetConvenioUseCase';
 import { CreateConvenioUseCase } from '../useCases/CreateConvenioUseCase';
@@ -30,24 +30,22 @@ const commonSchema = {
       'CANCELADO'
     ] as const
   ).optional(),
-  secretariaId: z.number().int(),
-  orgaoId: z.number().int().nullable().optional(),
-  programaId: z.number().int().nullable().optional(),
-  fonteId: z.number().int().nullable().optional()
+  secretariaId: z.string(),
+  orgaoId: z.string().nullable().optional(),
+  programaId: z.string().nullable().optional(),
+  fonteId: z.string().nullable().optional()
 };
 
 const createSchema = z.object(commonSchema);
 const updateSchema = createSchema.partial();
 
 export class ConvenioController {
-  private readonly repository = new PrismaConvenioRepository();
+  private readonly repository = new MongooseConvenioRepository();
 
   async index(req: Request, res: Response) {
     const search = req.query.search?.toString();
     const status = req.query.status?.toString();
-    const secretariaId = req.query.secretariaId
-      ? Number(req.query.secretariaId)
-      : undefined;
+    const secretariaId = req.query.secretariaId?.toString();
 
     // Usa listLite para performance na listagem
     const useCase = new ListConveniosLiteUseCase(this.repository);
@@ -56,7 +54,7 @@ export class ConvenioController {
   }
 
   async show(req: Request, res: Response) {
-    const id = Number(req.params.id);
+    const id = req.params.id;
     const useCase = new GetConvenioUseCase(this.repository);
     const convenio = await useCase.execute(id);
     return res.json(convenio);
@@ -70,7 +68,7 @@ export class ConvenioController {
   }
 
   async update(req: Request, res: Response) {
-    const id = Number(req.params.id);
+    const id = req.params.id;
     const payload = updateSchema.parse(req.body);
     const useCase = new UpdateConvenioUseCase(this.repository);
     const convenio = await useCase.execute(id, payload);
@@ -78,7 +76,7 @@ export class ConvenioController {
   }
 
   async remove(req: Request, res: Response) {
-    const id = Number(req.params.id);
+    const id = req.params.id;
     const useCase = new DeleteConvenioUseCase(this.repository);
     await useCase.execute(id);
     return res.status(204).send();

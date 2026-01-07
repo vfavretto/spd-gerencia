@@ -7,8 +7,7 @@ export type CreateEmendaDTO = {
   programa?: string;
   valorIndicado?: number;
   anoEmenda?: number;
-  convenioId: number;
+  convenioId: string;
 };
 
 export type UpdateEmendaDTO = Partial<Omit<CreateEmendaDTO, 'convenioId'>>;
-

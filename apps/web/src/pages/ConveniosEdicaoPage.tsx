@@ -5,7 +5,7 @@ import { useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { z } from 'zod';
-import { PageHeader } from '../components/PageHeader';
+import { PageHeader } from '../components/shared/PageHeader';
 import { convenioStatusOptions } from '../constants';
 import { convenioService } from '../services/convenioService';
 import { configService } from '../services/configService';
@@ -32,10 +32,10 @@ const convenioSchema = z.object({
       'CANCELADO'
     ] as const
   ),
-  secretariaId: z.number(),
-  orgaoId: z.number().optional(),
-  programaId: z.number().optional(),
-  fonteId: z.number().optional()
+  secretariaId: z.string(),
+  orgaoId: z.string().optional(),
+  programaId: z.string().optional(),
+  fonteId: z.string().optional()
 });
 
 type ConvenioForm = z.infer<typeof convenioSchema>;
@@ -52,7 +52,7 @@ export const ConveniosEdicaoPage = () => {
 
   const { data: convenio, isLoading } = useQuery({
     queryKey: ['convenio', id],
-    queryFn: () => convenioService.getById(Number(id)),
+    queryFn: () => convenioService.getById(id!),
     enabled: !!id
   });
 
@@ -99,7 +99,7 @@ export const ConveniosEdicaoPage = () => {
 
   const updateMutation = useMutation({
     mutationFn: (payload: ConvenioForm) =>
-      convenioService.update(Number(id), {
+      convenioService.update(id!, {
         ...payload,
         dataAssinatura: payload.dataAssinatura || null,
         dataInicioVigencia: payload.dataInicioVigencia || null,

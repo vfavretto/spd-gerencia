@@ -1,7 +1,7 @@
 export type UsuarioRole = 'ADMINISTRADOR' | 'ANALISTA' | 'VISUALIZADOR';
 
 export interface User {
-  id: number;
+  id: string;
   nome: string;
   email: string;
   role: UsuarioRole;
@@ -40,34 +40,39 @@ export type StatusPendencia = 'ABERTA' | 'EM_ANDAMENTO' | 'RESOLVIDA' | 'CANCELA
 export type TipoAditivo = 'PRAZO' | 'VALOR' | 'PRAZO_E_VALOR' | 'SUPRESSAO' | 'ACRESCIMO';
 
 export interface Secretaria {
-  id: number;
+  id: string;
+  _id?: string;
   nome: string;
   sigla?: string | null;
   responsavel?: string | null;
 }
 
 export interface OrgaoConcedente {
-  id: number;
+  id: string;
+  _id?: string;
   nome: string;
   esfera?: string | null;
   contato?: string | null;
 }
 
 export interface Programa {
-  id: number;
+  id: string;
+  _id?: string;
   nome: string;
   codigo?: string | null;
   descricao?: string | null;
 }
 
 export interface FonteRecurso {
-  id: number;
+  id: string;
+  _id?: string;
   nome: string;
   tipo?: string | null;
 }
 
 export interface Convenio {
-  id: number;
+  id: string;
+  _id?: string;
   codigo: string;
   titulo: string;
   objeto: string;
@@ -95,9 +100,13 @@ export interface Convenio {
   dataPrestacaoContas?: string | null;
   // Relacionamentos
   secretaria?: Secretaria;
+  secretariaId?: string;
   orgao?: OrgaoConcedente | null;
+  orgaoId?: string | null;
   programa?: Programa | null;
+  programaId?: string | null;
   fonte?: FonteRecurso | null;
+  fonteId?: string | null;
   emendas?: EmendaParlamentar[];
   financeiroContas?: FinanceiroContas | null;
   contratos?: ContratoExecucao[];
@@ -108,7 +117,8 @@ export interface Convenio {
 export type TipoComunicado = 'ENTRADA' | 'SAIDA';
 
 export interface Comunicado {
-  id: number;
+  id: string;
+  _id?: string;
   protocolo: string;
   assunto: string;
   conteudo?: string | null;
@@ -118,7 +128,7 @@ export interface Comunicado {
   origem?: string | null;
   destino?: string | null;
   responsavel?: string | null;
-  convenioId?: number | null;
+  convenioId?: string | null;
   convenio?: Convenio | null;
 }
 
@@ -130,7 +140,8 @@ export type TipoEvento =
   | 'OUTROS';
 
 export interface EventoAgenda {
-  id: number;
+  id: string;
+  _id?: string;
   titulo: string;
   descricao?: string | null;
   dataInicio: string;
@@ -146,7 +157,7 @@ export interface DashboardOverview {
   totalValor: number;
   comunicadosPendentes: number;
   proximasDatas: Array<{
-    id: number;
+    id: string;
     titulo: string;
     dataFimVigencia: string | null;
     status: ConvenioStatus;
@@ -167,7 +178,8 @@ export interface Catalogs {
 // ==================== NOVAS INTERFACES ====================
 
 export interface EmendaParlamentar {
-  id: number;
+  id: string;
+  _id?: string;
   nomeParlamentar: string;
   partido?: string | null;
   codigoEmenda?: string | null;
@@ -176,14 +188,15 @@ export interface EmendaParlamentar {
   programa?: string | null;
   valorIndicado?: string | number | null;
   anoEmenda?: number | null;
-  convenioId: number;
+  convenioId: string;
 }
 
-export type CreateEmendaDTO = Omit<EmendaParlamentar, 'id' | 'convenioId'>;
+export type CreateEmendaDTO = Omit<EmendaParlamentar, 'id' | '_id' | 'convenioId'>;
 export type UpdateEmendaDTO = Partial<CreateEmendaDTO>;
 
 export interface FinanceiroContas {
-  id: number;
+  id: string;
+  _id?: string;
   banco?: string | null;
   agencia?: string | null;
   contaBancaria?: string | null;
@@ -191,13 +204,14 @@ export interface FinanceiroContas {
   saldoRendimentos?: string | number | null;
   fichasOrcamentarias?: string | null;
   observacoes?: string | null;
-  convenioId: number;
+  convenioId: string;
 }
 
-export type UpsertFinanceiroDTO = Omit<FinanceiroContas, 'id' | 'convenioId'>;
+export type UpsertFinanceiroDTO = Omit<FinanceiroContas, 'id' | '_id' | 'convenioId'>;
 
 export interface ContratoExecucao {
-  id: number;
+  id: string;
+  _id?: string;
   numProcessoLicitatorio?: string | null;
   modalidadeLicitacao?: ModalidadeLicitacao | null;
   numeroContrato?: string | null;
@@ -214,15 +228,16 @@ export interface ContratoExecucao {
   artRrt?: string | null;
   situacao?: string | null;
   observacoes?: string | null;
-  convenioId: number;
+  convenioId: string;
   medicoes?: Medicao[];
 }
 
-export type CreateContratoDTO = Omit<ContratoExecucao, 'id' | 'convenioId' | 'medicoes'>;
+export type CreateContratoDTO = Omit<ContratoExecucao, 'id' | '_id' | 'convenioId' | 'medicoes'>;
 export type UpdateContratoDTO = Partial<CreateContratoDTO>;
 
 export interface Medicao {
-  id: number;
+  id: string;
+  _id?: string;
   numeroMedicao: number;
   dataMedicao: string;
   percentualFisico?: string | number | null;
@@ -231,10 +246,10 @@ export interface Medicao {
   valorPago?: string | number | null;
   observacoes?: string | null;
   situacao?: string | null;
-  contratoId: number;
+  contratoId: string;
 }
 
-export type CreateMedicaoDTO = Omit<Medicao, 'id' | 'contratoId'>;
+export type CreateMedicaoDTO = Omit<Medicao, 'id' | '_id' | 'contratoId'>;
 export type UpdateMedicaoDTO = Partial<Omit<CreateMedicaoDTO, 'numeroMedicao'>>;
 
 export interface SaldoContrato {
@@ -247,7 +262,8 @@ export interface SaldoContrato {
 }
 
 export interface Pendencia {
-  id: number;
+  id: string;
+  _id?: string;
   descricao: string;
   responsavel?: string | null;
   prazo?: string | null;
@@ -255,17 +271,18 @@ export interface Pendencia {
   prioridade?: number | null;
   resolucao?: string | null;
   dataResolucao?: string | null;
-  convenioId: number;
-  criadoPorId?: number | null;
-  criadoPor?: { id: number; nome: string } | null;
+  convenioId: string;
+  criadoPorId?: string | null;
+  criadoPor?: { id: string; nome: string } | null;
   criadoEm?: string;
 }
 
-export type CreatePendenciaDTO = Omit<Pendencia, 'id' | 'convenioId' | 'criadoPorId' | 'criadoPor' | 'criadoEm'>;
+export type CreatePendenciaDTO = Omit<Pendencia, 'id' | '_id' | 'convenioId' | 'criadoPorId' | 'criadoPor' | 'criadoEm'>;
 export type UpdatePendenciaDTO = Partial<CreatePendenciaDTO>;
 
 export interface Aditivo {
-  id: number;
+  id: string;
+  _id?: string;
   numeroAditivo: number;
   tipoAditivo: TipoAditivo;
   dataAssinatura?: string | null;
@@ -275,10 +292,10 @@ export interface Aditivo {
   motivo?: string | null;
   justificativa?: string | null;
   observacoes?: string | null;
-  convenioId: number;
+  convenioId: string;
 }
 
-export type CreateAditivoDTO = Omit<Aditivo, 'id' | 'convenioId'>;
+export type CreateAditivoDTO = Omit<Aditivo, 'id' | '_id' | 'convenioId'>;
 export type UpdateAditivoDTO = Partial<Omit<CreateAditivoDTO, 'numeroAditivo'>>;
 
 export interface VigenciaInfo {

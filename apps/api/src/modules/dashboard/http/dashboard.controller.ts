@@ -1,49 +1,46 @@
 import type { Request, Response } from 'express';
-import { prisma } from '@spd/db';
+import { ConvenioModel, ComunicadoModel } from '@spd/db';
 
 export class DashboardController {
   async overview(_req: Request, res: Response) {
-    const [totalConvenios, totalValor, proximasDatas, comunicadosPendentes] =
+    const [totalConvenios, totalValorResult, proximasDatas, comunicadosPendentes] =
       await Promise.all([
-        prisma.convenio.count(),
-        prisma.convenio.aggregate({
-          _sum: { valorGlobal: true }
-        }),
-        prisma.convenio.findMany({
-          where: {
-            dataFimVigencia: {
-              gte: new Date()
-            }
-          },
-          select: {
-            id: true,
-            titulo: true,
-            dataFimVigencia: true,
-            status: true
-          },
-          orderBy: { dataFimVigencia: 'asc' },
-          take: 5
-        }),
-        prisma.comunicado.count({
-          where: {
-            status: {
-              in: ['PENDENTE', 'EM ANDAMENTO']
-            }
-          }
+        ConvenioModel.countDocuments(),
+        ConvenioModel.aggregate([
+          { $group: { _id: null, total: { $sum: '$valorGlobal' } } }
+        ]),
+        ConvenioModel.find({
+          dataFimVigencia: { $gte: new Date() }
+        })
+          .select('titulo dataFimVigencia status')
+          .sort({ dataFimVigencia: 1 })
+          .limit(5)
+          .lean(),
+        ComunicadoModel.countDocuments({
+          status: { $in: ['PENDENTE', 'EM ANDAMENTO'] }
         })
       ]);
 
-    const porStatus = await prisma.convenio.groupBy({
-      by: ['status'],
-      _count: true
-    });
+    const porStatusResult = await ConvenioModel.aggregate([
+      { $group: { _id: '$status', _count: { $sum: 1 } } }
+    ]);
+
+    const porStatus = porStatusResult.map(item => ({
+      status: item._id,
+      _count: item._count
+    }));
 
     return res.json({
       totalConvenios,
-      totalValor: totalValor._sum.valorGlobal ?? 0,
+      totalValor: totalValorResult[0]?.total ?? 0,
       comunicadosPendentes,
       porStatus,
-      proximasDatas
+      proximasDatas: proximasDatas.map(d => ({
+        id: d._id.toString(),
+        titulo: d.titulo,
+        dataFimVigencia: d.dataFimVigencia,
+        status: d.status
+      }))
     });
   }
 }

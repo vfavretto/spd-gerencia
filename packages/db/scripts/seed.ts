@@ -10,6 +10,12 @@
  * 2. Configurar a variável de ambiente MONGODB_URI
  */
 
+import path from 'node:path';
+import dotenv from 'dotenv';
+
+// Carrega variáveis de ambiente da raiz do monorepo
+dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
+
 import bcrypt from 'bcryptjs';
 import { Types } from 'mongoose';
 import { connectDB, disconnectDB } from '../src/connection';
@@ -543,6 +549,7 @@ async function seed() {
   console.log(`   ✅ ${medicoes.length} medições criadas`);
 
   // ==================== PENDÊNCIAS ====================
+  // Prioridade: 1 = Alta, 2 = Média, 3 = Baixa
   console.log('⚠️ Criando pendências...');
   const pendencias = await PendenciaModel.insertMany([
     {
@@ -550,7 +557,7 @@ async function seed() {
       responsavel: 'Eng. Paulo Roberto',
       prazo: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000),
       status: StatusPendencia.ABERTA,
-      prioridade: 'ALTA',
+      prioridade: 1, // Alta
       convenioId: convenios[0]._id,
       criadoPorId: analista._id
     },
@@ -559,7 +566,7 @@ async function seed() {
       responsavel: 'Fiscal João',
       prazo: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       status: StatusPendencia.EM_ANDAMENTO,
-      prioridade: 'MEDIA',
+      prioridade: 2, // Média
       convenioId: convenios[0]._id,
       criadoPorId: analista._id
     },
@@ -568,7 +575,7 @@ async function seed() {
       responsavel: 'SMMA',
       prazo: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
       status: StatusPendencia.ABERTA,
-      prioridade: 'ALTA',
+      prioridade: 1, // Alta
       convenioId: convenios[1]._id,
       criadoPorId: admin._id
     },
@@ -577,7 +584,7 @@ async function seed() {
       responsavel: 'Maria Santos',
       prazo: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
       status: StatusPendencia.RESOLVIDA,
-      prioridade: 'MEDIA',
+      prioridade: 2, // Média
       resolucao: 'Cronograma atualizado e enviado ao órgão concedente',
       dataResolucao: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
       convenioId: convenios[2]._id,

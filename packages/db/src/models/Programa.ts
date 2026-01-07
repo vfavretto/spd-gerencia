@@ -14,8 +14,5 @@ const programaSchema = new Schema<IPrograma>(
   }
 );
 
-// Índices
-programaSchema.index({ nome: 1 }, { unique: true });
-
 export const ProgramaModel: Model<IPrograma> = model<IPrograma>('Programa', programaSchema);
 

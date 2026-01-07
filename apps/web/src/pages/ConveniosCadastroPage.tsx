@@ -19,7 +19,7 @@ const wizardSchema = z.object({
   codigo: z.string().min(3, 'Informe o código do convênio'),
   titulo: z.string().min(3, 'Título obrigatório'),
   objeto: z.string().min(3, 'Descreva o objeto'),
-  secretariaId: z.number({ required_error: 'Selecione a secretaria' }),
+  secretariaId: z.string({ required_error: 'Selecione a secretaria' }).min(1, 'Selecione a secretaria'),
 
   // Step 2: Valores Macro
   valorGlobal: z.number({ required_error: 'Informe o valor global' }).min(0),
@@ -27,10 +27,10 @@ const wizardSchema = z.object({
   valorContrapartida: z.number().min(0).optional(),
   esfera: z.enum(['FEDERAL', 'ESTADUAL']).optional(),
 
-  // Step 3: Classificação
-  orgaoId: z.number().optional(),
-  programaId: z.number().optional(),
-  fonteId: z.number().optional(),
+  // Step 3: Classificação (IDs são strings do MongoDB ObjectId)
+  orgaoId: z.string().optional(),
+  programaId: z.string().optional(),
+  fonteId: z.string().optional(),
   modalidadeRepasse: z.enum([
     'CONVENIO',
     'CONTRATO_REPASSE',
@@ -104,6 +104,7 @@ export const ConveniosCadastroPage = () => {
         dataAssinatura: null,
         dataInicioVigencia: null,
         dataFimVigencia: null,
+        // Converter strings vazias para null (IDs do MongoDB)
         orgaoId: payload.orgaoId || null,
         programaId: payload.programaId || null,
         fonteId: payload.fonteId || null,
@@ -240,10 +241,7 @@ export const ConveniosCadastroPage = () => {
                     <label className="form-label">Secretaria Responsável *</label>
                     <select
                       className="form-input"
-                      {...register('secretariaId', {
-                        setValueAs: (value) =>
-                          value === '' ? undefined : Number.parseInt(value, 10)
-                      })}
+                      {...register('secretariaId')}
                     >
                       <option value="">Selecione</option>
                       {secretariaOptions.map((secretaria) => (
@@ -411,10 +409,7 @@ export const ConveniosCadastroPage = () => {
                     <label className="form-label">Órgão Concedente</label>
                     <select
                       className="form-input"
-                      {...register('orgaoId', {
-                        setValueAs: (value) =>
-                          value === '' ? undefined : Number.parseInt(value, 10)
-                      })}
+                      {...register('orgaoId')}
                     >
                       <option value="">Selecione</option>
                       {catalogs?.orgaos.map((orgao) => (
@@ -445,10 +440,7 @@ export const ConveniosCadastroPage = () => {
                     <label className="form-label">Programa</label>
                     <select
                       className="form-input"
-                      {...register('programaId', {
-                        setValueAs: (value) =>
-                          value === '' ? undefined : Number.parseInt(value, 10)
-                      })}
+                      {...register('programaId')}
                     >
                       <option value="">Selecione</option>
                       {catalogs?.programas.map((programa) => (
@@ -462,10 +454,7 @@ export const ConveniosCadastroPage = () => {
                     <label className="form-label">Fonte de Recurso</label>
                     <select
                       className="form-input"
-                      {...register('fonteId', {
-                        setValueAs: (value) =>
-                          value === '' ? undefined : Number.parseInt(value, 10)
-                      })}
+                      {...register('fonteId')}
                     >
                       <option value="">Selecione</option>
                       {catalogs?.fontes.map((fonte) => (

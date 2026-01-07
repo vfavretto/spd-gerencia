@@ -13,8 +13,5 @@ const fonteRecursoSchema = new Schema<IFonteRecurso>(
   }
 );
 
-// Índices
-fonteRecursoSchema.index({ nome: 1 }, { unique: true });
-
 export const FonteRecursoModel: Model<IFonteRecurso> = model<IFonteRecurso>('FonteRecurso', fonteRecursoSchema);
 

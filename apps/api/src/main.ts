@@ -1,3 +1,6 @@
+// Carrega variáveis de ambiente ANTES de qualquer outra importação
+import '@config/env';
+
 import { connectDB } from '@spd/db';
 import { createServer } from './server';
 import { env } from '@config/env';

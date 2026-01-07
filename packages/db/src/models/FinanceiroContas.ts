@@ -19,8 +19,5 @@ const financeiroContasSchema = new Schema<IFinanceiroContas>(
   }
 );
 
-// Índices
-financeiroContasSchema.index({ convenioId: 1 }, { unique: true });
-
 export const FinanceiroContasModel: Model<IFinanceiroContas> = model<IFinanceiroContas>('FinanceiroContas', financeiroContasSchema);
 

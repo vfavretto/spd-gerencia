@@ -14,8 +14,5 @@ const secretariaSchema = new Schema<ISecretaria>(
   }
 );
 
-// Índices
-secretariaSchema.index({ nome: 1 }, { unique: true });
-
 export const SecretariaModel: Model<ISecretaria> = model<ISecretaria>('Secretaria', secretariaSchema);
 

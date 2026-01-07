@@ -1,12 +1,10 @@
 import path from 'node:path';
 import dotenv from 'dotenv';
 
-// Carrega primeiro a partir da pasta do workspace (apps/api/.env) caso exista.
-dotenv.config();
-// Em seguida tenta carregar a partir da raiz do monorepo.
+// Carrega o .env da raiz do monorepo
+// Caminho: apps/api/src/config -> apps/api/src -> apps/api -> apps -> raiz
 dotenv.config({
-  path: path.resolve(__dirname, '../../../.env'),
-  override: false
+  path: path.resolve(__dirname, '../../../../.env')
 });
 
 const required = (value: string | undefined, key: string): string => {

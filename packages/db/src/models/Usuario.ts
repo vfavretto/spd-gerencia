@@ -21,8 +21,5 @@ const usuarioSchema = new Schema<IUsuario>(
   }
 );
 
-// Índices
-usuarioSchema.index({ email: 1 }, { unique: true });
-
 export const UsuarioModel: Model<IUsuario> = model<IUsuario>('Usuario', usuarioSchema);
 

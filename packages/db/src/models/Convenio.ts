@@ -151,8 +151,7 @@ convenioSchema.virtual('aditivos', {
   foreignField: 'convenioId'
 });
 
-// Índices
-convenioSchema.index({ codigo: 1 }, { unique: true });
+// Índices (codigo já tem unique: true no schema)
 convenioSchema.index({ status: 1 });
 convenioSchema.index({ secretariaId: 1 });
 convenioSchema.index({ titulo: 'text', codigo: 'text' });

@@ -43,8 +43,7 @@ comunicadoSchema.virtual('criadoPor', {
   justOne: true
 });
 
-// Índices
-comunicadoSchema.index({ protocolo: 1 }, { unique: true });
+// Índices (protocolo já tem unique: true no schema)
 comunicadoSchema.index({ convenioId: 1 });
 comunicadoSchema.index({ tipo: 1 });
 

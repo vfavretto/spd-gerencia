@@ -14,8 +14,5 @@ const orgaoConcedenteSchema = new Schema<IOrgaoConcedente>(
   }
 );
 
-// Índices
-orgaoConcedenteSchema.index({ nome: 1 }, { unique: true });
-
 export const OrgaoConcedenteModel: Model<IOrgaoConcedente> = model<IOrgaoConcedente>('OrgaoConcedente', orgaoConcedenteSchema);
 

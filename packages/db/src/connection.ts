@@ -7,7 +7,8 @@ export async function connectDB(): Promise<typeof mongoose> {
     return mongoose;
   }
 
-  const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/spd-gerencia';
+  // Aceita MONGODB_URI ou DATABASE_URL (para compatibilidade com o backend)
+  const mongoUri = process.env.MONGODB_URI || process.env.DATABASE_URL || 'mongodb://localhost:27017/spd-gerencia';
 
   try {
     const connection = await mongoose.connect(mongoUri);

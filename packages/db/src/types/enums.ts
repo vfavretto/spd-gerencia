@@ -1,0 +1,65 @@
+// ==================== ENUMS ====================
+
+export enum UsuarioRole {
+  ADMINISTRADOR = 'ADMINISTRADOR',
+  ANALISTA = 'ANALISTA',
+  VISUALIZADOR = 'VISUALIZADOR'
+}
+
+export enum ConvenioStatus {
+  RASCUNHO = 'RASCUNHO',
+  EM_ANALISE = 'EM_ANALISE',
+  APROVADO = 'APROVADO',
+  EM_EXECUCAO = 'EM_EXECUCAO',
+  CONCLUIDO = 'CONCLUIDO',
+  CANCELADO = 'CANCELADO'
+}
+
+export enum TipoComunicado {
+  ENTRADA = 'ENTRADA',
+  SAIDA = 'SAIDA'
+}
+
+export enum TipoEvento {
+  REUNIAO = 'REUNIAO',
+  PRESTACAO_CONTAS = 'PRESTACAO_CONTAS',
+  ENTREGA_DOCUMENTOS = 'ENTREGA_DOCUMENTOS',
+  VENCIMENTO_ETAPA = 'VENCIMENTO_ETAPA',
+  OUTROS = 'OUTROS'
+}
+
+export enum ModalidadeRepasse {
+  CONVENIO = 'CONVENIO',
+  CONTRATO_REPASSE = 'CONTRATO_REPASSE',
+  TERMO_FOMENTO = 'TERMO_FOMENTO',
+  TERMO_COLABORACAO = 'TERMO_COLABORACAO'
+}
+
+export enum EsferaGoverno {
+  FEDERAL = 'FEDERAL',
+  ESTADUAL = 'ESTADUAL'
+}
+
+export enum ModalidadeLicitacao {
+  PREGAO = 'PREGAO',
+  TOMADA_PRECOS = 'TOMADA_PRECOS',
+  CONCORRENCIA = 'CONCORRENCIA',
+  DISPENSA = 'DISPENSA',
+  INEXIGIBILIDADE = 'INEXIGIBILIDADE'
+}
+
+export enum StatusPendencia {
+  ABERTA = 'ABERTA',
+  EM_ANDAMENTO = 'EM_ANDAMENTO',
+  RESOLVIDA = 'RESOLVIDA',
+  CANCELADA = 'CANCELADA'
+}
+
+export enum TipoAditivo {
+  PRAZO = 'PRAZO',
+  VALOR = 'VALOR',
+  PRAZO_E_VALOR = 'PRAZO_E_VALOR',
+  SUPRESSAO = 'SUPRESSAO',
+  ACRESCIMO = 'ACRESCIMO'
+}
+

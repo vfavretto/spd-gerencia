@@ -1,4 +1,4 @@
-import type { Convenio } from '@spd/db';
+import type { IConvenio } from '@spd/db';
 import type {
   CreateConvenioDTO,
   UpdateConvenioDTO
@@ -7,18 +7,18 @@ import type {
 export type ConvenioFilters = {
   search?: string;
   status?: string;
-  secretariaId?: number;
+  secretariaId?: string;
 };
 
 // Tipo leve para listagens (sem relacionamentos pesados)
 export type ConvenioLite = {
-  id: number;
+  id: string;
   codigo: string;
   titulo: string;
   objeto: string;
   status: string;
   valorGlobal: number | string;
-  dataFimVigencia: Date | null;
+  dataFimVigencia: Date | null | undefined;
   atualizadoEm: Date;
   secretaria: { nome: string; sigla: string | null } | null;
   _count: {
@@ -28,10 +28,10 @@ export type ConvenioLite = {
 };
 
 export interface ConvenioRepository {
-  list(filters?: ConvenioFilters): Promise<Convenio[]>;
+  list(filters?: ConvenioFilters): Promise<IConvenio[]>;
   listLite(filters?: ConvenioFilters): Promise<ConvenioLite[]>;
-  findById(id: number): Promise<Convenio | null>;
-  create(data: CreateConvenioDTO): Promise<Convenio>;
-  update(id: number, data: UpdateConvenioDTO): Promise<Convenio>;
-  delete(id: number): Promise<void>;
+  findById(id: string): Promise<IConvenio | null>;
+  create(data: CreateConvenioDTO): Promise<IConvenio>;
+  update(id: string, data: UpdateConvenioDTO): Promise<IConvenio>;
+  delete(id: string): Promise<void>;
 }

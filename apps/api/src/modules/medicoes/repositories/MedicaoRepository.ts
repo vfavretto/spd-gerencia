@@ -1,13 +1,12 @@
-import type { Medicao } from '@spd/db';
+import type { IMedicao } from '@spd/db';
 import type { CreateMedicaoDTO, UpdateMedicaoDTO } from '../dto/MedicaoDTO';
 
 export interface MedicaoRepository {
-  listByContrato(contratoId: number): Promise<Medicao[]>;
-  findById(id: number): Promise<Medicao | null>;
-  getNextNumeroMedicao(contratoId: number): Promise<number>;
-  getTotalMedido(contratoId: number): Promise<number>;
-  create(data: CreateMedicaoDTO): Promise<Medicao>;
-  update(id: number, data: UpdateMedicaoDTO): Promise<Medicao>;
-  delete(id: number): Promise<void>;
+  listByContrato(contratoId: string): Promise<IMedicao[]>;
+  findById(id: string): Promise<IMedicao | null>;
+  getNextNumeroMedicao(contratoId: string): Promise<number>;
+  getTotalMedido(contratoId: string): Promise<number>;
+  create(data: CreateMedicaoDTO): Promise<IMedicao>;
+  update(id: string, data: UpdateMedicaoDTO): Promise<IMedicao>;
+  delete(id: string): Promise<void>;
 }
-

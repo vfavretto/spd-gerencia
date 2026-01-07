@@ -1,12 +1,11 @@
-import type { ContratoExecucao } from '@spd/db';
+import type { IContratoExecucao } from '@spd/db';
 import type { CreateContratoDTO, UpdateContratoDTO } from '../dto/ContratoDTO';
 
 export interface ContratoRepository {
-  listByConvenio(convenioId: number): Promise<ContratoExecucao[]>;
-  findById(id: number): Promise<ContratoExecucao | null>;
-  findByIdWithMedicoes(id: number): Promise<ContratoExecucao | null>;
-  create(data: CreateContratoDTO): Promise<ContratoExecucao>;
-  update(id: number, data: UpdateContratoDTO): Promise<ContratoExecucao>;
-  delete(id: number): Promise<void>;
+  listByConvenio(convenioId: string): Promise<IContratoExecucao[]>;
+  findById(id: string): Promise<IContratoExecucao | null>;
+  findByIdWithMedicoes(id: string): Promise<IContratoExecucao | null>;
+  create(data: CreateContratoDTO): Promise<IContratoExecucao>;
+  update(id: string, data: UpdateContratoDTO): Promise<IContratoExecucao>;
+  delete(id: string): Promise<void>;
 }
-

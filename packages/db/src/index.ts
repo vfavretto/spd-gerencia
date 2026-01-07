@@ -1,5 +1,8 @@
-import { PrismaClient } from '@prisma/client';
+// Connection
+export { connectDB, disconnectDB, mongoose } from './connection';
 
-export const prisma = new PrismaClient();
+// Types (enums and interfaces)
+export * from './types';
 
-export * from '@prisma/client';
+// Models
+export * from './models';

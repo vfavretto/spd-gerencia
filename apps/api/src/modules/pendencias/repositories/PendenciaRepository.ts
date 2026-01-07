@@ -1,4 +1,4 @@
-import type { Pendencia } from '@spd/db';
+import type { IPendencia } from '@spd/db';
 import type { CreatePendenciaDTO, UpdatePendenciaDTO } from '../dto/PendenciaDTO';
 
 export type PendenciaFilters = {
@@ -7,11 +7,10 @@ export type PendenciaFilters = {
 };
 
 export interface PendenciaRepository {
-  listByConvenio(convenioId: number, filters?: PendenciaFilters): Promise<Pendencia[]>;
-  findById(id: number): Promise<Pendencia | null>;
-  countByStatus(convenioId: number): Promise<Record<string, number>>;
-  create(data: CreatePendenciaDTO): Promise<Pendencia>;
-  update(id: number, data: UpdatePendenciaDTO): Promise<Pendencia>;
-  delete(id: number): Promise<void>;
+  listByConvenio(convenioId: string, filters?: PendenciaFilters): Promise<IPendencia[]>;
+  findById(id: string): Promise<IPendencia | null>;
+  countByStatus(convenioId: string): Promise<Record<string, number>>;
+  create(data: CreatePendenciaDTO): Promise<IPendencia>;
+  update(id: string, data: UpdatePendenciaDTO): Promise<IPendencia>;
+  delete(id: string): Promise<void>;
 }
-

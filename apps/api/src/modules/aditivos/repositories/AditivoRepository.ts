@@ -1,13 +1,12 @@
-import type { Aditivo } from '@spd/db';
+import type { IAditivo } from '@spd/db';
 import type { CreateAditivoDTO, UpdateAditivoDTO } from '../dto/AditivoDTO';
 
 export interface AditivoRepository {
-  listByConvenio(convenioId: number): Promise<Aditivo[]>;
-  findById(id: number): Promise<Aditivo | null>;
-  getNextNumeroAditivo(convenioId: number): Promise<number>;
-  getUltimaVigencia(convenioId: number): Promise<Date | null>;
-  create(data: CreateAditivoDTO): Promise<Aditivo>;
-  update(id: number, data: UpdateAditivoDTO): Promise<Aditivo>;
-  delete(id: number): Promise<void>;
+  listByConvenio(convenioId: string): Promise<IAditivo[]>;
+  findById(id: string): Promise<IAditivo | null>;
+  getNextNumeroAditivo(convenioId: string): Promise<number>;
+  getUltimaVigencia(convenioId: string): Promise<Date | null>;
+  create(data: CreateAditivoDTO): Promise<IAditivo>;
+  update(id: string, data: UpdateAditivoDTO): Promise<IAditivo>;
+  delete(id: string): Promise<void>;
 }
-

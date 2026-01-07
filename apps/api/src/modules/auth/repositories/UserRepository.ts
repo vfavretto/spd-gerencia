@@ -1,13 +1,13 @@
-import type { Usuario, UsuarioRole } from '@spd/db';
+import type { IUsuario } from '@spd/db';
 
 export type CreateUserDTO = {
   nome: string;
   email: string;
   senha: string;
-  role?: UsuarioRole;
+  role?: 'ADMINISTRADOR' | 'ANALISTA' | 'VISUALIZADOR';
 };
 
 export interface UserRepository {
-  findByEmail(email: string): Promise<Usuario | null>;
-  create(data: CreateUserDTO): Promise<Usuario>;
+  findByEmail(email: string): Promise<IUsuario | null>;
+  create(data: CreateUserDTO): Promise<IUsuario>;
 }

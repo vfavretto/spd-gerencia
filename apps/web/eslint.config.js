@@ -19,5 +19,18 @@ export default defineConfig([
       ecmaVersion: 2020,
       globals: globals.browser,
     },
+    rules: {
+      // Componentes UI (shadcn/ui) exportam variants junto com componentes
+      'react-refresh/only-export-components': ['warn', { allowExportNames: ['badgeVariants', 'buttonVariants'] }],
+      // React Hook Form watch() é seguro de usar (warning do React Compiler beta)
+      'react-hooks/incompatible-library': 'off',
+    },
+  },
+  // Regras específicas para pasta de componentes UI
+  {
+    files: ['**/components/ui/**/*.{ts,tsx}'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
   },
 ])

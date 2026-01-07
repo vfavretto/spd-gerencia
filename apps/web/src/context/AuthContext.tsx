@@ -2,7 +2,6 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   useState
 } from 'react';
@@ -33,19 +32,26 @@ const defaultState: AuthState = {
   token: null
 };
 
-export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
-  const [state, setState] = useState<AuthState>(defaultState);
-  const [initializing, setInitializing] = useState(true);
-
-  useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
+// Função de inicialização síncrona para evitar setState em useEffect
+const getInitialState = (): AuthState => {
+  if (typeof window === 'undefined') return defaultState;
+  const stored = localStorage.getItem(STORAGE_KEY);
+  if (stored) {
+    try {
       const parsed: AuthState = JSON.parse(stored);
-      setState(parsed);
       setAuthToken(parsed.token);
+      return parsed;
+    } catch {
+      return defaultState;
     }
-    setInitializing(false);
-  }, []);
+  }
+  return defaultState;
+};
+
+export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
+  const [state, setState] = useState<AuthState>(getInitialState);
+  // Inicialização é síncrona agora, então começa como false
+  const [initializing] = useState(false);
 
   const login = useCallback(async ({ email, senha }: { email: string; senha: string }) => {
     const response = await authService.login(email, senha);

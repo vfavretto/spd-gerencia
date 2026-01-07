@@ -5,6 +5,8 @@ export const errorHandler = (
   err: Error,
   _req: Request,
   res: Response,
+  // NextFunction é necessário na assinatura para o Express reconhecer como error handler
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _next: NextFunction
 ) => {
   if (err instanceof AppError) {

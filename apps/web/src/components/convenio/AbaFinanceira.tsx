@@ -28,6 +28,10 @@ export function AbaFinanceira({ convenio, onUpdate }: Props) {
     saldoRendimentos: number | undefined;
     fichasOrcamentarias: string;
     observacoes: string;
+    // Novos campos
+    codigoReceita: string;
+    dataDeposito: string;
+    valorCPExclusiva: number | undefined;
   };
 
   const { register, handleSubmit, reset } = useForm<FinanceiroFormData>({
@@ -42,7 +46,13 @@ export function AbaFinanceira({ convenio, onUpdate }: Props) {
         ? Number(financeiro.saldoRendimentos)
         : undefined,
       fichasOrcamentarias: financeiro?.fichasOrcamentarias || '',
-      observacoes: financeiro?.observacoes || ''
+      observacoes: financeiro?.observacoes || '',
+      // Novos campos
+      codigoReceita: financeiro?.codigoReceita || '',
+      dataDeposito: financeiro?.dataDeposito?.split('T')[0] || '',
+      valorCPExclusiva: financeiro?.valorCPExclusiva
+        ? Number(financeiro.valorCPExclusiva)
+        : undefined
     }
   });
 
@@ -150,6 +160,26 @@ export function AbaFinanceira({ convenio, onUpdate }: Props) {
                 type="number"
                 step="0.01"
                 {...register('saldoRendimentos', {
+                  setValueAs: (v) => (v === '' ? undefined : Number(v))
+                })}
+              />
+            </div>
+          </div>
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="space-y-2">
+              <Label>Código da Receita</Label>
+              <Input {...register('codigoReceita')} placeholder="Código da receita" />
+            </div>
+            <div className="space-y-2">
+              <Label>Data do Depósito</Label>
+              <Input type="date" {...register('dataDeposito')} />
+            </div>
+            <div className="space-y-2">
+              <Label>CP Exclusiva/Recurso Próprio</Label>
+              <Input
+                type="number"
+                step="0.01"
+                {...register('valorCPExclusiva', {
                   setValueAs: (v) => (v === '' ? undefined : Number(v))
                 })}
               />

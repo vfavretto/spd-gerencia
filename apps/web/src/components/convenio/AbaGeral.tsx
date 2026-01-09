@@ -44,6 +44,10 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
     secretariaId: string | undefined;
     orgaoId: string | undefined;
     programaId: string | undefined;
+    // Novos campos de processo
+    processoSPD: string;
+    processoCreditoAdicional: string;
+    area: string;
   };
 
   const { register, handleSubmit, reset } = useForm<ConvenioFormData>({
@@ -67,7 +71,11 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
       modalidadeRepasse: convenio.modalidadeRepasse || '',
       secretariaId: convenio.secretaria?.id,
       orgaoId: convenio.orgao?.id,
-      programaId: convenio.programa?.id
+      programaId: convenio.programa?.id,
+      // Novos campos de processo
+      processoSPD: convenio.processoSPD || '',
+      processoCreditoAdicional: convenio.processoCreditoAdicional || '',
+      area: convenio.area || ''
     }
   });
 
@@ -197,6 +205,22 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
                 <option key={o.id} value={o.id}>{o.nome}</option>
               ))}
             </select>
+          </div>
+        </div>
+
+        {/* Campos de Processo */}
+        <div className="grid gap-4 md:grid-cols-3">
+          <div className="space-y-2">
+            <Label>Processo SPD</Label>
+            <Input {...register('processoSPD')} placeholder="Nº do processo SPD" />
+          </div>
+          <div className="space-y-2">
+            <Label>Processo Crédito Adicional</Label>
+            <Input {...register('processoCreditoAdicional')} placeholder="Nº do processo" />
+          </div>
+          <div className="space-y-2">
+            <Label>Área</Label>
+            <Input {...register('area')} placeholder="Área responsável" />
           </div>
         </div>
       </form>
@@ -329,6 +353,30 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
           </p>
         </div>
       </div>
+
+      {/* Processos */}
+      {(convenio.processoSPD || convenio.processoCreditoAdicional || convenio.area) && (
+        <div className="grid gap-4 md:grid-cols-3">
+          <div className="rounded-xl bg-slate-50 p-4">
+            <p className="text-xs text-slate-500 mb-1">Processo SPD</p>
+            <p className="font-medium text-slate-900">
+              {convenio.processoSPD || '—'}
+            </p>
+          </div>
+          <div className="rounded-xl bg-slate-50 p-4">
+            <p className="text-xs text-slate-500 mb-1">Processo Crédito Adicional</p>
+            <p className="font-medium text-slate-900">
+              {convenio.processoCreditoAdicional || '—'}
+            </p>
+          </div>
+          <div className="rounded-xl bg-slate-50 p-4">
+            <p className="text-xs text-slate-500 mb-1">Área</p>
+            <p className="font-medium text-slate-900">
+              {convenio.area || '—'}
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Emendas Parlamentares */}
       {convenio.emendas && convenio.emendas.length > 0 && (

@@ -16,7 +16,8 @@ const createSchema = z.object({
   status: statusEnum.optional(),
   prioridade: z.number().int().min(1).max(3).optional(),
   resolucao: z.string().nullable().optional(),
-  dataResolucao: z.coerce.date().nullable().optional()
+  dataResolucao: z.coerce.date().nullable().optional(),
+  orgaoResponsavel: z.string().nullable().optional()
 });
 
 const updateSchema = createSchema.partial();

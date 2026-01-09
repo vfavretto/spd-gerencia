@@ -11,6 +11,8 @@ import { contratoRoutes } from './contratos/http/contrato.routes';
 import { medicaoRoutes } from './medicoes/http/medicao.routes';
 import { pendenciaRoutes } from './pendencias/http/pendencia.routes';
 import { aditivoRoutes } from './aditivos/http/aditivo.routes';
+import { fichaOrcamentariaRoutes } from './fichasOrcamentarias/http/fichaOrcamentaria.routes';
+import { notaEmpenhoRoutes } from './notasEmpenho/http/notaEmpenho.routes';
 import { ensureAuthenticated } from '@shared/middlewares/ensureAuthenticated';
 
 export const routes = Router();
@@ -33,6 +35,8 @@ routes.use('/convenios/:convenioId/financeiro', financeiroRoutes);
 routes.use('/convenios/:convenioId/contratos', contratoRoutes);
 routes.use('/convenios/:convenioId/pendencias', pendenciaRoutes);
 routes.use('/convenios/:convenioId/aditivos', aditivoRoutes);
+routes.use('/convenios/:convenioId/fichas-orcamentarias', fichaOrcamentariaRoutes);
+routes.use('/convenios/:convenioId/notas-empenho', notaEmpenhoRoutes);
 
 // Rotas aninhadas de contratos
 routes.use('/contratos/:contratoId/medicoes', medicaoRoutes);

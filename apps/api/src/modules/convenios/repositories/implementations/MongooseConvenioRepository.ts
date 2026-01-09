@@ -34,7 +34,9 @@ const populateOptions = [
     match: { status: { $in: [StatusPendencia.ABERTA, StatusPendencia.EM_ANDAMENTO] } },
     options: { sort: { prioridade: 1 } }
   },
-  { path: 'aditivos', options: { sort: { numeroAditivo: 1 } } }
+  { path: 'aditivos', options: { sort: { numeroAditivo: 1 } } },
+  { path: 'fichasOrcamentarias', options: { sort: { tipo: 1, criadoEm: -1 } } },
+  { path: 'notasEmpenho', options: { sort: { tipo: 1, dataEmissao: -1 } } }
 ];
 
 export class MongooseConvenioRepository implements ConvenioRepository {

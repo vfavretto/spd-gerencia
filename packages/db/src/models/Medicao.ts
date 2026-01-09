@@ -11,6 +11,7 @@ const medicaoSchema = new Schema<IMedicao>(
     valorPago: { type: Number, default: null },
     observacoes: { type: String, default: null },
     situacao: { type: String, default: null },
+    processoMedicao: { type: String, default: null },
     contratoId: { type: Schema.Types.ObjectId, ref: 'ContratoExecucao', required: true }
   },
   {

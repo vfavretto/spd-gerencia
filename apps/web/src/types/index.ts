@@ -39,6 +39,9 @@ export type StatusPendencia = 'ABERTA' | 'EM_ANDAMENTO' | 'RESOLVIDA' | 'CANCELA
 
 export type TipoAditivo = 'PRAZO' | 'VALOR' | 'PRAZO_E_VALOR' | 'SUPRESSAO' | 'ACRESCIMO';
 
+export type TipoFichaOrcamentaria = 'REPASSE' | 'CONTRAPARTIDA' | 'EXCLUSIVO';
+export type TipoEmpenho = 'REPASSE' | 'CONTRAPARTIDA' | 'EXCLUSIVO';
+
 export interface Secretaria {
   id: string;
   _id?: string;
@@ -98,6 +101,10 @@ export interface Convenio {
   dataInicioVigencia?: string | null;
   dataFimVigencia?: string | null;
   dataPrestacaoContas?: string | null;
+  // Campos de processo
+  processoSPD?: string | null;
+  processoCreditoAdicional?: string | null;
+  area?: string | null;
   // Relacionamentos
   secretaria?: Secretaria;
   secretariaId?: string;
@@ -112,6 +119,8 @@ export interface Convenio {
   contratos?: ContratoExecucao[];
   pendencias?: Pendencia[];
   aditivos?: Aditivo[];
+  fichasOrcamentarias?: FichaOrcamentaria[];
+  notasEmpenho?: NotaEmpenho[];
 }
 
 export type TipoComunicado = 'ENTRADA' | 'SAIDA';
@@ -204,6 +213,10 @@ export interface FinanceiroContas {
   saldoRendimentos?: string | number | null;
   fichasOrcamentarias?: string | null;
   observacoes?: string | null;
+  // Novos campos
+  codigoReceita?: string | null;
+  dataDeposito?: string | null;
+  valorCPExclusiva?: string | number | null;
   convenioId: string;
 }
 
@@ -228,6 +241,10 @@ export interface ContratoExecucao {
   artRrt?: string | null;
   situacao?: string | null;
   observacoes?: string | null;
+  // Novos campos
+  cno?: string | null;
+  prazoExecucaoDias?: number | null;
+  dataTerminoExecucao?: string | null;
   convenioId: string;
   medicoes?: Medicao[];
 }
@@ -246,6 +263,7 @@ export interface Medicao {
   valorPago?: string | number | null;
   observacoes?: string | null;
   situacao?: string | null;
+  processoMedicao?: string | null;
   contratoId: string;
 }
 
@@ -271,6 +289,7 @@ export interface Pendencia {
   prioridade?: number | null;
   resolucao?: string | null;
   dataResolucao?: string | null;
+  orgaoResponsavel?: string | null;
   convenioId: string;
   criadoPorId?: string | null;
   criadoPor?: { id: string; nome: string } | null;
@@ -302,4 +321,69 @@ export interface VigenciaInfo {
   vigenciaAtual: string | null;
   vigenciaExpirada: boolean;
   diasRestantes: number | null;
+}
+
+// ==================== NOVAS INTERFACES (PLANILHA) ====================
+
+export interface FichaOrcamentaria {
+  id: string;
+  _id?: string;
+  numero: string;
+  tipo: TipoFichaOrcamentaria;
+  descricao?: string | null;
+  valor?: string | number | null;
+  convenioId: string;
+  criadoEm?: string;
+}
+
+export type CreateFichaOrcamentariaDTO = Omit<FichaOrcamentaria, 'id' | '_id' | 'convenioId' | 'criadoEm'>;
+export type UpdateFichaOrcamentariaDTO = Partial<CreateFichaOrcamentariaDTO>;
+
+export interface NotaEmpenho {
+  id: string;
+  _id?: string;
+  numero: string;
+  tipo: TipoEmpenho;
+  valor: string | number;
+  dataEmissao: string;
+  observacoes?: string | null;
+  convenioId: string;
+  criadoEm?: string;
+}
+
+export type CreateNotaEmpenhoDTO = Omit<NotaEmpenho, 'id' | '_id' | 'convenioId' | 'criadoEm'>;
+export type UpdateNotaEmpenhoDTO = Partial<CreateNotaEmpenhoDTO>;
+
+export interface ValoresVigentes {
+  // Valores originais
+  valorGlobal: number;
+  valorRepasseOriginal: number;
+  valorContrapartidaOriginal: number;
+  
+  // Valores após aditivos
+  valorRepasseVigente: number;
+  valorContrapartidaVigente: number;
+  valorGlobalVigente: number;
+  
+  // Valores de aditivos
+  totalAcrescimos: number;
+  totalSupressoes: number;
+  
+  // Valores executados
+  valorTotalContratado: number;
+  valorTotalMedido: number;
+  valorTotalPago: number;
+  
+  // Saldos
+  saldoRepasse: number;
+  saldoContrapartida: number;
+  saldoAContratar: number;
+  
+  // Percentuais
+  percentualExecutado: number;
+  percentualPago: number;
+  
+  // Última medição
+  dataUltimaMedicao: string | null;
+  diasSemMedicao: number | null;
 }

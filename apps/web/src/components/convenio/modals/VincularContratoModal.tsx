@@ -37,7 +37,11 @@ const schema = z.object({
   valorContrato: z.number({ required_error: 'Informe o valor do contrato' }).min(0),
   engenheiroResponsavel: z.string().optional(),
   creaEngenheiro: z.string().optional(),
-  artRrt: z.string().optional()
+  artRrt: z.string().optional(),
+  // Novos campos
+  cno: z.string().optional(),
+  prazoExecucaoDias: z.number().int().min(0).optional(),
+  dataTerminoExecucao: z.string().optional()
 });
 
 type FormData = z.infer<typeof schema>;
@@ -84,7 +88,10 @@ export function VincularContratoModal({ isOpen, onClose, convenioId, onSuccess }
         engenheiroResponsavel: data.engenheiroResponsavel || null,
         creaEngenheiro: data.creaEngenheiro || null,
         artRrt: data.artRrt || null,
-        contratadaCnpj: data.contratadaCnpj || null
+        contratadaCnpj: data.contratadaCnpj || null,
+        cno: data.cno || null,
+        prazoExecucaoDias: data.prazoExecucaoDias || null,
+        dataTerminoExecucao: data.dataTerminoExecucao || null
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['convenio', String(convenioId)] });
@@ -260,6 +267,36 @@ export function VincularContratoModal({ isOpen, onClose, convenioId, onSuccess }
                   {...register('artRrt')}
                   placeholder="Nº da ART ou RRT"
                 />
+              </div>
+            </div>
+          </div>
+
+          {/* Seção: Execução */}
+          <div className="space-y-4">
+            <h4 className="font-medium">Dados de Execução</h4>
+            <div className="grid gap-4 md:grid-cols-3">
+              <div className="space-y-2">
+                <Label htmlFor="cno">CNO</Label>
+                <Input
+                  id="cno"
+                  {...register('cno')}
+                  placeholder="Cadastro Nacional de Obras"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="prazoExecucaoDias">Prazo de Execução (dias)</Label>
+                <Input
+                  type="number"
+                  id="prazoExecucaoDias"
+                  {...register('prazoExecucaoDias', {
+                    setValueAs: (v) => (v === '' ? undefined : Number(v))
+                  })}
+                  placeholder="Ex: 180"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="dataTerminoExecucao">Término Previsto</Label>
+                <Input type="date" id="dataTerminoExecucao" {...register('dataTerminoExecucao')} />
               </div>
             </div>
           </div>

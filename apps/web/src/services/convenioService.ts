@@ -1,5 +1,5 @@
 import { api } from '../lib/api';
-import type { Convenio, ConvenioStatus } from '../types';
+import type { Convenio, ConvenioStatus, ValoresVigentes } from '../types';
 
 export type ConvenioFilters = {
   search?: string;
@@ -35,5 +35,10 @@ export const convenioService = {
 
   async remove(id: string): Promise<void> {
     await api.delete(`/convenios/${id}`);
+  },
+
+  async getValoresVigentes(id: string): Promise<ValoresVigentes> {
+    const { data } = await api.get<ValoresVigentes>(`/convenios/${id}/valores-vigentes`);
+    return data;
   }
 };

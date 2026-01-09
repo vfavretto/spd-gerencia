@@ -16,22 +16,26 @@ const modalidadeLicitacaoEnum = z.enum([
 ]);
 
 const createSchema = z.object({
-  numProcessoLicitatorio: z.string().optional(),
-  modalidadeLicitacao: modalidadeLicitacaoEnum.optional(),
-  numeroContrato: z.string().optional(),
-  contratadaCnpj: z.string().optional(),
-  contratadaNome: z.string().optional(),
+  numProcessoLicitatorio: z.string().optional().nullable(),
+  modalidadeLicitacao: modalidadeLicitacaoEnum.optional().nullable(),
+  numeroContrato: z.string().optional().nullable(),
+  contratadaCnpj: z.string().optional().nullable(),
+  contratadaNome: z.string().optional().nullable(),
   dataAssinatura: z.coerce.date().nullable().optional(),
   dataVigenciaInicio: z.coerce.date().nullable().optional(),
   dataVigenciaFim: z.coerce.date().nullable().optional(),
   dataOIS: z.coerce.date().nullable().optional(),
-  valorContrato: z.number().min(0).optional(),
-  valorExecutado: z.number().min(0).optional(),
-  engenheiroResponsavel: z.string().optional(),
-  creaEngenheiro: z.string().optional(),
-  artRrt: z.string().optional(),
-  situacao: z.string().optional(),
-  observacoes: z.string().optional(),
+  valorContrato: z.number().min(0).optional().nullable(),
+  valorExecutado: z.number().min(0).optional().nullable(),
+  engenheiroResponsavel: z.string().optional().nullable(),
+  creaEngenheiro: z.string().optional().nullable(),
+  artRrt: z.string().optional().nullable(),
+  situacao: z.string().optional().nullable(),
+  observacoes: z.string().optional().nullable(),
+  // Novos campos
+  cno: z.string().optional().nullable(),
+  prazoExecucaoDias: z.number().int().min(0).optional().nullable(),
+  dataTerminoExecucao: z.coerce.date().nullable().optional(),
   convenioId: z.string()
 });
 

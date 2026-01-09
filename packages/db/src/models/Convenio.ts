@@ -74,6 +74,11 @@ const convenioSchema = new Schema<IConvenio>(
     dataFimVigencia: { type: Date, default: null },
     dataPrestacaoContas: { type: Date, default: null },
 
+    // Campos de processo
+    processoSPD: { type: String, default: null },
+    processoCreditoAdicional: { type: String, default: null },
+    area: { type: String, default: null },
+
     // Relacionamentos (referencias)
     secretariaId: { type: Schema.Types.ObjectId, ref: 'Secretaria', required: true },
     orgaoId: { type: Schema.Types.ObjectId, ref: 'OrgaoConcedente', default: null },
@@ -147,6 +152,18 @@ convenioSchema.virtual('pendencias', {
 
 convenioSchema.virtual('aditivos', {
   ref: 'Aditivo',
+  localField: '_id',
+  foreignField: 'convenioId'
+});
+
+convenioSchema.virtual('fichasOrcamentarias', {
+  ref: 'FichaOrcamentaria',
+  localField: '_id',
+  foreignField: 'convenioId'
+});
+
+convenioSchema.virtual('notasEmpenho', {
+  ref: 'NotaEmpenho',
   localField: '_id',
   foreignField: 'convenioId'
 });

@@ -8,7 +8,9 @@ import type {
   EsferaGoverno,
   ModalidadeLicitacao,
   StatusPendencia,
-  TipoAditivo
+  TipoAditivo,
+  TipoFichaOrcamentaria,
+  TipoEmpenho
 } from './enums';
 
 // ==================== BASE INTERFACES ====================
@@ -108,6 +110,31 @@ export interface IFinanceiroContas extends BaseDocument {
   saldoRendimentos?: number | null;
   fichasOrcamentarias?: string | null;
   observacoes?: string | null;
+  // Novos campos
+  codigoReceita?: string | null;
+  dataDeposito?: Date | null;
+  valorCPExclusiva?: number | null;
+  convenioId: Types.ObjectId;
+}
+
+// ==================== FICHA ORCAMENTARIA ====================
+
+export interface IFichaOrcamentaria extends BaseDocument {
+  numero: string;
+  tipo: TipoFichaOrcamentaria;
+  descricao?: string | null;
+  valor?: number | null;
+  convenioId: Types.ObjectId;
+}
+
+// ==================== NOTA EMPENHO ====================
+
+export interface INotaEmpenho extends BaseDocument {
+  numero: string;
+  tipo: TipoEmpenho;
+  valor: number;
+  dataEmissao: Date;
+  observacoes?: string | null;
   convenioId: Types.ObjectId;
 }
 
@@ -122,6 +149,7 @@ export interface IMedicao extends BaseDocument {
   valorPago?: number | null;
   observacoes?: string | null;
   situacao?: string | null;
+  processoMedicao?: string | null;
   contratoId: Types.ObjectId;
 }
 
@@ -144,6 +172,10 @@ export interface IContratoExecucao extends BaseDocument {
   artRrt?: string | null;
   situacao?: string | null;
   observacoes?: string | null;
+  // Novos campos
+  cno?: string | null;
+  prazoExecucaoDias?: number | null;
+  dataTerminoExecucao?: Date | null;
   convenioId: Types.ObjectId;
   // Virtual populate
   medicoes?: IMedicao[];
@@ -159,6 +191,7 @@ export interface IPendencia extends BaseDocument {
   prioridade?: number | null;
   resolucao?: string | null;
   dataResolucao?: Date | null;
+  orgaoResponsavel?: string | null;
   convenioId: Types.ObjectId;
   criadoPorId?: Types.ObjectId | null;
   // Virtual populate
@@ -246,6 +279,11 @@ export interface IConvenio extends BaseDocument {
   dataInicioVigencia?: Date | null;
   dataFimVigencia?: Date | null;
   dataPrestacaoContas?: Date | null;
+
+  // Campos de processo
+  processoSPD?: string | null;
+  processoCreditoAdicional?: string | null;
+  area?: string | null;
   
   // Relacionamentos (referencias)
   secretariaId: Types.ObjectId;
@@ -267,5 +305,7 @@ export interface IConvenio extends BaseDocument {
   contratos?: IContratoExecucao[];
   pendencias?: IPendencia[];
   aditivos?: IAditivo[];
+  fichasOrcamentarias?: IFichaOrcamentaria[];
+  notasEmpenho?: INotaEmpenho[];
 }
 

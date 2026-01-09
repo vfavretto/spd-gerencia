@@ -1,0 +1,10 @@
+export type CreateNotaEmpenhoDTO = {
+  numero: string;
+  tipo: 'REPASSE' | 'CONTRAPARTIDA' | 'EXCLUSIVO';
+  valor: number;
+  dataEmissao: Date | string;
+  observacoes?: string;
+  convenioId: string;
+};
+
+export type UpdateNotaEmpenhoDTO = Partial<Omit<CreateNotaEmpenhoDTO, 'convenioId'>>;

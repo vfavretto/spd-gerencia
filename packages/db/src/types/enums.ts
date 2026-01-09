@@ -63,3 +63,14 @@ export enum TipoAditivo {
   ACRESCIMO = 'ACRESCIMO'
 }
 
+export enum TipoFichaOrcamentaria {
+  REPASSE = 'REPASSE',
+  CONTRAPARTIDA = 'CONTRAPARTIDA',
+  EXCLUSIVO = 'EXCLUSIVO'
+}
+
+export enum TipoEmpenho {
+  REPASSE = 'REPASSE',
+  CONTRAPARTIDA = 'CONTRAPARTIDA',
+  EXCLUSIVO = 'EXCLUSIVO'
+}

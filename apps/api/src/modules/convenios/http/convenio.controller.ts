@@ -6,6 +6,7 @@ import { GetConvenioUseCase } from '../useCases/GetConvenioUseCase';
 import { CreateConvenioUseCase } from '../useCases/CreateConvenioUseCase';
 import { UpdateConvenioUseCase } from '../useCases/UpdateConvenioUseCase';
 import { DeleteConvenioUseCase } from '../useCases/DeleteConvenioUseCase';
+import { GetValoresVigentesUseCase } from '../useCases/GetValoresVigentesUseCase';
 
 const commonSchema = {
   codigo: z.string().min(1),
@@ -80,5 +81,12 @@ export class ConvenioController {
     const useCase = new DeleteConvenioUseCase(this.repository);
     await useCase.execute(id);
     return res.status(204).send();
+  }
+
+  async valoresVigentes(req: Request, res: Response) {
+    const id = req.params.id;
+    const useCase = new GetValoresVigentesUseCase(this.repository);
+    const valores = await useCase.execute(id);
+    return res.json(valores);
   }
 }

@@ -15,6 +15,7 @@ const pendenciaSchema = new Schema<IPendencia>(
     prioridade: { type: Number, default: 2 },
     resolucao: { type: String, default: null },
     dataResolucao: { type: Date, default: null },
+    orgaoResponsavel: { type: String, default: null },
     convenioId: { type: Schema.Types.ObjectId, ref: 'Convenio', required: true },
     criadoPorId: { type: Schema.Types.ObjectId, ref: 'Usuario', default: null }
   },

@@ -181,6 +181,45 @@ export function AbaEngenharia({ convenio, onUpdate }: Props) {
                     )}
                   </div>
 
+                  {/* Informações de Execução */}
+                  {(contrato.cno || contrato.prazoExecucaoDias || contrato.dataTerminoExecucao) && (
+                    <div className="grid gap-4 md:grid-cols-3 mt-2 pt-2 border-t border-slate-100">
+                      {contrato.cno && (
+                        <div className="flex items-start gap-2">
+                          <FileText className="h-4 w-4 text-slate-400 mt-0.5" />
+                          <div>
+                            <p className="text-xs text-slate-500">CNO</p>
+                            <p className="text-sm font-medium text-slate-900">
+                              {contrato.cno}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                      {contrato.prazoExecucaoDias && (
+                        <div className="flex items-start gap-2">
+                          <Calendar className="h-4 w-4 text-slate-400 mt-0.5" />
+                          <div>
+                            <p className="text-xs text-slate-500">Prazo de Execução</p>
+                            <p className="text-sm font-medium text-slate-900">
+                              {contrato.prazoExecucaoDias} dias
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                      {contrato.dataTerminoExecucao && (
+                        <div className="flex items-start gap-2">
+                          <Calendar className="h-4 w-4 text-slate-400 mt-0.5" />
+                          <div>
+                            <p className="text-xs text-slate-500">Término Previsto</p>
+                            <p className="text-sm font-medium text-slate-900">
+                              {formatDateBR(contrato.dataTerminoExecucao)}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                   {/* Lista de Medições */}
                   <div className="mt-4">
                     <div className="flex items-center justify-between mb-2">

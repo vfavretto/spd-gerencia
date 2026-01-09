@@ -58,6 +58,7 @@ export function AbaDiario({ convenio, onUpdate }: Props) {
     prazo: string;
     prioridade: number;
     status: StatusPendencia;
+    orgaoResponsavel: string;
   };
 
   const { register, handleSubmit, reset } = useForm<PendenciaFormData>({
@@ -66,18 +67,20 @@ export function AbaDiario({ convenio, onUpdate }: Props) {
       responsavel: '',
       prazo: '',
       prioridade: 2,
-      status: 'ABERTA'
+      status: 'ABERTA',
+      orgaoResponsavel: ''
     }
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: { descricao: string; responsavel?: string; prazo?: string; prioridade: number; status: StatusPendencia }) => 
+    mutationFn: (data: { descricao: string; responsavel?: string; prazo?: string; prioridade: number; status: StatusPendencia; orgaoResponsavel?: string }) => 
       pendenciaService.create(convenio.id, {
         descricao: data.descricao,
         responsavel: data.responsavel || null,
         prazo: data.prazo || null,
         prioridade: data.prioridade,
-        status: data.status
+        status: data.status,
+        orgaoResponsavel: data.orgaoResponsavel || null
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['convenio', String(convenio.id)] });
@@ -239,6 +242,11 @@ export function AbaDiario({ convenio, onUpdate }: Props) {
                           {pendencia.responsavel}
                         </span>
                       )}
+                      {pendencia.orgaoResponsavel && (
+                        <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs">
+                          {pendencia.orgaoResponsavel}
+                        </span>
+                      )}
                       {pendencia.prazo && (
                         <span className="flex items-center gap-1">
                           <Calendar className="h-3.5 w-3.5" />
@@ -316,12 +324,19 @@ export function AbaDiario({ convenio, onUpdate }: Props) {
               />
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-4 md:grid-cols-3">
               <div className="space-y-2">
                 <Label>Responsável</Label>
                 <Input
                   {...register('responsavel')}
                   placeholder="Quem deve resolver?"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Órgão Responsável</Label>
+                <Input
+                  {...register('orgaoResponsavel')}
+                  placeholder="Ex: SPD, Secretaria X"
                 />
               </div>
               <div className="space-y-2">

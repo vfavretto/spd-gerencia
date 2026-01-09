@@ -28,7 +28,8 @@ const schema = z.object({
   dataPagamento: z.string().optional(),
   valorPago: z.number().optional(),
   observacoes: z.string().optional(),
-  situacao: z.string().optional()
+  situacao: z.string().optional(),
+  processoMedicao: z.string().optional()
 });
 
 type FormData = z.infer<typeof schema>;
@@ -75,6 +76,7 @@ export function NovaMedicaoModal({ isOpen, onClose, contratoId, convenioId, data
         percentualFisico: data.percentualFisico || null,
         observacoes: data.observacoes || null,
         situacao: data.situacao || 'em análise',
+        processoMedicao: data.processoMedicao || null,
         numeroMedicao: 0 // Será calculado pelo backend
       }),
     onSuccess: () => {
@@ -237,14 +239,24 @@ export function NovaMedicaoModal({ isOpen, onClose, contratoId, convenioId, data
             </div>
           </div>
 
-          {/* Situação */}
-          <div className="space-y-2">
-            <Label htmlFor="situacao">Situação</Label>
-            <select className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm" {...register('situacao')}>
-              <option value="em análise">Em Análise</option>
-              <option value="aprovada">Aprovada</option>
-              <option value="rejeitada">Rejeitada</option>
-            </select>
+          {/* Situação e Processo */}
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="situacao">Situação</Label>
+              <select className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm" {...register('situacao')}>
+                <option value="em análise">Em Análise</option>
+                <option value="aprovada">Aprovada</option>
+                <option value="rejeitada">Rejeitada</option>
+              </select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="processoMedicao">Nº do Processo</Label>
+              <Input
+                id="processoMedicao"
+                {...register('processoMedicao')}
+                placeholder="Nº do processo da medição"
+              />
+            </div>
           </div>
 
           {/* Observações */}

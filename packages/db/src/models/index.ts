@@ -9,6 +9,8 @@ export { ComunicadoModel } from './Comunicado';
 export { EventoAgendaModel } from './EventoAgenda';
 export { EmendaParlamentarModel } from './EmendaParlamentar';
 export { FinanceiroContasModel } from './FinanceiroContas';
+export { FichaOrcamentariaModel } from './FichaOrcamentaria';
+export { NotaEmpenhoModel } from './NotaEmpenho';
 export { ContratoExecucaoModel } from './ContratoExecucao';
 export { MedicaoModel } from './Medicao';
 export { PendenciaModel } from './Pendencia';

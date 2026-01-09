@@ -9,14 +9,15 @@ import { DeleteMedicaoUseCase } from '../useCases/DeleteMedicaoUseCase';
 import { GetSaldoContratoUseCase } from '../useCases/GetSaldoContratoUseCase';
 
 const createSchema = z.object({
-  numeroMedicao: z.number().int().positive().optional(),
+  numeroMedicao: z.number().int().min(0).optional(),
   dataMedicao: z.coerce.date(),
-  percentualFisico: z.number().min(0).max(100).optional(),
+  percentualFisico: z.number().min(0).max(100).optional().nullable(),
   valorMedido: z.number().min(0),
   dataPagamento: z.coerce.date().nullable().optional(),
-  valorPago: z.number().min(0).optional(),
-  observacoes: z.string().optional(),
-  situacao: z.string().optional(),
+  valorPago: z.number().min(0).optional().nullable(),
+  observacoes: z.string().optional().nullable(),
+  situacao: z.string().optional().nullable(),
+  processoMedicao: z.string().optional().nullable(),
   contratoId: z.string()
 });
 

@@ -10,6 +10,10 @@ const financeiroContasSchema = new Schema<IFinanceiroContas>(
     saldoRendimentos: { type: Number, default: null },
     fichasOrcamentarias: { type: String, default: null },
     observacoes: { type: String, default: null },
+    // Novos campos
+    codigoReceita: { type: String, default: null },
+    dataDeposito: { type: Date, default: null },
+    valorCPExclusiva: { type: Number, default: null },
     convenioId: { type: Schema.Types.ObjectId, ref: 'Convenio', required: true, unique: true }
   },
   {

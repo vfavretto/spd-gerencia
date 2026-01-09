@@ -24,6 +24,10 @@ const contratoExecucaoSchema = new Schema<IContratoExecucao>(
     artRrt: { type: String, default: null },
     situacao: { type: String, default: null },
     observacoes: { type: String, default: null },
+    // Novos campos
+    cno: { type: String, default: null },
+    prazoExecucaoDias: { type: Number, default: null },
+    dataTerminoExecucao: { type: Date, default: null },
     convenioId: { type: Schema.Types.ObjectId, ref: 'Convenio', required: true }
   },
   {

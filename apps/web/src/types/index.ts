@@ -177,6 +177,58 @@ export interface DashboardOverview {
   }>;
 }
 
+export interface DashboardResumo {
+  // Visão financeira
+  totalPorEsfera: { esfera: string | null; total: number; quantidade: number }[];
+  conveniosPorStatus: { status: string; total: number }[];
+  somaRepasses: number;
+  somaContrapartidas: number;
+  valorGlobalTotal: number;
+  
+  // Execução
+  execucao: {
+    valorTotalContratado: number;
+    valorTotalMedido: number;
+    valorTotalPago: number;
+    percentualMedido: number;
+    percentualPago: number;
+  };
+  
+  // Pendências
+  pendencias: {
+    abertas: number;
+    emAndamento: number;
+    vencidasHoje: number;
+    total: number;
+  };
+  
+  // Contratos
+  contratos: {
+    total: number;
+    emExecucao: number;
+    concluidos: number;
+    valorTotal: number;
+  };
+  
+  // Alertas
+  alertas: {
+    conveniosVencendo30Dias: number;
+    conveniosSemMedicao60Dias: number;
+    pendenciasAtrasadas: number;
+    contratosSemMedicaoRecente: number;
+  };
+  
+  // Top convênios por valor
+  topConvenios: {
+    id: string;
+    codigo: string;
+    titulo: string;
+    valorGlobal: number;
+    status: string;
+    percentualExecutado: number;
+  }[];
+}
+
 export interface Catalogs {
   secretarias: Secretaria[];
   orgaos: OrgaoConcedente[];

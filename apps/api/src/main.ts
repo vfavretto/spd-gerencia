@@ -6,7 +6,7 @@ import { createServer } from './server';
 import { env } from '@config/env';
 
 async function bootstrap() {
-  // Conectar ao MongoDB antes de iniciar o servidor
+  // Conectar ao MySQL antes de iniciar o servidor
   await connectDB();
 
   const app = createServer();

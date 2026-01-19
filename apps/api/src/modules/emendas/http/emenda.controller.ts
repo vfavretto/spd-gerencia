@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { z } from 'zod';
-import { MongooseEmendaRepository } from '../repositories/implementations/MongooseEmendaRepository';
+import { PrismaEmendaRepository } from '../repositories/implementations/PrismaEmendaRepository';
 import { ListEmendasUseCase } from '../useCases/ListEmendasUseCase';
 import { GetEmendaUseCase } from '../useCases/GetEmendaUseCase';
 import { CreateEmendaUseCase } from '../useCases/CreateEmendaUseCase';
@@ -9,20 +9,20 @@ import { DeleteEmendaUseCase } from '../useCases/DeleteEmendaUseCase';
 
 const createSchema = z.object({
   nomeParlamentar: z.string().min(1),
-  partido: z.string().optional(),
-  codigoEmenda: z.string().optional(),
-  funcao: z.string().optional(),
-  subfuncao: z.string().optional(),
-  programa: z.string().optional(),
-  valorIndicado: z.number().min(0).optional(),
-  anoEmenda: z.number().int().optional(),
+  partido: z.string().nullable().optional(),
+  codigoEmenda: z.string().nullable().optional(),
+  funcao: z.string().nullable().optional(),
+  subfuncao: z.string().nullable().optional(),
+  programa: z.string().nullable().optional(),
+  valorIndicado: z.number().min(0).nullable().optional(),
+  anoEmenda: z.number().int().nullable().optional(),
   convenioId: z.string()
 });
 
 const updateSchema = createSchema.omit({ convenioId: true }).partial();
 
 export class EmendaController {
-  private readonly repository = new MongooseEmendaRepository();
+  private readonly repository = new PrismaEmendaRepository();
 
   async index(req: Request, res: Response) {
     const convenioId = req.params.convenioId;

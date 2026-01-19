@@ -39,7 +39,7 @@ export class AuthenticateUserUseCase {
       { email: user.email, role: user.role },
       env.jwtSecret,
       {
-        subject: user._id.toString(),
+        subject: user.id,
         expiresIn: '8h'
       }
     );
@@ -47,7 +47,7 @@ export class AuthenticateUserUseCase {
     return {
       token,
       usuario: {
-        id: user._id.toString(),
+        id: user.id,
         nome: user.nome,
         email: user.email,
         role: user.role

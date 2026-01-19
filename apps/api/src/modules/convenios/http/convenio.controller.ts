@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { z } from 'zod';
-import { MongooseConvenioRepository } from '../repositories/implementations/MongooseConvenioRepository';
+import { PrismaConvenioRepository } from '../repositories/implementations/PrismaConvenioRepository';
 import { ListConveniosLiteUseCase } from '../useCases/ListConveniosLiteUseCase';
 import { GetConvenioUseCase } from '../useCases/GetConvenioUseCase';
 import { CreateConvenioUseCase } from '../useCases/CreateConvenioUseCase';
@@ -41,7 +41,7 @@ const createSchema = z.object(commonSchema);
 const updateSchema = createSchema.partial();
 
 export class ConvenioController {
-  private readonly repository = new MongooseConvenioRepository();
+  private readonly repository = new PrismaConvenioRepository();
 
   async index(req: Request, res: Response) {
     const search = req.query.search?.toString();

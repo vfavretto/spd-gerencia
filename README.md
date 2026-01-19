@@ -1,6 +1,6 @@
 # Sistema de Gerenciamento Interno – Secretaria de Planejamento e Desenvolvimento (Votorantim)
 
-Monorepo contendo o backend (Node.js + Express + Mongoose), frontend (React + Vite + Tailwind) e pacote compartilhado de banco de dados para apoiar o acompanhamento de convênios, comunicados e agenda institucional da Prefeitura Municipal de Votorantim.
+Monorepo contendo o backend (Node.js + Express + Prisma), frontend (React + Vite + Tailwind) e pacote compartilhado de banco de dados para apoiar o acompanhamento de convênios, comunicados e agenda institucional da Prefeitura Municipal de Votorantim.
 
 ## Estrutura
 
@@ -10,7 +10,7 @@ Monorepo contendo o backend (Node.js + Express + Mongoose), frontend (React + Vi
 │   ├── api   # API REST (Express + Clean Architecture)
 │   └── web   # Frontend React (Vite, Tailwind, React Query)
 ├── packages
-│   └── db    # Models Mongoose e seed compartilhado
+│   └── db    # Prisma schema e seed compartilhado
 ├── tsconfig.base.json
 └── README.md
 ```
@@ -18,7 +18,7 @@ Monorepo contendo o backend (Node.js + Express + Mongoose), frontend (React + Vi
 ## Pré-requisitos
 
 - Node.js 18+
-- MongoDB (local ou remoto)
+- Docker (para subir o MySQL)
 
 ## Configuração inicial
 
@@ -28,24 +28,35 @@ Monorepo contendo o backend (Node.js + Express + Mongoose), frontend (React + Vi
 cp .env.example .env
 ```
 
-2. Configure a string `MONGODB_URI` com as credenciais do MongoDB:
+2. Configure a string `DATABASE_URL` com as credenciais do MySQL:
 
 ```
-MONGODB_URI="mongodb://localhost:27017/spd_gerencia"
+DATABASE_URL="mysql://spd_user:spd_pass@localhost:3306/spd_gerencia"
 ```
 
-3. Instale as dependências do monorepo:
+3. Suba o banco MySQL via Docker:
+
+```bash
+docker compose up -d
+```
+
+4. Instale as dependências do monorepo:
 
 ```bash
 npm install
 ```
 
-4. Compile o pacote de banco de dados e execute a seed inicial:
+5. Gere o Prisma Client e rode as migrations:
 
 ```bash
-# Compila os models do Mongoose
-npm --workspace packages/db run build
+cd packages/db
+npx prisma generate
+npx prisma migrate dev
+```
 
+6. (Opcional) Execute a seed inicial:
+
+```bash
 # Popula dados base (usuários, secretarias, convênios exemplo, etc.)
 npm --workspace packages/db run seed
 ```
@@ -75,7 +86,7 @@ npm --workspace packages/db run seed
 
 ### Backend
 - **Node.js** + **Express** - API REST
-- **Mongoose** - ODM para MongoDB
+- **Prisma** - ORM para MySQL
 - **JWT** - Autenticação
 - **TypeScript** - Tipagem estática
 
@@ -86,7 +97,7 @@ npm --workspace packages/db run seed
 - **React Router** - Navegação
 
 ### Banco de Dados
-- **MongoDB** - Banco NoSQL orientado a documentos
+- **MySQL 8** - Banco relacional (via Docker)
 
 ## Próximos passos sugeridos
 

@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { z } from 'zod';
-import { MongooseFichaOrcamentariaRepository } from '../repositories/implementations/MongooseFichaOrcamentariaRepository';
+import { PrismaFichaOrcamentariaRepository } from '../repositories/implementations/PrismaFichaOrcamentariaRepository';
 import { ListFichasOrcamentariasUseCase } from '../useCases/ListFichasOrcamentariasUseCase';
 import { GetFichaOrcamentariaUseCase } from '../useCases/GetFichaOrcamentariaUseCase';
 import { CreateFichaOrcamentariaUseCase } from '../useCases/CreateFichaOrcamentariaUseCase';
@@ -10,15 +10,15 @@ import { DeleteFichaOrcamentariaUseCase } from '../useCases/DeleteFichaOrcamenta
 const createSchema = z.object({
   numero: z.string().min(1),
   tipo: z.enum(['REPASSE', 'CONTRAPARTIDA', 'EXCLUSIVO']),
-  descricao: z.string().optional(),
-  valor: z.number().min(0).optional(),
+  descricao: z.string().nullable().optional(),
+  valor: z.number().min(0).nullable().optional(),
   convenioId: z.string()
 });
 
 const updateSchema = createSchema.omit({ convenioId: true }).partial();
 
 export class FichaOrcamentariaController {
-  private readonly repository = new MongooseFichaOrcamentariaRepository();
+  private readonly repository = new PrismaFichaOrcamentariaRepository();
 
   async index(req: Request, res: Response) {
     const convenioId = req.params.convenioId;

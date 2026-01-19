@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { z } from 'zod';
-import { MongooseEventoRepository } from '../repositories/implementations/MongooseEventoRepository';
+import { PrismaEventoRepository } from '../repositories/implementations/PrismaEventoRepository';
 import { ListEventosUseCase } from '../useCases/ListEventosUseCase';
 import { GetEventoUseCase } from '../useCases/GetEventoUseCase';
 import { CreateEventoUseCase } from '../useCases/CreateEventoUseCase';
@@ -9,7 +9,7 @@ import { DeleteEventoUseCase } from '../useCases/DeleteEventoUseCase';
 
 const createSchema = z.object({
   titulo: z.string().min(3),
-  descricao: z.string().optional(),
+  descricao: z.string().nullable().optional(),
   tipo: z
     .enum([
       'REUNIAO',
@@ -18,18 +18,19 @@ const createSchema = z.object({
       'VENCIMENTO_ETAPA',
       'OUTROS'
     ])
+    .nullable()
     .optional(),
   dataInicio: z.coerce.date(),
   dataFim: z.coerce.date().nullable().optional(),
-  local: z.string().optional(),
-  responsavel: z.string().optional(),
+  local: z.string().nullable().optional(),
+  responsavel: z.string().nullable().optional(),
   convenioId: z.string().nullable().optional()
 });
 
 const updateSchema = createSchema.partial();
 
 export class AgendaController {
-  private readonly repository = new MongooseEventoRepository();
+  private readonly repository = new PrismaEventoRepository();
 
   async index(_req: Request, res: Response) {
     const useCase = new ListEventosUseCase(this.repository);

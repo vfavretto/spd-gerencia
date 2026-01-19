@@ -1,4 +1,3 @@
-import type { Types, Document } from 'mongoose';
 import type {
   UsuarioRole,
   ConvenioStatus,
@@ -15,8 +14,8 @@ import type {
 
 // ==================== BASE INTERFACES ====================
 
-export interface BaseDocument extends Document {
-  _id: Types.ObjectId;
+export interface BaseDocument {
+  id: string;
   criadoEm: Date;
   atualizadoEm: Date;
 }
@@ -65,7 +64,7 @@ export interface IFonteRecurso extends BaseDocument {
 // ==================== CONVENIO ANEXO ====================
 
 export interface IConvenioAnexo {
-  _id: Types.ObjectId;
+  id: string;
   nome: string;
   url: string;
   tipo?: string | null;
@@ -75,7 +74,7 @@ export interface IConvenioAnexo {
 // ==================== ETAPA CONVENIO ====================
 
 export interface IEtapaConvenio {
-  _id: Types.ObjectId;
+  id: string;
   titulo: string;
   descricao?: string | null;
   dataPrevista?: Date | null;
@@ -97,7 +96,7 @@ export interface IEmendaParlamentar extends BaseDocument {
   programa?: string | null;
   valorIndicado?: number | null;
   anoEmenda?: number | null;
-  convenioId: Types.ObjectId;
+  convenioId: string;
 }
 
 // ==================== FINANCEIRO CONTAS ====================
@@ -114,7 +113,7 @@ export interface IFinanceiroContas extends BaseDocument {
   codigoReceita?: string | null;
   dataDeposito?: Date | null;
   valorCPExclusiva?: number | null;
-  convenioId: Types.ObjectId;
+  convenioId: string;
 }
 
 // ==================== FICHA ORCAMENTARIA ====================
@@ -124,7 +123,7 @@ export interface IFichaOrcamentaria extends BaseDocument {
   tipo: TipoFichaOrcamentaria;
   descricao?: string | null;
   valor?: number | null;
-  convenioId: Types.ObjectId;
+  convenioId: string;
 }
 
 // ==================== NOTA EMPENHO ====================
@@ -135,7 +134,7 @@ export interface INotaEmpenho extends BaseDocument {
   valor: number;
   dataEmissao: Date;
   observacoes?: string | null;
-  convenioId: Types.ObjectId;
+  convenioId: string;
 }
 
 // ==================== MEDICAO ====================
@@ -150,7 +149,7 @@ export interface IMedicao extends BaseDocument {
   observacoes?: string | null;
   situacao?: string | null;
   processoMedicao?: string | null;
-  contratoId: Types.ObjectId;
+  contratoId: string;
 }
 
 // ==================== CONTRATO EXECUCAO ====================
@@ -176,7 +175,7 @@ export interface IContratoExecucao extends BaseDocument {
   cno?: string | null;
   prazoExecucaoDias?: number | null;
   dataTerminoExecucao?: Date | null;
-  convenioId: Types.ObjectId;
+  convenioId: string;
   // Virtual populate
   medicoes?: IMedicao[];
 }
@@ -192,8 +191,8 @@ export interface IPendencia extends BaseDocument {
   resolucao?: string | null;
   dataResolucao?: Date | null;
   orgaoResponsavel?: string | null;
-  convenioId: Types.ObjectId;
-  criadoPorId?: Types.ObjectId | null;
+  convenioId: string;
+  criadoPorId?: string | null;
   // Virtual populate
   criadoPor?: IUsuario | null;
 }
@@ -210,7 +209,8 @@ export interface IAditivo extends BaseDocument {
   motivo?: string | null;
   justificativa?: string | null;
   observacoes?: string | null;
-  convenioId: Types.ObjectId;
+  convenioId: string;
+  contratoId?: string | null;
 }
 
 // ==================== COMUNICADO ====================
@@ -226,8 +226,8 @@ export interface IComunicado extends BaseDocument {
   destino?: string | null;
   responsavel?: string | null;
   arquivoUrl?: string | null;
-  convenioId?: Types.ObjectId | null;
-  criadoPorId?: Types.ObjectId | null;
+  convenioId?: string | null;
+  criadoPorId?: string | null;
   // Virtual populate
   convenio?: IConvenio | null;
   criadoPor?: IUsuario | null;
@@ -243,7 +243,7 @@ export interface IEventoAgenda extends BaseDocument {
   dataFim?: Date | null;
   local?: string | null;
   responsavel?: string | null;
-  convenioId?: Types.ObjectId | null;
+  convenioId?: string | null;
   // Virtual populate
   convenio?: IConvenio | null;
 }
@@ -286,10 +286,10 @@ export interface IConvenio extends BaseDocument {
   area?: string | null;
   
   // Relacionamentos (referencias)
-  secretariaId: Types.ObjectId;
-  orgaoId?: Types.ObjectId | null;
-  programaId?: Types.ObjectId | null;
-  fonteId?: Types.ObjectId | null;
+  secretariaId: string;
+  orgaoId?: string | null;
+  programaId?: string | null;
+  fonteId?: string | null;
   
   // Subdocumentos embedded
   anexos: IConvenioAnexo[];

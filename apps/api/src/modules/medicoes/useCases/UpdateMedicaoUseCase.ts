@@ -1,4 +1,4 @@
-import { ContratoExecucaoModel, type IMedicao } from '@spd/db';
+import { prisma, type IMedicao } from '@spd/db';
 import type { UpdateMedicaoDTO } from '../dto/MedicaoDTO';
 import type { MedicaoRepository } from '../repositories/MedicaoRepository';
 import { AppError } from '@shared/errors/AppError';
@@ -14,12 +14,13 @@ export class UpdateMedicaoUseCase {
 
     // Se está atualizando o valor, validar contra o contrato
     if (data.valorMedido !== undefined) {
-      const contrato = await ContratoExecucaoModel.findById(medicaoAtual.contratoId)
-        .select('valorContrato')
-        .exec();
+      const contrato = await prisma.contratoExecucao.findUnique({
+        where: { id: medicaoAtual.contratoId },
+        select: { valorContrato: true }
+      });
 
       if (contrato) {
-        const totalMedido = await this.repository.getTotalMedido(medicaoAtual.contratoId.toString());
+        const totalMedido = await this.repository.getTotalMedido(medicaoAtual.contratoId);
         const valorAtualMedicao = Number(medicaoAtual.valorMedido);
         const valorContrato = Number(contrato.valorContrato ?? 0);
         
@@ -37,9 +38,10 @@ export class UpdateMedicaoUseCase {
 
     // Se está atualizando a data, validar contra OIS
     if (data.dataMedicao) {
-      const contrato = await ContratoExecucaoModel.findById(medicaoAtual.contratoId)
-        .select('dataOIS')
-        .exec();
+      const contrato = await prisma.contratoExecucao.findUnique({
+        where: { id: medicaoAtual.contratoId },
+        select: { dataOIS: true }
+      });
 
       if (contrato?.dataOIS && data.dataMedicao < contrato.dataOIS) {
         throw new AppError(

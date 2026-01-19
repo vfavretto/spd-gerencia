@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { z } from 'zod';
-import { MongooseUserRepository } from '../repositories/implementations/MongooseUserRepository';
+import { PrismaUserRepository } from '../repositories/implementations/PrismaUserRepository';
 import { AuthenticateUserUseCase } from '../useCases/AuthenticateUserUseCase';
 
 const loginSchema = z.object({
@@ -12,7 +12,7 @@ export class AuthController {
   async login(req: Request, res: Response) {
     const payload = loginSchema.parse(req.body);
 
-    const repository = new MongooseUserRepository();
+    const repository = new PrismaUserRepository();
     const useCase = new AuthenticateUserUseCase(repository);
 
     const result = await useCase.execute(payload);

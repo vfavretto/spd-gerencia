@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { z } from 'zod';
-import { MongooseNotaEmpenhoRepository } from '../repositories/implementations/MongooseNotaEmpenhoRepository';
+import { PrismaNotaEmpenhoRepository } from '../repositories/implementations/PrismaNotaEmpenhoRepository';
 import { ListNotasEmpenhoUseCase } from '../useCases/ListNotasEmpenhoUseCase';
 import { GetNotaEmpenhoUseCase } from '../useCases/GetNotaEmpenhoUseCase';
 import { CreateNotaEmpenhoUseCase } from '../useCases/CreateNotaEmpenhoUseCase';
@@ -12,14 +12,14 @@ const createSchema = z.object({
   tipo: z.enum(['REPASSE', 'CONTRAPARTIDA', 'EXCLUSIVO']),
   valor: z.number().min(0),
   dataEmissao: z.string().or(z.date()),
-  observacoes: z.string().optional(),
+  observacoes: z.string().nullable().optional(),
   convenioId: z.string()
 });
 
 const updateSchema = createSchema.omit({ convenioId: true }).partial();
 
 export class NotaEmpenhoController {
-  private readonly repository = new MongooseNotaEmpenhoRepository();
+  private readonly repository = new PrismaNotaEmpenhoRepository();
 
   async index(req: Request, res: Response) {
     const convenioId = req.params.convenioId;

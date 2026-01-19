@@ -1,22 +1,21 @@
-import mongoose from 'mongoose';
+import { PrismaClient } from '@prisma/client';
 
 let isConnected = false;
 
-export async function connectDB(): Promise<typeof mongoose> {
+export const prisma = new PrismaClient();
+
+export async function connectDB(): Promise<PrismaClient> {
   if (isConnected) {
-    return mongoose;
+    return prisma;
   }
 
-  // Aceita MONGODB_URI ou DATABASE_URL (para compatibilidade com o backend)
-  const mongoUri = process.env.MONGODB_URI || process.env.DATABASE_URL || 'mongodb://localhost:27017/spd-gerencia';
-
   try {
-    const connection = await mongoose.connect(mongoUri);
+    await prisma.$connect();
     isConnected = true;
-    console.log('✅ MongoDB conectado com sucesso');
-    return connection;
+    console.log('✅ MySQL conectado com sucesso (Prisma)');
+    return prisma;
   } catch (error) {
-    console.error('❌ Erro ao conectar ao MongoDB:', error);
+    console.error('❌ Erro ao conectar ao MySQL:', error);
     throw error;
   }
 }
@@ -27,14 +26,12 @@ export async function disconnectDB(): Promise<void> {
   }
 
   try {
-    await mongoose.disconnect();
+    await prisma.$disconnect();
     isConnected = false;
-    console.log('🔌 MongoDB desconectado');
+    console.log('🔌 MySQL desconectado');
   } catch (error) {
-    console.error('❌ Erro ao desconectar do MongoDB:', error);
+    console.error('❌ Erro ao desconectar do MySQL:', error);
     throw error;
   }
 }
-
-export { mongoose };
 

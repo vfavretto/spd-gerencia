@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { z } from 'zod';
-import { MongooseAditivoRepository } from '../repositories/implementations/MongooseAditivoRepository';
+import { PrismaAditivoRepository } from '../repositories/implementations/PrismaAditivoRepository';
 import { ListAditivosUseCase } from '../useCases/ListAditivosUseCase';
 import { GetAditivoUseCase } from '../useCases/GetAditivoUseCase';
 import { CreateAditivoUseCase } from '../useCases/CreateAditivoUseCase';
@@ -17,22 +17,22 @@ const tipoAditivoEnum = z.enum([
 ]);
 
 const createSchema = z.object({
-  numeroAditivo: z.number().int().positive().optional(),
+  numeroAditivo: z.number().int().positive().nullable().optional(),
   tipoAditivo: tipoAditivoEnum,
   dataAssinatura: z.coerce.date().nullable().optional(),
   novaVigencia: z.coerce.date().nullable().optional(),
-  valorAcrescimo: z.number().min(0).optional(),
-  valorSupressao: z.number().min(0).optional(),
-  motivo: z.string().optional(),
-  justificativa: z.string().optional(),
-  observacoes: z.string().optional(),
+  valorAcrescimo: z.number().min(0).nullable().optional(),
+  valorSupressao: z.number().min(0).nullable().optional(),
+  motivo: z.string().nullable().optional(),
+  justificativa: z.string().nullable().optional(),
+  observacoes: z.string().nullable().optional(),
   convenioId: z.string()
 });
 
 const updateSchema = createSchema.omit({ convenioId: true, numeroAditivo: true }).partial();
 
 export class AditivoController {
-  private readonly repository = new MongooseAditivoRepository();
+  private readonly repository = new PrismaAditivoRepository();
 
   async index(req: Request, res: Response) {
     const convenioId = req.params.convenioId;

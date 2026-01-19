@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { z } from 'zod';
-import { MongooseComunicadoRepository } from '../repositories/implementations/MongooseComunicadoRepository';
+import { PrismaComunicadoRepository } from '../repositories/implementations/PrismaComunicadoRepository';
 import { ListComunicadosUseCase } from '../useCases/ListComunicadosUseCase';
 import { GetComunicadoUseCase } from '../useCases/GetComunicadoUseCase';
 import { CreateComunicadoUseCase } from '../useCases/CreateComunicadoUseCase';
@@ -10,20 +10,20 @@ import { DeleteComunicadoUseCase } from '../useCases/DeleteComunicadoUseCase';
 const createSchema = z.object({
   protocolo: z.string(),
   assunto: z.string().min(3),
-  conteudo: z.string().optional(),
+  conteudo: z.string().nullable().optional(),
   tipo: z.enum(['ENTRADA', 'SAIDA']),
-  status: z.string().optional(),
-  origem: z.string().optional(),
-  destino: z.string().optional(),
-  responsavel: z.string().optional(),
-  arquivoUrl: z.string().url().optional().or(z.literal('')).transform(val => val === '' ? undefined : val),
+  status: z.string().nullable().optional(),
+  origem: z.string().nullable().optional(),
+  destino: z.string().nullable().optional(),
+  responsavel: z.string().nullable().optional(),
+  arquivoUrl: z.string().url().nullable().optional().or(z.literal('')).transform(val => val === '' ? null : val),
   convenioId: z.string().nullable().optional()
 });
 
 const updateSchema = createSchema.partial();
 
 export class ComunicadoController {
-  private readonly repository = new MongooseComunicadoRepository();
+  private readonly repository = new PrismaComunicadoRepository();
 
   async index(_req: Request, res: Response) {
     const useCase = new ListComunicadosUseCase(this.repository);

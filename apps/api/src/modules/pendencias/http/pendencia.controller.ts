@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { z } from 'zod';
-import { MongoosePendenciaRepository } from '../repositories/implementations/MongoosePendenciaRepository';
+import { PrismaPendenciaRepository } from '../repositories/implementations/PrismaPendenciaRepository';
 import { ListPendenciasUseCase } from '../useCases/ListPendenciasUseCase';
 import { GetPendenciaUseCase } from '../useCases/GetPendenciaUseCase';
 import { CreatePendenciaUseCase } from '../useCases/CreatePendenciaUseCase';
@@ -23,7 +23,7 @@ const createSchema = z.object({
 const updateSchema = createSchema.partial();
 
 export class PendenciaController {
-  private readonly repository = new MongoosePendenciaRepository();
+  private readonly repository = new PrismaPendenciaRepository();
 
   async index(req: Request, res: Response) {
     const convenioId = req.params.convenioId;

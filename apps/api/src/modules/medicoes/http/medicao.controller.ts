@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { z } from 'zod';
-import { MongooseMedicaoRepository } from '../repositories/implementations/MongooseMedicaoRepository';
+import { PrismaMedicaoRepository } from '../repositories/implementations/PrismaMedicaoRepository';
 import { ListMedicoesUseCase } from '../useCases/ListMedicoesUseCase';
 import { GetMedicaoUseCase } from '../useCases/GetMedicaoUseCase';
 import { CreateMedicaoUseCase } from '../useCases/CreateMedicaoUseCase';
@@ -24,7 +24,7 @@ const createSchema = z.object({
 const updateSchema = createSchema.omit({ contratoId: true, numeroMedicao: true }).partial();
 
 export class MedicaoController {
-  private readonly repository = new MongooseMedicaoRepository();
+  private readonly repository = new PrismaMedicaoRepository();
 
   async index(req: Request, res: Response) {
     const contratoId = req.params.contratoId;

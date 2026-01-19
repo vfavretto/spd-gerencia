@@ -1,22 +1,22 @@
 import type { Request, Response } from 'express';
 import { z } from 'zod';
-import { MongooseFinanceiroRepository } from '../repositories/implementations/MongooseFinanceiroRepository';
+import { PrismaFinanceiroRepository } from '../repositories/implementations/PrismaFinanceiroRepository';
 import { GetFinanceiroUseCase } from '../useCases/GetFinanceiroUseCase';
 import { UpsertFinanceiroUseCase } from '../useCases/UpsertFinanceiroUseCase';
 import { DeleteFinanceiroUseCase } from '../useCases/DeleteFinanceiroUseCase';
 
 const upsertSchema = z.object({
-  banco: z.string().optional(),
-  agencia: z.string().optional(),
-  contaBancaria: z.string().optional(),
-  valorLiberadoTotal: z.number().min(0).optional(),
-  saldoRendimentos: z.number().min(0).optional(),
-  fichasOrcamentarias: z.string().optional(),
-  observacoes: z.string().optional()
+  banco: z.string().nullable().optional(),
+  agencia: z.string().nullable().optional(),
+  contaBancaria: z.string().nullable().optional(),
+  valorLiberadoTotal: z.number().min(0).nullable().optional(),
+  saldoRendimentos: z.number().min(0).nullable().optional(),
+  fichasOrcamentarias: z.string().nullable().optional(),
+  observacoes: z.string().nullable().optional()
 });
 
 export class FinanceiroController {
-  private readonly repository = new MongooseFinanceiroRepository();
+  private readonly repository = new PrismaFinanceiroRepository();
 
   async show(req: Request, res: Response) {
     const convenioId = req.params.convenioId;

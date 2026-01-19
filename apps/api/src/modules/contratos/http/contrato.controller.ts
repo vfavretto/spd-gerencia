@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { z } from 'zod';
-import { MongooseContratoRepository } from '../repositories/implementations/MongooseContratoRepository';
+import { PrismaContratoRepository } from '../repositories/implementations/PrismaContratoRepository';
 import { ListContratosUseCase } from '../useCases/ListContratosUseCase';
 import { GetContratoUseCase } from '../useCases/GetContratoUseCase';
 import { CreateContratoUseCase } from '../useCases/CreateContratoUseCase';
@@ -42,7 +42,7 @@ const createSchema = z.object({
 const updateSchema = createSchema.omit({ convenioId: true }).partial();
 
 export class ContratoController {
-  private readonly repository = new MongooseContratoRepository();
+  private readonly repository = new PrismaContratoRepository();
 
   async index(req: Request, res: Response) {
     const convenioId = req.params.convenioId;

@@ -1,10 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Edit2, Save, X, CalendarCheck, FileSignature } from 'lucide-react';
+import { Edit2, Save, X, CalendarCheck, FileSignature, Plus, Pencil, Trash2, Landmark } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import type { Convenio } from '@/types';
+import type { Convenio, EmendaParlamentar } from '@/types';
 import { convenioService } from '@/services/convenioService';
 import { configService } from '@/services/configService';
+import { emendaService } from '@/services/emendaService';
 import { formatDateBR } from '@/lib/date';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,6 +13,7 @@ import { Label } from '@/components/ui/label';
 import { toast } from '@/components/ui/toaster';
 import { RegistrarAssinaturaModal } from './modals/RegistrarAssinaturaModal';
 import { AditivarModal } from './modals/AditivarModal';
+import { EmendaModal } from './modals/EmendaModal';
 
 type Props = {
   convenio: Convenio;
@@ -23,6 +25,36 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const [showAssinaturaModal, setShowAssinaturaModal] = useState(false);
   const [showAditivoModal, setShowAditivoModal] = useState(false);
+  const [showEmendaModal, setShowEmendaModal] = useState(false);
+  const [emendaParaEditar, setEmendaParaEditar] = useState<EmendaParlamentar | null>(null);
+
+  const deletarEmendaMutation = useMutation({
+    mutationFn: (emendaId: string) => emendaService.delete(convenio.id, emendaId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['convenio', String(convenio.id)] });
+      toast.success('Emenda removida com sucesso');
+      onUpdate();
+    },
+    onError: () => {
+      toast.error('Erro ao remover emenda');
+    }
+  });
+
+  const handleEditarEmenda = (emenda: EmendaParlamentar) => {
+    setEmendaParaEditar(emenda);
+    setShowEmendaModal(true);
+  };
+
+  const handleNovaEmenda = () => {
+    setEmendaParaEditar(null);
+    setShowEmendaModal(true);
+  };
+
+  const handleDeletarEmenda = (emenda: EmendaParlamentar) => {
+    if (confirm(`Deseja realmente remover a emenda do parlamentar "${emenda.nomeParlamentar}"?`)) {
+      deletarEmendaMutation.mutate(emenda.id);
+    }
+  };
 
   const { data: catalogs } = useQuery({
     queryKey: ['catalogs'],
@@ -379,36 +411,87 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
       )}
 
       {/* Emendas Parlamentares */}
-      {convenio.emendas && convenio.emendas.length > 0 && (
-        <div className="space-y-3">
-          <h4 className="font-medium text-slate-700">Emendas Parlamentares</h4>
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h4 className="font-medium text-slate-700 flex items-center gap-2">
+            <Landmark className="h-4 w-4" />
+            Emendas Parlamentares
+          </h4>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleNovaEmenda}
+            className="border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+          >
+            <Plus className="h-4 w-4 mr-1" />
+            Adicionar Emenda
+          </Button>
+        </div>
+        
+        {convenio.emendas && convenio.emendas.length > 0 ? (
           <div className="space-y-2">
             {convenio.emendas.map((emenda) => (
               <div
                 key={emenda.id}
-                className="flex items-center justify-between rounded-xl bg-slate-50 px-4 py-3"
+                className="flex items-center justify-between rounded-xl bg-slate-50 px-4 py-3 group"
               >
-                <div>
+                <div className="flex-1">
                   <p className="font-medium text-slate-900">
                     {emenda.nomeParlamentar}
                   </p>
                   <p className="text-xs text-slate-500">
-                    {emenda.partido} {emenda.codigoEmenda && `• ${emenda.codigoEmenda}`}
+                    {emenda.partido && <span>{emenda.partido}</span>}
+                    {emenda.anoEmenda && <span> • Ano: {emenda.anoEmenda}</span>}
+                    {emenda.codigoEmenda && <span> • Código: {emenda.codigoEmenda}</span>}
                   </p>
                 </div>
-                {emenda.valorIndicado && (
-                  <span className="text-sm font-semibold text-emerald-600">
-                    {new Intl.NumberFormat('pt-BR', {
-                      style: 'currency',
-                      currency: 'BRL'
-                    }).format(Number(emenda.valorIndicado))}
-                  </span>
-                )}
+                <div className="flex items-center gap-3">
+                  {emenda.valorIndicado && (
+                    <span className="text-sm font-semibold text-emerald-600">
+                      {new Intl.NumberFormat('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL'
+                      }).format(Number(emenda.valorIndicado))}
+                    </span>
+                  )}
+                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                      onClick={() => handleEditarEmenda(emenda)}
+                      className="p-1.5 rounded-lg text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 transition"
+                      title="Editar emenda"
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDeletarEmenda(emenda)}
+                      className="p-1.5 rounded-lg text-slate-500 hover:text-red-600 hover:bg-red-50 transition"
+                      title="Remover emenda"
+                      disabled={deletarEmendaMutation.isPending}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
-        </div>
-      )}
+        ) : (
+          <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50/50 p-6 text-center">
+            <Landmark className="h-8 w-8 text-slate-300 mx-auto mb-2" />
+            <p className="text-sm text-slate-500">
+              Nenhuma emenda parlamentar vinculada a este convênio.
+            </p>
+            <Button
+              variant="link"
+              size="sm"
+              onClick={handleNovaEmenda}
+              className="mt-2 text-emerald-600"
+            >
+              Adicionar primeira emenda
+            </Button>
+          </div>
+        )}
+      </div>
 
       {/* Aditivos */}
       {convenio.aditivos && convenio.aditivos.length > 0 && (
@@ -454,6 +537,17 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
         convenioId={convenio.id}
         vigenciaAtual={convenio.dataFimVigencia}
         numeroAditivos={numeroAditivos}
+        onSuccess={onUpdate}
+      />
+
+      <EmendaModal
+        isOpen={showEmendaModal}
+        onClose={() => {
+          setShowEmendaModal(false);
+          setEmendaParaEditar(null);
+        }}
+        convenioId={convenio.id}
+        emenda={emendaParaEditar}
         onSuccess={onUpdate}
       />
     </div>

@@ -6,44 +6,44 @@ Este documento descreve o roteiro para refatorar o projeto `spd-gerencia`, migra
 
 O objetivo desta fase é garantir a integridade relacional dos dados que hoje estão soltos na planilha.
 
-- [ ] **Configuração do Ambiente**
-    - [ ] Subir container Docker com MySQL 8.0+.
-    - [ ] Configurar variáveis de ambiente (`DATABASE_URL`) no `.env`.
-    - [ ] Instalar Prisma ORM (ou TypeORM) para gerenciar o schema e migrações.
+- [x] **Configuração do Ambiente**
+    - [x] Subir container Docker com MySQL 8.0+.
+    - [x] Configurar variáveis de ambiente (`DATABASE_URL`) no `.env`.
+    - [x] Instalar Prisma ORM (ou TypeORM) para gerenciar o schema e migrações.
         ```bash
         npm install prisma --save-dev
         npm install @prisma/client
         npx prisma init
         ```
 
-- [ ] **Modelagem do Banco de Dados (Schema)**
-    - [ ] Criar tabela `Convenios` (Dados base, objeto, prazos, status).
-    - [ ] Criar tabela `FontesRecurso` (Federal, Estadual, Financiamento).
-    - [ ] Criar tabela `Financeiro` (Relacionamento 1:N com Convênio).
+- [x] **Modelagem do Banco de Dados (Schema)**
+    - [x] Criar tabela `Convenios` (Dados base, objeto, prazos, status).
+    - [x] Criar tabela `FontesRecurso` (Federal, Estadual, Financiamento).
+    - [x] Criar tabela `Financeiro` (Relacionamento 1:N com Convênio).
         - *Campos cruciais:* `ficha_orcamentaria`, `nota_empenho`, `data_emissao`, `valor`, `tipo` (RP, CP, Exclusiva).
-    - [ ] Criar tabela `Contratos` (Relacionamento 1:N com Convênio).
-    - [ ] Criar tabela `Medicoes` (Relacionamento 1:N com Contrato).
-    - [ ] Criar tabela `Aditivos` (Vigência e Valor).
-    - [ ] Criar tabela `HistoricoStatus` (Para auditoria de mudanças de fase).
+    - [x] Criar tabela `Contratos` (Relacionamento 1:N com Convênio).
+    - [x] Criar tabela `Medicoes` (Relacionamento 1:N com Contrato).
+    - [x] Criar tabela `Aditivos` (Vigência e Valor).
+    - [x] Criar tabela `HistoricoStatus` (Para auditoria de mudanças de fase).
 
-- [ ] **Refatoração da Camada de Dados (Repositories)**
-    - [ ] Criar implementação `MysqlConvenioRepository` (substituindo Mongoose).
-    - [ ] Criar implementação `MysqlFinanceiroRepository`.
-    - [ ] Criar implementação `MysqlMedicaoRepository`.
-    - [ ] Atualizar injeção de dependência no `server.ts` ou container DI para usar os repositórios MySQL.
+- [x] **Refatoração da Camada de Dados (Repositories)**
+    - [x] Criar implementação `MysqlConvenioRepository` (substituindo Mongoose).
+    - [x] Criar implementação `MysqlFinanceiroRepository`.
+    - [x] Criar implementação `MysqlMedicaoRepository`.
+    - [x] Atualizar injeção de dependência no `server.ts` ou container DI para usar os repositórios MySQL.
 
 ## ⚙️ Fase 2: Backend e Regras de Negócio
 
 Implementação da lógica que o Excel não consegue fazer ou faz manualmente.
 
-- [ ] **Máquina de Estados (Status Flow)**
+- [] **Máquina de Estados (Status Flow)**
     - [ ] Implementar validação de transição de status.
         - *Ex:* Impedir mudança para "Concluído" se houver saldo pendente ou prestação de contas aberta.
-    - [ ] Mapear as abas do Excel ("Em Análise", "Em Andamento", "Suspensiva") para status no banco.
+    - [x] Mapear as abas do Excel ("Em Análise", "Em Andamento", "Suspensiva") para status no banco.
 
-- [ ] **Módulo Financeiro Avançado**
-    - [ ] Implementar cálculo de saldo automático (Backend deve somar Empenhos - Medições Pagas).
-    - [ ] Criar validação para não permitir medição maior que o saldo do contrato.
+- [x] **Módulo Financeiro Avançado**
+    - [x] Implementar cálculo de saldo automático (Backend deve somar Empenhos - Medições Pagas).
+    - [x] Criar validação para não permitir medição maior que o saldo do contrato.
 
 - [ ] **Serviço de Monitoramento (Cron Jobs)**
     - [ ] Instalar `node-cron` ou configurar filas (BullMQ).
@@ -65,7 +65,7 @@ Melhorar a apresentação para lidar com a densidade de dados do Excel.
     - [ ] Melhorar inputs de moeda (R$) para evitar erros de digitação.
 
 - [ ] **Indicadores Visuais**
-    - [ ] Implementar Badges coloridas condicionais na tabela:
+    - [x] Implementar Badges coloridas condicionais na tabela:
         - *Vermelho:* Prazos vencendo ou "Dias sem movimentação" > 30.
         - *Verde:* Concluídos.
         - *Amarelo:* Em análise/Pendências.

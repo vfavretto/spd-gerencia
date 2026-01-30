@@ -10,7 +10,7 @@ const usuarioSchema = new Schema<IUsuario>(
     role: {
       type: String,
       enum: Object.values(UsuarioRole),
-      default: UsuarioRole.ANALISTA
+      default: UsuarioRole.ESTAGIARIO
     },
     ativo: { type: Boolean, default: true }
   },

@@ -6,26 +6,36 @@
 
 @layer base {
   :root {
-    --background: 210 40% 98%;
+    --background: 210 20% 98%;
     --foreground: 222 47% 11%;
     --card: 0 0% 100%;
     --card-foreground: 222 47% 11%;
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
-    --primary: 239 84% 67%;
+    
+    /* Azul Azure (Pastel) - Confiança & Segurança */
+    --primary: 212 70% 60%;
     --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96%;
+    
+    /* Amarelo Sol (Pastel) - Atenção & Destaque */
+    --secondary: 45 90% 70%;
     --secondary-foreground: 222 47% 11%;
-    --muted: 210 40% 96%;
+    
+    --muted: 210 20% 96%;
     --muted-foreground: 215 16% 47%;
-    --accent: 210 40% 96%;
+    
+    /* Verde Menta - Saúde & Renovação */
+    --accent: 150 50% 65%;
     --accent-foreground: 222 47% 11%;
+    
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
+    
     --border: 214 32% 91%;
     --input: 214 32% 91%;
-    --ring: 239 84% 67%;
-    --radius: 0.75rem;
+    --ring: 212 70% 60%;
+    
+    --radius: 1rem;
   }
 }
 
@@ -57,7 +67,7 @@ body {
 }
 
 .glass-panel {
-  @apply rounded-3xl border border-white/30 bg-white/70 shadow-card backdrop-blur-2xl;
+  @apply rounded-3xl border border-white/40 bg-white/60 shadow-lg backdrop-blur-xl;
 }
 
 .form-label {
@@ -65,7 +75,7 @@ body {
 }
 
 .form-input {
-  @apply mt-1 w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition focus:border-primary-500 focus:ring-2 focus:ring-primary-100;
+  @apply mt-1 w-full rounded-2xl border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20;
 }
 
 .section-title {

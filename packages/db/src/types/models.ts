@@ -9,7 +9,8 @@ import type {
   StatusPendencia,
   TipoAditivo,
   TipoFichaOrcamentaria,
-  TipoEmpenho
+  TipoEmpenho,
+  AcaoAuditoria
 } from './enums';
 
 // ==================== BASE INTERFACES ====================
@@ -307,5 +308,37 @@ export interface IConvenio extends BaseDocument {
   aditivos?: IAditivo[];
   fichasOrcamentarias?: IFichaOrcamentaria[];
   notasEmpenho?: INotaEmpenho[];
+  snapshots?: IConvenioSnapshot[];
+}
+
+// ==================== AUDIT LOG ====================
+
+export interface IAuditLog {
+  id: string;
+  usuarioId: string;
+  usuarioNome: string;
+  usuarioEmail: string;
+  acao: AcaoAuditoria;
+  entidade: string;
+  entidadeId: string;
+  dadosAntigos?: Record<string, unknown> | null;
+  dadosNovos?: Record<string, unknown> | null;
+  ip?: string | null;
+  userAgent?: string | null;
+  criadoEm: Date;
+}
+
+// ==================== CONVENIO SNAPSHOT ====================
+
+export interface IConvenioSnapshot {
+  id: string;
+  convenioId: string;
+  versao: number;
+  dados: Record<string, unknown>;
+  criadoPorId?: string | null;
+  criadoPorNome?: string | null;
+  motivoSnapshot?: string | null;
+  criadoEm: Date;
+  convenio?: IConvenio;
 }
 

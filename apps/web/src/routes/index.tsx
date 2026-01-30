@@ -1,14 +1,14 @@
-import { Navigate, Route, Routes } from 'react-router-dom';
-import { DashboardLayout } from '../components/layout/DashboardLayout';
-import { CalendarioPage } from '../pages/CalendarioPage';
-import { ComunicadosPage } from '../pages/ComunicadosPage';
-import { ConfiguracoesPage } from '../pages/ConfiguracoesPage';
-import { ConveniosCadastroPage } from '../pages/ConveniosCadastroPage';
-import { ConvenioDetalhesPage } from '../pages/ConvenioDetalhesPage';
-import { ConveniosListaPage } from '../pages/ConveniosListaPage';
-import { DashboardPage } from '../pages/DashboardPage';
-import { LoginPage } from '../pages/LoginPage';
-import { ProtectedRoute } from './ProtectedRoute';
+import { Navigate, Route, Routes } from "react-router-dom";
+import { DashboardLayout } from "@/modules/shared/layouts/DashboardLayout";
+import { CalendarioPage } from "@/modules/agenda/pages/CalendarioPage";
+import { ComunicadosPage } from "@/modules/comunicados/pages/ComunicadosPage";
+import { ConfiguracoesPage } from "@/modules/configuracoes/pages/ConfiguracoesPage";
+import { ConveniosCadastroPage } from "@/modules/convenios/pages/ConveniosCadastroPage";
+import { ConvenioDetalhesPage } from "@/modules/convenios/pages/ConvenioDetalhesPage";
+import { ConveniosListaPage } from "@/modules/convenios/pages/ConveniosListaPage";
+import { DashboardPage } from "@/modules/dashboard/pages/DashboardPage";
+import { LoginPage } from "@/modules/auth/pages/LoginPage";
+import { ProtectedRoute } from "./ProtectedRoute";
 
 export const AppRoutes = () => (
   <Routes>

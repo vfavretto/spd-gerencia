@@ -7,6 +7,8 @@ import { CreateConvenioUseCase } from '../useCases/CreateConvenioUseCase';
 import { UpdateConvenioUseCase } from '../useCases/UpdateConvenioUseCase';
 import { DeleteConvenioUseCase } from '../useCases/DeleteConvenioUseCase';
 import { GetValoresVigentesUseCase } from '../useCases/GetValoresVigentesUseCase';
+import { AuditService } from '../../auditoria/services/AuditService';
+import { SnapshotService } from '../../snapshots/services/SnapshotService';
 
 const commonSchema = {
   codigo: z.string().min(1),
@@ -65,21 +67,72 @@ export class ConvenioController {
     const payload = createSchema.parse(req.body);
     const useCase = new CreateConvenioUseCase(this.repository);
     const convenio = await useCase.execute(payload);
+
+    // Registra auditoria
+    await AuditService.logCreate(
+      { id: req.user!.id, email: req.user!.email },
+      'Convenio',
+      convenio.id,
+      convenio as unknown as Record<string, unknown>,
+      req.ip,
+      req.get('user-agent')
+    );
+
     return res.status(201).json(convenio);
   }
 
   async update(req: Request, res: Response) {
     const id = req.params.id;
     const payload = updateSchema.parse(req.body);
+
+    // Busca dados antigos para auditoria e snapshot
+    const getUseCase = new GetConvenioUseCase(this.repository);
+    const dadosAntigos = await getUseCase.execute(id);
+
+    // Cria snapshot antes da atualização (histórico de versões)
+    await SnapshotService.beforeUpdate(
+      id,
+      dadosAntigos as unknown as Record<string, unknown>,
+      { id: req.user!.id }
+    );
+
     const useCase = new UpdateConvenioUseCase(this.repository);
     const convenio = await useCase.execute(id, payload);
+
+    // Registra auditoria
+    await AuditService.logUpdate(
+      { id: req.user!.id, email: req.user!.email },
+      'Convenio',
+      id,
+      dadosAntigos as unknown as Record<string, unknown>,
+      convenio as unknown as Record<string, unknown>,
+      req.ip,
+      req.get('user-agent')
+    );
+
     return res.json(convenio);
   }
 
   async remove(req: Request, res: Response) {
     const id = req.params.id;
+
+    // Busca dados para auditoria antes de excluir
+    const getUseCase = new GetConvenioUseCase(this.repository);
+    const dadosAntigos = await getUseCase.execute(id);
+
     const useCase = new DeleteConvenioUseCase(this.repository);
     await useCase.execute(id);
+
+    // Registra auditoria
+    await AuditService.logDelete(
+      { id: req.user!.id, email: req.user!.email },
+      'Convenio',
+      id,
+      dadosAntigos as unknown as Record<string, unknown>,
+      req.ip,
+      req.get('user-agent')
+    );
+
     return res.status(204).send();
   }
 

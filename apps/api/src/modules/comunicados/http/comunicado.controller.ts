@@ -6,6 +6,7 @@ import { GetComunicadoUseCase } from '../useCases/GetComunicadoUseCase';
 import { CreateComunicadoUseCase } from '../useCases/CreateComunicadoUseCase';
 import { UpdateComunicadoUseCase } from '../useCases/UpdateComunicadoUseCase';
 import { DeleteComunicadoUseCase } from '../useCases/DeleteComunicadoUseCase';
+import { AuditService } from '../../auditoria/services/AuditService';
 
 const createSchema = z.object({
   protocolo: z.string(),
@@ -45,21 +46,65 @@ export class ComunicadoController {
       ...payload,
       convenioId: payload.convenioId ?? null
     });
+
+    // Registra auditoria
+    await AuditService.logCreate(
+      { id: req.user!.id, email: req.user!.email },
+      'Comunicado',
+      comunicado.id,
+      comunicado as unknown as Record<string, unknown>,
+      req.ip,
+      req.get('user-agent')
+    );
+
     return res.status(201).json(comunicado);
   }
 
   async update(req: Request, res: Response) {
     const id = req.params.id;
     const payload = updateSchema.parse(req.body);
+
+    // Busca dados antigos para auditoria
+    const getUseCase = new GetComunicadoUseCase(this.repository);
+    const dadosAntigos = await getUseCase.execute(id);
+
     const useCase = new UpdateComunicadoUseCase(this.repository);
     const comunicado = await useCase.execute(id, payload);
+
+    // Registra auditoria
+    await AuditService.logUpdate(
+      { id: req.user!.id, email: req.user!.email },
+      'Comunicado',
+      id,
+      dadosAntigos as unknown as Record<string, unknown>,
+      comunicado as unknown as Record<string, unknown>,
+      req.ip,
+      req.get('user-agent')
+    );
+
     return res.json(comunicado);
   }
 
   async remove(req: Request, res: Response) {
     const id = req.params.id;
+
+    // Busca dados para auditoria antes de excluir
+    const getUseCase = new GetComunicadoUseCase(this.repository);
+    const dadosAntigos = await getUseCase.execute(id);
+
     const useCase = new DeleteComunicadoUseCase(this.repository);
     await useCase.execute(id);
+
+    // Registra auditoria
+    await AuditService.logDelete(
+      { id: req.user!.id, email: req.user!.email },
+      'Comunicado',
+      id,
+      dadosAntigos as unknown as Record<string, unknown>,
+      req.ip,
+      req.get('user-agent')
+    );
+
     return res.status(204).send();
   }
 }

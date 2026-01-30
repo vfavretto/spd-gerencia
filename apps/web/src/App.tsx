@@ -1,5 +1,5 @@
-import { AppRoutes } from './routes';
-import { Toaster } from '@/components/ui/toaster';
+import { AppRoutes } from "./routes";
+import { Toaster } from "@/modules/shared/ui/toaster";
 
 export const App = () => {
   return (

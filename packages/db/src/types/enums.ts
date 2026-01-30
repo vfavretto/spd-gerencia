@@ -1,9 +1,16 @@
 // ==================== ENUMS ====================
 
 export enum UsuarioRole {
-  ADMINISTRADOR = 'ADMINISTRADOR',
+  ADMIN = 'ADMIN',
   ANALISTA = 'ANALISTA',
-  VISUALIZADOR = 'VISUALIZADOR'
+  ESTAGIARIO = 'ESTAGIARIO',
+  OBSERVADOR = 'OBSERVADOR'
+}
+
+export enum AcaoAuditoria {
+  CREATE = 'CREATE',
+  UPDATE = 'UPDATE',
+  DELETE = 'DELETE'
 }
 
 export enum ConvenioStatus {

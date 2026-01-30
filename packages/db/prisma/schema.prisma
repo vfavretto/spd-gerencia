@@ -8,9 +8,16 @@ datasource db {
 }
 
 enum UsuarioRole {
-  ADMINISTRADOR
+  ADMIN
   ANALISTA
-  VISUALIZADOR
+  ESTAGIARIO
+  OBSERVADOR
+}
+
+enum AcaoAuditoria {
+  CREATE
+  UPDATE
+  DELETE
 }
 
 enum ConvenioStatus {
@@ -189,6 +196,7 @@ model Convenio {
   notasEmpenho      NotaEmpenho[]
   comunicados       Comunicado[]
   eventosAgenda     EventoAgenda[]
+  snapshots         ConvenioSnapshot[]
 
   @@index([status])
   @@index([secretariaId])
@@ -419,4 +427,40 @@ model EventoAgenda {
 
   convenio Convenio? @relation(fields: [convenioId], references: [id])
   @@index([convenioId])
+}
+
+model AuditLog {
+  id           String         @id @default(uuid())
+  usuarioId    String
+  usuarioNome  String
+  usuarioEmail String
+  acao         AcaoAuditoria
+  entidade     String
+  entidadeId   String
+  dadosAntigos Json?
+  dadosNovos   Json?
+  ip           String?
+  userAgent    String?
+  criadoEm     DateTime       @default(now())
+
+  @@index([usuarioId])
+  @@index([entidade, entidadeId])
+  @@index([criadoEm])
+}
+
+model ConvenioSnapshot {
+  id            String   @id @default(uuid())
+  convenioId    String
+  versao        Int
+  dados         Json
+  criadoPorId   String?
+  criadoPorNome String?
+  motivoSnapshot String?
+  criadoEm      DateTime @default(now())
+
+  convenio Convenio @relation(fields: [convenioId], references: [id])
+
+  @@index([convenioId])
+  @@index([criadoEm])
+  @@unique([convenioId, versao])
 }

@@ -99,13 +99,6 @@ npm --workspace packages/db run seed
 ### Banco de Dados
 - **MySQL 8** - Banco relacional (via Docker)
 
-## Próximos passos sugeridos
-
-- Implementar testes automatizados (unitários e e2e)
-- Adicionar controle de permissões por perfil
-- Integração com armazenamento de documentos (S3/MinIO)
-- Deploy (Docker + CI/CD)
-
 ---
 
 Secretaria de Planejamento e Desenvolvimento – Prefeitura de Votorantim.

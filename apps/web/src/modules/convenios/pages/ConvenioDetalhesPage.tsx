@@ -18,7 +18,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/modules/shared/ui/ca
 import { Button } from "@/modules/shared/ui/button";
 import { convenioService } from "@/modules/convenios/services/convenioService";
 import { aditivoService } from "@/modules/convenios/services/aditivoService";
-import { formatCurrency } from "@/modules/shared/ui/currency-input";
+import { formatCurrency } from "@/modules/shared/utils/format";
 import { formatDateBR } from "@/modules/shared/lib/date";
 
 // Componentes das Abas

@@ -1,7 +1,7 @@
 import { BarChart3, TrendingUp, Calendar, DollarSign } from "lucide-react";
 import type { Convenio } from "@/modules/shared/types";
 import { formatDateBR } from "@/modules/shared/lib/date";
-import { formatCurrency } from "@/modules/shared/ui/currency-input";
+import { formatCurrency } from "@/modules/shared/utils/format";
 import { Progress, ProgressCircle } from "@/modules/shared/ui/progress";
 
 type Props = {

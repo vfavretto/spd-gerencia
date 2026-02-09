@@ -8,6 +8,12 @@ export type ConvenioFilters = {
   search?: string;
   status?: string;
   secretariaId?: string;
+  esfera?: string;
+  modalidadeRepasse?: string;
+  dataInicioVigencia?: string;
+  dataFimVigencia?: string;
+  valorMin?: number;
+  valorMax?: number;
 };
 
 // Tipo leve para listagens (sem relacionamentos pesados)

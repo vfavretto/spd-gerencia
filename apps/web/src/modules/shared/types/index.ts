@@ -4,12 +4,31 @@ export interface User {
   id: string;
   nome: string;
   email: string;
+  matricula: string;
   role: UsuarioRole;
 }
 
 export interface LoginResponse {
   token: string;
   usuario: User;
+}
+
+export interface RegisterUserDTO {
+  nome: string;
+  email: string;
+  matricula: string;
+  senha: string;
+  role?: UsuarioRole;
+}
+
+export interface UserListItem {
+  id: string;
+  nome: string;
+  email: string;
+  matricula: string;
+  role: UsuarioRole;
+  ativo: boolean;
+  criadoEm: string;
 }
 
 // ==================== AUDITORIA ====================
@@ -172,6 +191,18 @@ export interface Convenio {
   aditivos?: Aditivo[];
   fichasOrcamentarias?: FichaOrcamentaria[];
   notasEmpenho?: NotaEmpenho[];
+  etapas?: EtapaConvenio[];
+}
+
+export interface EtapaConvenio {
+  id: string;
+  titulo: string;
+  descricao?: string | null;
+  dataPrevista?: string | null;
+  dataRealizada?: string | null;
+  responsavel?: string | null;
+  situacao?: string | null;
+  convenioId: string;
 }
 
 export type TipoComunicado = 'ENTRADA' | 'SAIDA';
@@ -183,13 +214,10 @@ export interface Comunicado {
   assunto: string;
   conteudo?: string | null;
   tipo: TipoComunicado;
-  status?: string | null;
   dataRegistro: string;
   origem?: string | null;
   destino?: string | null;
   responsavel?: string | null;
-  convenioId?: string | null;
-  convenio?: Convenio | null;
 }
 
 export type TipoEvento =

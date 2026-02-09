@@ -3,12 +3,11 @@ export type CreateComunicadoDTO = {
   assunto: string;
   conteudo?: string;
   tipo: 'ENTRADA' | 'SAIDA';
-  status?: string;
+  dataRegistro?: Date;
   origem?: string;
   destino?: string;
   responsavel?: string;
   arquivoUrl?: string;
-  convenioId?: string | null;
 };
 
 export type UpdateComunicadoDTO = Partial<CreateComunicadoDTO>;

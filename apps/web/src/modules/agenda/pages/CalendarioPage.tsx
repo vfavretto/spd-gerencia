@@ -234,14 +234,29 @@ export const CalendarioPage = () => {
                   </p>
                 </div>
                 <div className="divide-y divide-slate-100">
-                  {lista.map((evento) => (
-                    <div key={evento.id} className="flex flex-col gap-2 px-5 py-4">
+                  {lista.map((evento) => {
+                    const tipoColors: Record<string, string> = {
+                      REUNIAO: "border-l-blue-400",
+                      PRESTACAO_CONTAS: "border-l-amber-400",
+                      ENTREGA_DOCUMENTOS: "border-l-emerald-400",
+                      VENCIMENTO_ETAPA: "border-l-rose-400",
+                      OUTROS: "border-l-slate-400"
+                    };
+                    const tipoBadgeColors: Record<string, string> = {
+                      REUNIAO: "bg-blue-50 text-blue-600",
+                      PRESTACAO_CONTAS: "bg-amber-50 text-amber-600",
+                      ENTREGA_DOCUMENTOS: "bg-emerald-50 text-emerald-600",
+                      VENCIMENTO_ETAPA: "bg-rose-50 text-rose-600",
+                      OUTROS: "bg-slate-50 text-slate-600"
+                    };
+                    return (
+                    <div key={evento.id} className={`flex flex-col gap-2 border-l-4 px-5 py-4 ${tipoColors[evento.tipo] ?? "border-l-slate-300"}`}>
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-sm font-semibold text-primary-600">
+                          <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold ${tipoBadgeColors[evento.tipo] ?? "bg-slate-50 text-slate-600"}`}>
                             {tipoEventoOptions.find((opt) => opt.value === evento.tipo)?.label ??
                               "Evento"}
-                          </p>
+                          </span>
                           <h4 className="text-lg font-semibold text-slate-900">
                             {evento.titulo}
                           </h4>
@@ -269,7 +284,8 @@ export const CalendarioPage = () => {
                         )}
                       </div>
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             ))}

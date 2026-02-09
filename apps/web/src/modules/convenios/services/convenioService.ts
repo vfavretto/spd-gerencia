@@ -4,7 +4,13 @@ import type { Convenio, ConvenioStatus, ValoresVigentes } from "@/modules/shared
 export type ConvenioFilters = {
   search?: string;
   status?: ConvenioStatus | "";
-  secretariaId?: string | '';
+  secretariaId?: string | "";
+  esfera?: string | "";
+  modalidadeRepasse?: string | "";
+  dataInicioVigencia?: string | "";
+  dataFimVigencia?: string | "";
+  valorMin?: string | "";
+  valorMax?: string | "";
 };
 
 export const convenioService = {
@@ -13,6 +19,12 @@ export const convenioService = {
     if (filters?.search) params.search = filters.search;
     if (filters?.status) params.status = filters.status;
     if (filters?.secretariaId) params.secretariaId = filters.secretariaId;
+    if (filters?.esfera) params.esfera = filters.esfera;
+    if (filters?.modalidadeRepasse) params.modalidadeRepasse = filters.modalidadeRepasse;
+    if (filters?.dataInicioVigencia) params.dataInicioVigencia = filters.dataInicioVigencia;
+    if (filters?.dataFimVigencia) params.dataFimVigencia = filters.dataFimVigencia;
+    if (filters?.valorMin) params.valorMin = filters.valorMin;
+    if (filters?.valorMax) params.valorMax = filters.valorMax;
 
     const { data } = await api.get<Convenio[]>('/convenios', { params });
     return data;

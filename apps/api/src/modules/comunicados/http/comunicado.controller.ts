@@ -13,12 +13,11 @@ const createSchema = z.object({
   assunto: z.string().min(3),
   conteudo: z.string().nullable().optional(),
   tipo: z.enum(['ENTRADA', 'SAIDA']),
-  status: z.string().nullable().optional(),
+  dataRegistro: z.coerce.date().optional(),
   origem: z.string().nullable().optional(),
   destino: z.string().nullable().optional(),
   responsavel: z.string().nullable().optional(),
-  arquivoUrl: z.string().url().nullable().optional().or(z.literal('')).transform(val => val === '' ? null : val),
-  convenioId: z.string().nullable().optional()
+  arquivoUrl: z.string().url().nullable().optional().or(z.literal('')).transform(val => val === '' ? null : val)
 });
 
 const updateSchema = createSchema.partial();
@@ -42,10 +41,7 @@ export class ComunicadoController {
   async create(req: Request, res: Response) {
     const payload = createSchema.parse(req.body);
     const useCase = new CreateComunicadoUseCase(this.repository);
-    const comunicado = await useCase.execute({
-      ...payload,
-      convenioId: payload.convenioId ?? null
-    });
+    const comunicado = await useCase.execute(payload);
 
     // Registra auditoria
     await AuditService.logCreate(

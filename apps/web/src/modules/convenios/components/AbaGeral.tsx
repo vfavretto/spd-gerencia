@@ -3,6 +3,7 @@ import { Edit2, Save, X, CalendarCheck, FileSignature, Plus, Pencil, Trash2, Lan
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import type { Convenio, EmendaParlamentar } from "@/modules/shared/types";
+import { ConfirmDialog } from "@/modules/shared/components/ConfirmDialog";
 import { convenioService } from "@/modules/convenios/services/convenioService";
 import { configService } from "@/modules/configuracoes/services/configService";
 import { emendaService } from "@/modules/convenios/services/emendaService";
@@ -27,6 +28,7 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
   const [showAditivoModal, setShowAditivoModal] = useState(false);
   const [showEmendaModal, setShowEmendaModal] = useState(false);
   const [emendaParaEditar, setEmendaParaEditar] = useState<EmendaParlamentar | null>(null);
+  const [emendaParaDeletar, setEmendaParaDeletar] = useState<EmendaParlamentar | null>(null);
 
   const deletarEmendaMutation = useMutation({
     mutationFn: (emendaId: string) => emendaService.delete(convenio.id, emendaId),
@@ -51,9 +53,7 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
   };
 
   const handleDeletarEmenda = (emenda: EmendaParlamentar) => {
-    if (confirm(`Deseja realmente remover a emenda do parlamentar "${emenda.nomeParlamentar}"?`)) {
-      deletarEmendaMutation.mutate(emenda.id);
-    }
+    setEmendaParaDeletar(emenda);
   };
 
   const { data: catalogs } = useQuery({
@@ -549,6 +549,19 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
         convenioId={convenio.id}
         emenda={emendaParaEditar}
         onSuccess={onUpdate}
+      />
+
+      <ConfirmDialog
+        open={Boolean(emendaParaDeletar)}
+        onOpenChange={(open) => { if (!open) setEmendaParaDeletar(null); }}
+        title="Remover emenda"
+        description={`Deseja realmente remover a emenda do parlamentar "${emendaParaDeletar?.nomeParlamentar}"?`}
+        confirmLabel="Remover"
+        onConfirm={() => {
+          if (emendaParaDeletar) {
+            deletarEmendaMutation.mutate(emendaParaDeletar.id);
+          }
+        }}
       />
     </div>
   );

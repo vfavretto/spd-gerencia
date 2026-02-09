@@ -9,7 +9,9 @@
     "dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/main.ts",
     "build": "tsc --project tsconfig.json",
     "start": "node dist/main.js",
-    "lint": "eslint \"src/**/*.{ts,tsx}\""
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
+    "test": "jest",
+    "test:cov": "jest --coverage"
   },
   "dependencies": {
     "@spd/db": "file:../../packages/db",
@@ -19,7 +21,6 @@
     "express": "^4.22.1",
     "helmet": "^7.2.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.8.0",
     "morgan": "^1.10.0",
     "zod": "^3.25.0"
   },
@@ -27,12 +28,15 @@
     "@types/bcryptjs": "^2.4.6",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.25",
+    "@types/jest": "^30.0.0",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/morgan": "^1.9.9",
     "@types/node": "^20.19.0",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
     "@typescript-eslint/parser": "^7.18.0",
     "eslint": "^8.57.1",
+    "jest": "^30.2.0",
+    "ts-jest": "^29.4.6",
     "ts-node-dev": "^2.0.0",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.3"

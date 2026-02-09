@@ -1,4 +1,4 @@
-import type { ConvenioStatus, TipoComunicado, TipoEvento } from "@/modules/shared/types";
+import type { ConvenioStatus, EsferaGoverno, ModalidadeRepasse, TipoComunicado, TipoEvento } from "@/modules/shared/types";
 
 type Option<T> = {
   label: string;
@@ -25,6 +25,18 @@ export const tipoEventoOptions: Option<TipoEvento>[] = [
   { label: "Entrega de documentos", value: "ENTREGA_DOCUMENTOS" },
   { label: "Vencimento de etapa", value: "VENCIMENTO_ETAPA" },
   { label: "Outros", value: "OUTROS" }
+];
+
+export const esferaGovernoOptions: Option<EsferaGoverno>[] = [
+  { label: "Federal", value: "FEDERAL" },
+  { label: "Estadual", value: "ESTADUAL" }
+];
+
+export const modalidadeRepasseOptions: Option<ModalidadeRepasse>[] = [
+  { label: "Convênio", value: "CONVENIO" },
+  { label: "Contrato de Repasse", value: "CONTRATO_REPASSE" },
+  { label: "Termo de Fomento", value: "TERMO_FOMENTO" },
+  { label: "Termo de Colaboração", value: "TERMO_COLABORACAO" }
 ];
 
 export const statusColors: Record<

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Plus, Building, User, Calendar, FileText, BarChart3 } from "lucide-react";
 import type { Convenio, ContratoExecucao } from "@/modules/shared/types";
 import { formatDateBR } from "@/modules/shared/lib/date";
-import { formatCurrency } from "@/modules/shared/ui/currency-input";
+import { formatCurrency } from "@/modules/shared/utils/format";
 import { Progress } from "@/modules/shared/ui/progress";
 import { Badge } from "@/modules/shared/ui/badge";
 import { Button } from "@/modules/shared/ui/button";

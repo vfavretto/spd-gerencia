@@ -409,33 +409,42 @@ export const DashboardPage = () => {
 
           {/* Resumo de comunicados */}
           <div className="grid gap-4 md:grid-cols-3">
-            <div className="glass-panel flex items-center gap-4 p-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-50">
-                <Clock className="h-6 w-6 text-amber-600" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-slate-900">{overview?.comunicadosPendentes ?? 0}</p>
-                <p className="text-sm text-slate-500">Comunicados pendentes</p>
+            <div className="relative overflow-hidden rounded-3xl border border-slate-100 bg-white p-5 shadow-md transition-all hover:shadow-lg">
+              <div className="absolute inset-x-0 top-0 h-1 bg-amber-400" />
+              <div className="flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-50 to-amber-100">
+                  <Clock className="h-6 w-6 text-amber-600" />
+                </div>
+                <div>
+                  <p className="font-mono text-2xl font-bold text-slate-900">{overview?.comunicadosPendentes ?? 0}</p>
+                  <p className="text-sm text-slate-500">Comunicados pendentes</p>
+                </div>
               </div>
             </div>
             
-            <div className="glass-panel flex items-center gap-4 p-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50">
-                <FileText className="h-6 w-6 text-indigo-600" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-slate-900">{formatCurrency(resumo?.contratos.valorTotal ?? 0)}</p>
-                <p className="text-sm text-slate-500">Valor total contratado</p>
+            <div className="relative overflow-hidden rounded-3xl border border-slate-100 bg-white p-5 shadow-md transition-all hover:shadow-lg">
+              <div className="absolute inset-x-0 top-0 h-1 bg-indigo-400" />
+              <div className="flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-50 to-indigo-100">
+                  <FileText className="h-6 w-6 text-indigo-600" />
+                </div>
+                <div>
+                  <p className="font-mono text-2xl font-bold text-slate-900">{formatCurrency(resumo?.contratos.valorTotal ?? 0)}</p>
+                  <p className="text-sm text-slate-500">Valor total contratado</p>
+                </div>
               </div>
             </div>
 
-            <div className="glass-panel flex items-center gap-4 p-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50">
-                <CheckCircle2 className="h-6 w-6 text-emerald-600" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-slate-900">{resumo?.pendencias.total ?? 0}</p>
-                <p className="text-sm text-slate-500">Total de pendências registradas</p>
+            <div className="relative overflow-hidden rounded-3xl border border-slate-100 bg-white p-5 shadow-md transition-all hover:shadow-lg">
+              <div className="absolute inset-x-0 top-0 h-1 bg-emerald-400" />
+              <div className="flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-50 to-emerald-100">
+                  <CheckCircle2 className="h-6 w-6 text-emerald-600" />
+                </div>
+                <div>
+                  <p className="font-mono text-2xl font-bold text-slate-900">{resumo?.pendencias.total ?? 0}</p>
+                  <p className="text-sm text-slate-500">Total de pendências registradas</p>
+                </div>
               </div>
             </div>
           </div>

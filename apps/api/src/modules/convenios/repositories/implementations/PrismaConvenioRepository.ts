@@ -40,17 +40,39 @@ const includeRelations = {
 
 export class PrismaConvenioRepository implements ConvenioRepository {
   async listLite(filters?: ConvenioFilters): Promise<ConvenioLite[]> {
+    const where: Record<string, unknown> = {};
+
+    if (filters?.status) where.status = filters.status;
+    if (filters?.secretariaId) where.secretariaId = filters.secretariaId;
+    if (filters?.esfera) where.esfera = filters.esfera;
+    if (filters?.modalidadeRepasse) where.modalidadeRepasse = filters.modalidadeRepasse;
+
+    if (filters?.search) {
+      where.OR = [
+        { titulo: { contains: filters.search, mode: 'insensitive' } },
+        { codigo: { contains: filters.search, mode: 'insensitive' } }
+      ];
+    }
+
+    if (filters?.dataInicioVigencia || filters?.dataFimVigencia) {
+      where.dataInicioVigencia = {};
+      if (filters.dataInicioVigencia) {
+        (where.dataInicioVigencia as Record<string, unknown>).gte = new Date(filters.dataInicioVigencia);
+      }
+      if (filters.dataFimVigencia) {
+        where.dataFimVigencia = { lte: new Date(filters.dataFimVigencia) };
+      }
+    }
+
+    if (filters?.valorMin !== undefined || filters?.valorMax !== undefined) {
+      const valorFilter: Record<string, number> = {};
+      if (filters.valorMin !== undefined) valorFilter.gte = filters.valorMin;
+      if (filters.valorMax !== undefined) valorFilter.lte = filters.valorMax;
+      where.valorGlobal = valorFilter;
+    }
+
     const convenios = await prisma.convenio.findMany({
-      where: {
-        status: filters?.status,
-        secretariaId: filters?.secretariaId,
-        OR: filters?.search
-          ? [
-            { titulo: { contains: filters.search, mode: 'insensitive' } },
-            { codigo: { contains: filters.search, mode: 'insensitive' } }
-          ]
-          : undefined
-      },
+      where,
       select: {
         id: true,
         codigo: true,

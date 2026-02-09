@@ -5,7 +5,7 @@ import { AppError } from '@shared/errors/AppError';
 import type { UserRepository } from '../repositories/UserRepository';
 
 type Request = {
-  email: string;
+  matricula: string;
   senha: string;
 };
 
@@ -15,6 +15,7 @@ type Response = {
     id: string;
     nome: string;
     email: string;
+    matricula: string;
     role: string;
   };
 };
@@ -22,11 +23,15 @@ type Response = {
 export class AuthenticateUserUseCase {
   constructor(private readonly repository: UserRepository) {}
 
-  async execute({ email, senha }: Request): Promise<Response> {
-    const user = await this.repository.findByEmail(email);
+  async execute({ matricula, senha }: Request): Promise<Response> {
+    const user = await this.repository.findByMatricula(matricula);
 
     if (!user) {
       throw new AppError('Credenciais inválidas', 401);
+    }
+
+    if (!user.ativo) {
+      throw new AppError('Usuário desativado. Contate o administrador.', 401);
     }
 
     const passwordMatch = await bcrypt.compare(senha, user.senha);
@@ -36,7 +41,7 @@ export class AuthenticateUserUseCase {
     }
 
     const token = jwt.sign(
-      { email: user.email, role: user.role },
+      { email: user.email, role: user.role, matricula: user.matricula },
       env.jwtSecret,
       {
         subject: user.id,
@@ -50,6 +55,7 @@ export class AuthenticateUserUseCase {
         id: user.id,
         nome: user.nome,
         email: user.email,
+        matricula: user.matricula,
         role: user.role
       }
     };

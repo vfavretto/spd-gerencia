@@ -26,6 +26,7 @@ export interface BaseDocument {
 export interface IUsuario extends BaseDocument {
   nome: string;
   email: string;
+  matricula: string;
   senha: string;
   role: UsuarioRole;
   ativo: boolean;

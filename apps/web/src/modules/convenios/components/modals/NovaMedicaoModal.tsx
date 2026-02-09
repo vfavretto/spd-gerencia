@@ -15,7 +15,8 @@ import {
 import { Button } from "@/modules/shared/ui/button";
 import { Input } from "@/modules/shared/ui/input";
 import { Label } from "@/modules/shared/ui/label";
-import { CurrencyInput, formatCurrency } from "@/modules/shared/ui/currency-input";
+import { CurrencyInput } from "@/modules/shared/ui/currency-input";
+import { formatCurrency } from "@/modules/shared/utils/format";
 import { Card, CardContent, CardHeader, CardTitle } from "@/modules/shared/ui/card";
 import { medicaoService } from "@/modules/convenios/services/medicaoService";
 import { toast } from "@/modules/shared/ui/toaster";

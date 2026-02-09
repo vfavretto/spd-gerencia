@@ -49,10 +49,19 @@ export class ConvenioController {
     const search = req.query.search?.toString();
     const status = req.query.status?.toString();
     const secretariaId = req.query.secretariaId?.toString();
+    const esfera = req.query.esfera?.toString();
+    const modalidadeRepasse = req.query.modalidadeRepasse?.toString();
+    const dataInicioVigencia = req.query.dataInicioVigencia?.toString();
+    const dataFimVigencia = req.query.dataFimVigencia?.toString();
+    const valorMin = req.query.valorMin ? Number(req.query.valorMin) : undefined;
+    const valorMax = req.query.valorMax ? Number(req.query.valorMax) : undefined;
 
     // Usa listLite para performance na listagem
     const useCase = new ListConveniosLiteUseCase(this.repository);
-    const convenios = await useCase.execute({ search, status, secretariaId });
+    const convenios = await useCase.execute({
+      search, status, secretariaId, esfera, modalidadeRepasse,
+      dataInicioVigencia, dataFimVigencia, valorMin, valorMax
+    });
     return res.json(convenios);
   }
 

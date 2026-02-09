@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import type { Convenio } from "@/modules/shared/types";
 import { financeiroService } from "@/modules/convenios/services/financeiroService";
-import { formatCurrency } from "@/modules/shared/ui/currency-input";
+import { formatCurrency } from "@/modules/shared/utils/format";
 import { Button } from "@/modules/shared/ui/button";
 import { Input } from "@/modules/shared/ui/input";
 import { Label } from "@/modules/shared/ui/label";

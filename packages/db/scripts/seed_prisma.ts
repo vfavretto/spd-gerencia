@@ -15,19 +15,23 @@ async function seed() {
     update: {
       nome: 'Administrador',
       senha: senhaHash,
-      role: 'ADMINISTRADOR',
+      matricula: '00001',
+      role: 'ADMIN',
       ativo: true
     },
     create: {
       nome: 'Administrador',
       email: 'admin@spd.gov.br',
+      matricula: '00001',
       senha: senhaHash,
-      role: 'ADMINISTRADOR',
+      role: 'ADMIN',
       ativo: true
     }
   });
 
-  console.log('✅ Usuário admin criado: admin@spd.gov.br / admin123');
+  console.log('✅ Usuário admin criado:');
+  console.log('   Matrícula: 00001');
+  console.log('   Senha: admin123');
 }
 
 seed()

@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { MailPlus, RefreshCcw } from "lucide-react";
+import { toast } from "sonner";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -8,7 +9,6 @@ import { PageHeader } from "@/modules/shared/components/PageHeader";
 import { CanCreateComunicado } from "@/modules/shared/components/PermissionGate";
 import { tipoComunicadoOptions } from "@/modules/shared/constants";
 import { comunicadoService } from "@/modules/comunicados/services/comunicadoService";
-import { convenioService } from "@/modules/convenios/services/convenioService";
 import { formatDate } from "@/modules/shared/utils/format";
 
 const comunicadoSchema = z.object({
@@ -16,12 +16,11 @@ const comunicadoSchema = z.object({
   assunto: z.string().min(3, "Assunto obrigatório"),
   conteudo: z.string().optional(),
   tipo: z.enum(["ENTRADA", "SAIDA"]),
-  status: z.string().optional(),
+  dataRegistro: z.string().optional(),
   origem: z.string().optional(),
   destino: z.string().optional(),
   responsavel: z.string().optional(),
-  arquivoUrl: z.string().optional(),
-  convenioId: z.number().optional()
+  arquivoUrl: z.string().optional()
 });
 
 type ComunicadoForm = z.infer<typeof comunicadoSchema>;
@@ -35,15 +34,11 @@ export const ComunicadosPage = () => {
     queryFn: () => comunicadoService.list()
   });
 
-  const conveniosQuery = useQuery({
-    queryKey: ["convenios", { lite: true }],
-    queryFn: () => convenioService.list()
-  });
-
   const {
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors }
   } = useForm<ComunicadoForm>({
     resolver: zodResolver(comunicadoSchema),
@@ -52,23 +47,21 @@ export const ComunicadosPage = () => {
     }
   });
 
+  const tipoSelecionado = watch("tipo");
+
   const createMutation = useMutation({
     mutationFn: (payload: ComunicadoForm) =>
-      comunicadoService.create({
-        ...payload,
-        convenioId: payload.convenioId || null
-      }),
+      comunicadoService.create(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["comunicados"] });
       reset({ tipo: "ENTRADA" } as ComunicadoForm);
     },
-    onError: (error: Error) => {
-      console.error("Erro ao criar comunicado:", error);
+    onError: () => {
+      toast.error("Erro ao criar comunicado. Verifique os dados e tente novamente.");
     }
   });
 
   const comunicados = comunicadosQuery.data ?? [];
-  const convenios = conveniosQuery.data ?? [];
   const comunicadosFiltrados = tipoFiltro
     ? comunicados.filter((item) => item.tipo === tipoFiltro)
     : comunicados;
@@ -155,21 +148,32 @@ export const ComunicadosPage = () => {
 
             <div className="grid gap-4 md:grid-cols-2">
               <div>
-                <label className="form-label">Origem</label>
+                <label className="form-label">Data do registro</label>
                 <input
+                  type="date"
                   className="form-input"
-                  {...register("origem")}
-                  placeholder="Secretaria ou órgão"
+                  {...register("dataRegistro")}
                 />
               </div>
-              <div>
-                <label className="form-label">Destino</label>
-                <input
-                  className="form-input"
-                  {...register("destino")}
-                  placeholder="Setor ou responsável"
-                />
-              </div>
+              {tipoSelecionado === "ENTRADA" ? (
+                <div>
+                  <label className="form-label">Destinatário</label>
+                  <input
+                    className="form-input"
+                    {...register("destino")}
+                    placeholder="Setor ou responsável"
+                  />
+                </div>
+              ) : (
+                <div>
+                  <label className="form-label">Origem</label>
+                  <input
+                    className="form-input"
+                    {...register("origem")}
+                    placeholder="Secretaria ou órgão"
+                  />
+                </div>
+              )}
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">
@@ -182,40 +186,12 @@ export const ComunicadosPage = () => {
                 />
               </div>
               <div>
-                <label className="form-label">Status interno</label>
-                <input
-                  className="form-input"
-                  {...register("status")}
-                  placeholder="Pendente, Em andamento..."
-                />
-              </div>
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-2">
-              <div>
                 <label className="form-label">Link do arquivo</label>
                 <input
                   className="form-input"
                   {...register("arquivoUrl")}
                   placeholder="https://"
                 />
-              </div>
-              <div>
-                <label className="form-label">Convênio associado</label>
-                <select
-                  className="form-input"
-                  {...register("convenioId", {
-                    setValueAs: (value) =>
-                      value === "" ? undefined : Number.parseInt(value, 10)
-                  })}
-                >
-                  <option value="">Nenhum</option>
-                  {convenios.map((convenio) => (
-                    <option key={convenio.id} value={convenio.id}>
-                      {convenio.titulo}
-                    </option>
-                  ))}
-                </select>
               </div>
             </div>
 
@@ -275,7 +251,9 @@ export const ComunicadosPage = () => {
             {comunicadosFiltrados.map((item) => (
               <div
                 key={item.id}
-                className="rounded-3xl border border-slate-100 bg-white/70 p-4 shadow-sm"
+                className={`relative overflow-hidden rounded-3xl border border-slate-100 bg-white p-4 pl-6 shadow-sm transition-all hover:shadow-md ${
+                  item.tipo === "ENTRADA" ? "border-l-4 border-l-emerald-400" : "border-l-4 border-l-indigo-400"
+                }`}
               >
                 <div className="flex items-center justify-between">
                   <div>
@@ -310,11 +288,6 @@ export const ComunicadosPage = () => {
                   <div>
                     Data: <strong>{formatDate(item.dataRegistro)}</strong>
                   </div>
-                  {item.convenio && (
-                    <div>
-                      Convênio: <strong>{item.convenio.titulo}</strong>
-                    </div>
-                  )}
                 </div>
               </div>
             ))}

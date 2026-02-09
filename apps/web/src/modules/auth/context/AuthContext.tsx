@@ -14,7 +14,7 @@ type AuthContextValue = {
   token: string | null;
   isAuthenticated: boolean;
   initializing: boolean;
-  login: (credentials: { email: string; senha: string }) => Promise<void>;
+  login: (credentials: { matricula: string; senha: string }) => Promise<void>;
   logout: () => void;
 };
 
@@ -53,8 +53,8 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
   // Inicialização é síncrona agora, então começa como false
   const [initializing] = useState(false);
 
-  const login = useCallback(async ({ email, senha }: { email: string; senha: string }) => {
-    const response = await authService.login(email, senha);
+  const login = useCallback(async ({ matricula, senha }: { matricula: string; senha: string }) => {
+    const response = await authService.login(matricula, senha);
     const nextState: AuthState = {
       user: response.usuario,
       token: response.token

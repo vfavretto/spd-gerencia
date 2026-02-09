@@ -93,6 +93,7 @@ model Usuario {
   id          String   @id @default(uuid())
   nome        String
   email       String   @unique
+  matricula   String   @unique
   senha       String
   role        UsuarioRole
   ativo       Boolean  @default(true)
@@ -194,7 +195,6 @@ model Convenio {
   aditivos          Aditivo[]
   fichasOrcamentarias FichaOrcamentaria[]
   notasEmpenho      NotaEmpenho[]
-  comunicados       Comunicado[]
   eventosAgenda     EventoAgenda[]
   snapshots         ConvenioSnapshot[]
 
@@ -395,20 +395,16 @@ model Comunicado {
   assunto     String
   conteudo    String?
   tipo        TipoComunicado
-  status      String?
-  dataRegistro DateTime
+  dataRegistro DateTime     @default(now())
   origem      String?
   destino     String?
   responsavel String?
   arquivoUrl  String?
-  convenioId  String?
   criadoPorId String?
   criadoEm    DateTime      @default(now())
   atualizadoEm DateTime     @updatedAt
 
-  convenio  Convenio? @relation(fields: [convenioId], references: [id])
   criadoPor Usuario? @relation(fields: [criadoPorId], references: [id])
-  @@index([convenioId])
   @@index([criadoPorId])
 }
 

@@ -35,15 +35,6 @@ const CurrencyInput = React.forwardRef<HTMLInputElement, CurrencyInputProps>(
 );
 CurrencyInput.displayName = "CurrencyInput";
 
-// Utilitário para formatar número como moeda BRL
-export function formatCurrency(value: number | null | undefined): string {
-  if (value === null || value === undefined) return "R$ 0,00";
-  return new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  }).format(value);
-}
-
 // Utilitário para parse de string moeda para número
 export function parseCurrencyToNumber(value: string): number | null {
   if (!value) return null;

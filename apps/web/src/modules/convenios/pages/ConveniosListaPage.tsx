@@ -10,10 +10,15 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { EtapasResumoModal } from "@/modules/convenios/components/modals/EtapasResumoModal";
 import { PageHeader } from "@/modules/shared/components/PageHeader";
 import { StatusBadge } from "@/modules/shared/components/StatusBadge";
 import { CanCreateConvenio } from "@/modules/shared/components/PermissionGate";
-import { convenioStatusOptions } from "@/modules/shared/constants";
+import {
+  convenioStatusOptions,
+  esferaGovernoOptions,
+  modalidadeRepasseOptions
+} from "@/modules/shared/constants";
 import {
   convenioService,
   type ConvenioFilters
@@ -27,6 +32,7 @@ export const ConveniosListaPage = () => {
   const navigate = useNavigate();
   const [filters, setFilters] = useState<ConvenioFilters>({});
   const [currentPage, setCurrentPage] = useState(1);
+  const [etapasModal, setEtapasModal] = useState<{ id: string; titulo: string } | null>(null);
 
   const { data: catalogs } = useQuery({
     queryKey: ["catalogs"],
@@ -101,8 +107,8 @@ export const ConveniosListaPage = () => {
         </div>
 
         {/* Filtros */}
-        <div className="grid gap-3 md:grid-cols-3">
-          <div className="col-span-1 md:col-span-1">
+        <div className="grid gap-3 md:grid-cols-3 lg:grid-cols-4">
+          <div>
             <label className="form-label flex items-center gap-2">
               <Filter className="h-4 w-4" /> Buscar
             </label>
@@ -122,7 +128,7 @@ export const ConveniosListaPage = () => {
               value={filters.status || ""}
               onChange={(event) =>
                 handleFilterChange({
-                  status: (event.target.value as ConvenioFilters['status']) || ''
+                  status: (event.target.value as ConvenioFilters["status"]) || ""
                 })
               }
             >
@@ -140,9 +146,7 @@ export const ConveniosListaPage = () => {
               className="form-input"
               value={filters.secretariaId || ""}
               onChange={(event) =>
-                handleFilterChange({
-                  secretariaId: event.target.value
-                })
+                handleFilterChange({ secretariaId: event.target.value })
               }
             >
               <option value="">Todas</option>
@@ -152,6 +156,85 @@ export const ConveniosListaPage = () => {
                 </option>
               ))}
             </select>
+          </div>
+          <div>
+            <label className="form-label">Esfera de governo</label>
+            <select
+              className="form-input"
+              value={filters.esfera || ""}
+              onChange={(event) =>
+                handleFilterChange({ esfera: event.target.value })
+              }
+            >
+              <option value="">Todas</option>
+              {esferaGovernoOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="form-label">Modalidade de repasse</label>
+            <select
+              className="form-input"
+              value={filters.modalidadeRepasse || ""}
+              onChange={(event) =>
+                handleFilterChange({ modalidadeRepasse: event.target.value })
+              }
+            >
+              <option value="">Todas</option>
+              {modalidadeRepasseOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="form-label">Vigência - Início</label>
+            <input
+              type="date"
+              className="form-input"
+              value={filters.dataInicioVigencia || ""}
+              onChange={(event) =>
+                handleFilterChange({ dataInicioVigencia: event.target.value })
+              }
+            />
+          </div>
+          <div>
+            <label className="form-label">Vigência - Fim</label>
+            <input
+              type="date"
+              className="form-input"
+              value={filters.dataFimVigencia || ""}
+              onChange={(event) =>
+                handleFilterChange({ dataFimVigencia: event.target.value })
+              }
+            />
+          </div>
+          <div>
+            <label className="form-label">Faixa de valor (R$)</label>
+            <div className="flex gap-2">
+              <input
+                type="number"
+                className="form-input"
+                placeholder="Mín"
+                value={filters.valorMin || ""}
+                onChange={(event) =>
+                  handleFilterChange({ valorMin: event.target.value })
+                }
+              />
+              <input
+                type="number"
+                className="form-input"
+                placeholder="Máx"
+                value={filters.valorMax || ""}
+                onChange={(event) =>
+                  handleFilterChange({ valorMax: event.target.value })
+                }
+              />
+            </div>
           </div>
         </div>
 
@@ -202,10 +285,7 @@ export const ConveniosListaPage = () => {
                         Detalhes
                       </button>
                       <button
-                        onClick={() => {
-                          // TODO: Implementar no futuro
-                          alert("Funcionalidade de etapas será implementada em breve");
-                        }}
+                        onClick={() => setEtapasModal({ id: convenio.id, titulo: convenio.titulo })}
                         className="inline-flex items-center gap-1 rounded-xl bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-600 transition hover:bg-emerald-100"
                         title="Gerenciar etapas"
                       >
@@ -269,6 +349,14 @@ export const ConveniosListaPage = () => {
           </div>
         )}
       </section>
+
+      {etapasModal && (
+        <EtapasResumoModal
+          convenioId={etapasModal.id}
+          convenioTitulo={etapasModal.titulo}
+          onClose={() => setEtapasModal(null)}
+        />
+      )}
     </div>
   );
 };

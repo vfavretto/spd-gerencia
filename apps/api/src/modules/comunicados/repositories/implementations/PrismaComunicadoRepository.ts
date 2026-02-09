@@ -8,30 +8,24 @@ import type { ComunicadoRepository } from '../ComunicadoRepository';
 export class PrismaComunicadoRepository implements ComunicadoRepository {
   async list(): Promise<IComunicado[]> {
     return prisma.comunicado.findMany({
-      include: { convenio: true },
       orderBy: { dataRegistro: 'desc' }
     });
   }
 
   async findById(id: string): Promise<IComunicado | null> {
     return prisma.comunicado.findUnique({
-      where: { id },
-      include: { convenio: true }
+      where: { id }
     });
   }
 
   async create(data: CreateComunicadoDTO): Promise<IComunicado> {
-    return prisma.comunicado.create({
-      data,
-      include: { convenio: true }
-    });
+    return prisma.comunicado.create({ data });
   }
 
   async update(id: string, data: UpdateComunicadoDTO): Promise<IComunicado> {
     return prisma.comunicado.update({
       where: { id },
-      data,
-      include: { convenio: true }
+      data
     });
   }
 

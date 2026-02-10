@@ -172,7 +172,7 @@ export const DashboardPage = () => {
                       outerRadius={70}
                       paddingAngle={2}
                       dataKey="value"
-                      label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                      label={({ name, percent }) => `${name}: ${((percent ?? 0) * 100).toFixed(0)}%`}
                     >
                       <Cell fill="#818cf8" />
                       <Cell fill="#34d399" />

@@ -1,0 +1,43 @@
+# Dependencias (reinstaladas no container)
+node_modules
+**/node_modules
+
+# Builds locais
+**/dist
+**/build
+
+# Git
+.git
+.gitignore
+
+# IDE
+.vscode
+.cursor
+.idea
+*.swp
+*.swo
+
+# Ambiente (variaveis sensiveis)
+.env
+.env.local
+.env.*.local
+
+# Docker
+.dockerignore
+
+# Testes e cobertura
+**/coverage
+**/__tests__
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+
+# Documentacao e CI
+.github
+*.md
+LICENSE
+
+# OS
+.DS_Store
+Thumbs.db

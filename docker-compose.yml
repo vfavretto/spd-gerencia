@@ -2,16 +2,64 @@ services:
   mysql:
     image: mysql:8.0
     container_name: spd_mysql
+    restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: spd_gerencia
-      MYSQL_USER: spd_user
-      MYSQL_PASSWORD: spd_pass
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-spd_gerencia}
+      MYSQL_USER: ${MYSQL_USER:-spd_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-spd_pass}
     ports:
-      - "3306:3306"
+      - "${MYSQL_PORT:-3306}:3306"
     volumes:
       - spd_mysql_data:/var/lib/mysql
     command: --default-authentication-plugin=mysql_native_password
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - spd-network
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: spd_api
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      DATABASE_URL: mysql://${MYSQL_USER:-spd_user}:${MYSQL_PASSWORD:-spd_pass}@mysql:3306/${MYSQL_DATABASE:-spd_gerencia}
+      JWT_SECRET: ${JWT_SECRET:-troque-esta-chave}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost}
+    ports:
+      - "${API_PORT:-4000}:4000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - spd-network
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:4000}
+    container_name: spd_web
+    restart: unless-stopped
+    ports:
+      - "${WEB_PORT:-80}:80"
+    depends_on:
+      - api
+    networks:
+      - spd-network
 
 volumes:
   spd_mysql_data:
+
+networks:
+  spd-network:
+    driver: bridge

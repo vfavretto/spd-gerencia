@@ -259,7 +259,7 @@ export interface DashboardOverview {
 export interface DashboardResumo {
   // Visão financeira
   totalPorEsfera: { esfera: string | null; total: number; quantidade: number }[];
-  conveniosPorStatus: { status: string; total: number }[];
+  conveniosPorStatus: { status: ConvenioStatus; total: number }[];
   somaRepasses: number;
   somaContrapartidas: number;
   valorGlobalTotal: number;
@@ -303,7 +303,7 @@ export interface DashboardResumo {
     codigo: string;
     titulo: string;
     valorGlobal: number;
-    status: string;
+    status: ConvenioStatus;
     percentualExecutado: number;
   }[];
 }

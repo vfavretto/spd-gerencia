@@ -305,7 +305,7 @@ const registerSchema = z.object({
   email: z.string().email("E-mail inválido"),
   matricula: z.string().min(1, "Matrícula é obrigatória"),
   senha: z.string().min(6, "Senha deve ter ao menos 6 caracteres"),
-  role: z.enum(["ADMIN", "ANALISTA", "ESTAGIARIO", "OBSERVADOR"]).default("ANALISTA")
+  role: z.enum(["ADMIN", "ANALISTA", "ESTAGIARIO", "OBSERVADOR"])
 });
 
 type RegisterForm = z.infer<typeof registerSchema>;

@@ -1,8 +1,10 @@
+import type { StatusPendencia } from '@spd/db';
+
 export type CreatePendenciaDTO = {
   descricao: string;
   responsavel?: string | null;
   prazo?: Date | null;
-  status?: string;
+  status?: StatusPendencia;
   prioridade?: number;
   resolucao?: string | null;
   dataResolucao?: Date | null;
@@ -11,3 +13,4 @@ export type CreatePendenciaDTO = {
 };
 
 export type UpdatePendenciaDTO = Partial<Omit<CreatePendenciaDTO, 'convenioId' | 'criadoPorId'>>;
+

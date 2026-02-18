@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express';
 import { z } from 'zod';
+import { StatusPendencia } from '@spd/db';
 import { PrismaPendenciaRepository } from '../repositories/implementations/PrismaPendenciaRepository';
 import { ListPendenciasUseCase } from '../useCases/ListPendenciasUseCase';
 import { GetPendenciaUseCase } from '../useCases/GetPendenciaUseCase';
@@ -7,7 +8,7 @@ import { CreatePendenciaUseCase } from '../useCases/CreatePendenciaUseCase';
 import { UpdatePendenciaUseCase } from '../useCases/UpdatePendenciaUseCase';
 import { DeletePendenciaUseCase } from '../useCases/DeletePendenciaUseCase';
 
-const statusEnum = z.enum(['ABERTA', 'EM_ANDAMENTO', 'RESOLVIDA', 'CANCELADA']);
+const statusEnum = z.nativeEnum(StatusPendencia);
 
 const createSchema = z.object({
   descricao: z.string().min(1),
@@ -27,7 +28,8 @@ export class PendenciaController {
 
   async index(req: Request, res: Response) {
     const convenioId = req.params.convenioId;
-    const status = req.query.status?.toString();
+    const rawStatus = req.query.status?.toString();
+    const status = rawStatus ? statusEnum.parse(rawStatus) : undefined;
     const prioridade = req.query.prioridade ? Number(req.query.prioridade) : undefined;
 
     const useCase = new ListPendenciasUseCase(this.repository);

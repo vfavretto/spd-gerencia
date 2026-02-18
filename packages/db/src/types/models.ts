@@ -196,7 +196,7 @@ export interface IPendencia extends BaseDocument {
   convenioId: string;
   criadoPorId?: string | null;
   // Virtual populate
-  criadoPor?: IUsuario | null;
+  criadoPor?: Partial<IUsuario> | null;
 }
 
 // ==================== ADITIVO ====================

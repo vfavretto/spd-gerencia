@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { MailPlus, RefreshCcw } from "lucide-react";
+import { Filter, MailPlus, RefreshCcw, X } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -8,7 +8,10 @@ import { z } from "zod";
 import { PageHeader } from "@/modules/shared/components/PageHeader";
 import { CanCreateComunicado } from "@/modules/shared/components/PermissionGate";
 import { tipoComunicadoOptions } from "@/modules/shared/constants";
-import { comunicadoService } from "@/modules/comunicados/services/comunicadoService";
+import {
+  comunicadoService,
+  type ComunicadoFilters
+} from "@/modules/comunicados/services/comunicadoService";
 import { formatDate } from "@/modules/shared/utils/format";
 
 const comunicadoSchema = z.object({
@@ -27,12 +30,24 @@ type ComunicadoForm = z.infer<typeof comunicadoSchema>;
 
 export const ComunicadosPage = () => {
   const queryClient = useQueryClient();
-  const [tipoFiltro, setTipoFiltro] = useState<string>("");
+  const [filters, setFilters] = useState<ComunicadoFilters>({});
 
   const comunicadosQuery = useQuery({
-    queryKey: ["comunicados"],
-    queryFn: () => comunicadoService.list()
+    queryKey: ["comunicados", filters],
+    queryFn: () => comunicadoService.list(filters)
   });
+
+  const handleFilterChange = (newFilters: Partial<ComunicadoFilters>) => {
+    setFilters((prev) => ({ ...prev, ...newFilters }));
+  };
+
+  const clearFilters = () => {
+    setFilters({});
+  };
+
+  const hasActiveFilters = Boolean(
+    filters.tipo || filters.search || filters.responsavel || filters.dataInicio || filters.dataFim
+  );
 
   const {
     register,
@@ -62,9 +77,6 @@ export const ComunicadosPage = () => {
   });
 
   const comunicados = comunicadosQuery.data ?? [];
-  const comunicadosFiltrados = tipoFiltro
-    ? comunicados.filter((item) => item.tipo === tipoFiltro)
-    : comunicados;
 
   const onSubmit = (data: ComunicadoForm) => {
     createMutation.mutate(data);
@@ -224,31 +236,84 @@ export const ComunicadosPage = () => {
               <h3 className="text-lg font-semibold text-slate-900">
                 Histórico de comunicados
               </h3>
-              <p className="text-sm text-slate-500">Filtre por tipo para analisar.</p>
-            </div>
-            <div className="flex items-center gap-3">
-              {tipoComunicadoOptions.map((option) => (
-                <button
-                  key={option.value}
-                  onClick={() =>
-                    setTipoFiltro((prev) =>
-                      prev === option.value ? "" : option.value
-                    )
-                  }
-                  className={`rounded-2xl px-4 py-2 text-sm font-semibold transition ${
-                    tipoFiltro === option.value
-                      ? "bg-primary-600 text-white"
-                      : "bg-slate-100 text-slate-600"
-                  }`}
-                >
-                  {option.label}
-                </button>
-              ))}
+              <p className="text-sm text-slate-500">
+                {comunicados.length} {comunicados.length === 1 ? "comunicado encontrado" : "comunicados encontrados"}
+              </p>
             </div>
           </div>
 
+          <div className="mt-4 grid gap-3 md:grid-cols-3 lg:grid-cols-5">
+            <div className="lg:col-span-2">
+              <label className="form-label flex items-center gap-2">
+                <Filter className="h-4 w-4" /> Buscar
+              </label>
+              <input
+                className="form-input"
+                placeholder="Protocolo, assunto, origem ou destino"
+                value={filters.search || ""}
+                onChange={(e) => handleFilterChange({ search: e.target.value })}
+              />
+            </div>
+            <div>
+              <label className="form-label">Tipo</label>
+              <select
+                className="form-input"
+                value={filters.tipo || ""}
+                onChange={(e) =>
+                  handleFilterChange({ tipo: e.target.value as ComunicadoFilters["tipo"] })
+                }
+              >
+                <option value="">Todos</option>
+                {tipoComunicadoOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="form-label">Responsável</label>
+              <input
+                className="form-input"
+                placeholder="Nome do responsável"
+                value={filters.responsavel || ""}
+                onChange={(e) => handleFilterChange({ responsavel: e.target.value })}
+              />
+            </div>
+            <div>
+              <label className="form-label">Data início</label>
+              <input
+                type="date"
+                className="form-input"
+                value={filters.dataInicio || ""}
+                onChange={(e) => handleFilterChange({ dataInicio: e.target.value })}
+              />
+            </div>
+            <div>
+              <label className="form-label">Data fim</label>
+              <input
+                type="date"
+                className="form-input"
+                value={filters.dataFim || ""}
+                onChange={(e) => handleFilterChange({ dataFim: e.target.value })}
+              />
+            </div>
+          </div>
+
+          {hasActiveFilters && (
+            <div className="mt-3 flex items-center justify-end">
+              <button
+                onClick={clearFilters}
+                className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-slate-700"
+              >
+                <X className="h-4 w-4" />
+                Limpar filtros
+              </button>
+            </div>
+          )}
+
           <div className="mt-4 space-y-3">
-            {comunicadosFiltrados.map((item) => (
+            {comunicados.map((item) => (
               <div
                 key={item.id}
                 className={`relative overflow-hidden rounded-3xl border border-slate-100 bg-white p-4 pl-6 shadow-sm transition-all hover:shadow-md ${
@@ -291,9 +356,9 @@ export const ComunicadosPage = () => {
                 </div>
               </div>
             ))}
-            {comunicadosFiltrados.length === 0 && (
+            {comunicados.length === 0 && (
               <div className="rounded-3xl border border-dashed border-slate-200 bg-white/50 p-8 text-center text-sm text-slate-400">
-                Nenhum comunicado encontrado para o filtro selecionado.
+                Nenhum comunicado encontrado para os filtros selecionados.
               </div>
             )}
           </div>

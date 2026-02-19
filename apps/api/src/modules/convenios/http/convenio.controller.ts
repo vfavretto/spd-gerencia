@@ -79,7 +79,7 @@ export class ConvenioController {
 
     // Registra auditoria
     await AuditService.logCreate(
-      { id: req.user!.id, email: req.user!.email },
+      { id: req.user!.id, nome: req.user!.nome, email: req.user!.email },
       'Convenio',
       convenio.id,
       convenio as unknown as Record<string, unknown>,
@@ -110,7 +110,7 @@ export class ConvenioController {
 
     // Registra auditoria
     await AuditService.logUpdate(
-      { id: req.user!.id, email: req.user!.email },
+      { id: req.user!.id, nome: req.user!.nome, email: req.user!.email },
       'Convenio',
       id,
       dadosAntigos as unknown as Record<string, unknown>,
@@ -134,7 +134,7 @@ export class ConvenioController {
 
     // Registra auditoria
     await AuditService.logDelete(
-      { id: req.user!.id, email: req.user!.email },
+      { id: req.user!.id, nome: req.user!.nome, email: req.user!.email },
       'Convenio',
       id,
       dadosAntigos as unknown as Record<string, unknown>,

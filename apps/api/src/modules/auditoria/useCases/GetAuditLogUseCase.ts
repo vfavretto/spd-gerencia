@@ -4,7 +4,7 @@ import { AppError } from '@shared/errors/AppError';
 export class GetAuditLogUseCase {
   constructor(private auditLogRepository: IAuditLogRepository) {}
 
-  async execute(id: string) {
+  async execute(id: number) {
     const auditLog = await this.auditLogRepository.findById(id);
 
     if (!auditLog) {

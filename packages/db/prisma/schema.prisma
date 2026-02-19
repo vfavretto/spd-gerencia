@@ -90,113 +90,112 @@ enum TipoEmpenho {
 }
 
 model Usuario {
-  id          String   @id @default(uuid())
-  nome        String
-  email       String   @unique
-  matricula   String   @unique
-  senha       String
-  role        UsuarioRole
-  ativo       Boolean  @default(true)
-  criadoEm    DateTime @default(now())
-  atualizadoEm DateTime @updatedAt
+  id           String      @id @default(uuid())
+  nome         String
+  email        String      @unique
+  matricula    String      @unique
+  senha        String
+  role         UsuarioRole
+  ativo        Boolean     @default(true)
+  criadoEm     DateTime    @default(now())
+  atualizadoEm DateTime    @updatedAt
 
-  comunicados  Comunicado[]
-  pendencias   Pendencia[]
+  comunicados Comunicado[]
+  pendencias  Pendencia[]
 }
 
 model Secretaria {
-  id           String    @id @default(uuid())
+  id           String   @id @default(uuid())
   nome         String
   sigla        String?
   responsavel  String?
-  criadoEm     DateTime  @default(now())
-  atualizadoEm DateTime  @updatedAt
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
 
   convenios Convenio[]
 }
 
 model OrgaoConcedente {
-  id           String    @id @default(uuid())
+  id           String   @id @default(uuid())
   nome         String
   esfera       String?
   contato      String?
-  criadoEm     DateTime  @default(now())
-  atualizadoEm DateTime  @updatedAt
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
 
   convenios Convenio[]
 }
 
 model Programa {
-  id           String    @id @default(uuid())
+  id           String   @id @default(uuid())
   nome         String
   codigo       String?
   descricao    String?
-  criadoEm     DateTime  @default(now())
-  atualizadoEm DateTime  @updatedAt
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
 
   convenios Convenio[]
 }
 
 model FonteRecurso {
-  id           String    @id @default(uuid())
+  id           String   @id @default(uuid())
   nome         String
   tipo         String?
-  criadoEm     DateTime  @default(now())
-  atualizadoEm DateTime  @updatedAt
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
 
   convenios Convenio[]
 }
 
 model Convenio {
-  id                   String          @id @default(uuid())
-  codigo               String          @unique
-  titulo               String
-  objeto               String
-  status               ConvenioStatus  @default(RASCUNHO)
-  descricao            String?
-  observacoes          String?
-  numeroProposta       String?
-  dataInicioProcesso   DateTime?
-  modalidadeRepasse    ModalidadeRepasse?
-  termoFormalizacao    String?
-  numeroTermo          String?
-  clausulaSuspensiva   Boolean         @default(false)
-  esfera               EsferaGoverno?
-  ministerioOrgao      String?
-  objetoDescricao      String?
-  valorGlobal          Decimal         @db.Decimal(15, 2)
-  valorRepasse         Decimal?        @db.Decimal(15, 2)
-  valorContrapartida   Decimal?        @db.Decimal(15, 2)
-  dataAssinatura       DateTime?
-  dataInicioVigencia   DateTime?
-  dataFimVigencia      DateTime?
-  dataPrestacaoContas  DateTime?
-  processoSPD          String?
+  id                       String             @id @default(uuid())
+  codigo                   String             @unique
+  titulo                   String
+  objeto                   String
+  status                   ConvenioStatus     @default(RASCUNHO)
+  descricao                String?
+  observacoes              String?
+  numeroProposta           String?
+  dataInicioProcesso       DateTime?
+  modalidadeRepasse        ModalidadeRepasse?
+  termoFormalizacao        String?
+  numeroTermo              String?
+  clausulaSuspensiva       Boolean            @default(false)
+  esfera                   EsferaGoverno?
+  ministerioOrgao          String?
+  objetoDescricao          String?
+  valorGlobal              Decimal            @db.Decimal(15, 2)
+  valorRepasse             Decimal?           @db.Decimal(15, 2)
+  valorContrapartida       Decimal?           @db.Decimal(15, 2)
+  dataAssinatura           DateTime?
+  dataInicioVigencia       DateTime?
+  dataFimVigencia          DateTime?
+  dataPrestacaoContas      DateTime?
+  processoSPD              String?
   processoCreditoAdicional String?
-  area                 String?
-  secretariaId         String
-  orgaoId              String?
-  programaId           String?
-  fonteId              String?
-  criadoEm             DateTime        @default(now())
-  atualizadoEm         DateTime        @updatedAt
+  area                     String?
+  secretariaId             String
+  orgaoId                  String?
+  programaId               String?
+  fonteId                  String?
+  criadoEm                 DateTime           @default(now())
+  atualizadoEm             DateTime           @updatedAt
 
-  secretaria Secretaria @relation(fields: [secretariaId], references: [id])
+  secretaria Secretaria       @relation(fields: [secretariaId], references: [id])
   orgao      OrgaoConcedente? @relation(fields: [orgaoId], references: [id])
-  programa   Programa? @relation(fields: [programaId], references: [id])
-  fonte      FonteRecurso? @relation(fields: [fonteId], references: [id])
+  programa   Programa?        @relation(fields: [programaId], references: [id])
+  fonte      FonteRecurso?    @relation(fields: [fonteId], references: [id])
 
-  anexos            ConvenioAnexo[]
-  etapas            EtapaConvenio[]
-  emendas           EmendaParlamentar[]
-  financeiroContas  FinanceiroContas?
-  contratos         ContratoExecucao[]
-  pendencias        Pendencia[]
-  aditivos          Aditivo[]
+  anexos              ConvenioAnexo[]
+  emendas             EmendaParlamentar[]
+  financeiroContas    FinanceiroContas?
+  contratos           ContratoExecucao[]
+  pendencias          Pendencia[]
+  aditivos            Aditivo[]
   fichasOrcamentarias FichaOrcamentaria[]
-  notasEmpenho      NotaEmpenho[]
-  eventosAgenda     EventoAgenda[]
-  snapshots         ConvenioSnapshot[]
+  notasEmpenho        NotaEmpenho[]
+  eventosAgenda       EventoAgenda[]
+  snapshots           ConvenioSnapshot[]
 
   @@index([status])
   @@index([secretariaId])
@@ -211,222 +210,216 @@ model ConvenioAnexo {
   convenioId String
 
   convenio Convenio @relation(fields: [convenioId], references: [id])
-  @@index([convenioId])
-}
 
-model EtapaConvenio {
-  id           String   @id @default(uuid())
-  titulo       String
-  descricao    String?
-  dataPrevista DateTime?
-  dataRealizada DateTime?
-  responsavel  String?
-  situacao     String?
-  criadoEm     DateTime @default(now())
-  atualizadoEm DateTime @updatedAt
-  convenioId   String
-
-  convenio Convenio @relation(fields: [convenioId], references: [id])
   @@index([convenioId])
 }
 
 model EmendaParlamentar {
-  id             String   @id @default(uuid())
+  id              String   @id @default(uuid())
   nomeParlamentar String
-  partido        String?
-  codigoEmenda   String?
-  funcao         String?
-  subfuncao      String?
-  programa       String?
-  valorIndicado  Decimal? @db.Decimal(15, 2)
-  anoEmenda      Int?
-  convenioId     String
-  criadoEm       DateTime @default(now())
-  atualizadoEm   DateTime @updatedAt
+  partido         String?
+  codigoEmenda    String?
+  funcao          String?
+  subfuncao       String?
+  programa        String?
+  valorIndicado   Decimal? @db.Decimal(15, 2)
+  anoEmenda       Int?
+  convenioId      String
+  criadoEm        DateTime @default(now())
+  atualizadoEm    DateTime @updatedAt
 
   convenio Convenio @relation(fields: [convenioId], references: [id])
+
   @@index([convenioId])
 }
 
 model FinanceiroContas {
-  id                String   @id @default(uuid())
-  banco             String?
-  agencia           String?
-  contaBancaria     String?
-  valorLiberadoTotal Decimal? @db.Decimal(15, 2)
-  saldoRendimentos  Decimal? @db.Decimal(15, 2)
+  id                  String    @id @default(uuid())
+  banco               String?
+  agencia             String?
+  contaBancaria       String?
+  valorLiberadoTotal  Decimal?  @db.Decimal(15, 2)
+  saldoRendimentos    Decimal?  @db.Decimal(15, 2)
   fichasOrcamentarias String?
-  observacoes       String?
-  codigoReceita     String?
-  dataDeposito      DateTime?
-  valorCPExclusiva  Decimal? @db.Decimal(15, 2)
-  convenioId        String   @unique
-  criadoEm          DateTime @default(now())
-  atualizadoEm      DateTime @updatedAt
+  observacoes         String?
+  codigoReceita       String?
+  dataDeposito        DateTime?
+  valorCPExclusiva    Decimal?  @db.Decimal(15, 2)
+  convenioId          String    @unique
+  criadoEm            DateTime  @default(now())
+  atualizadoEm        DateTime  @updatedAt
 
   convenio Convenio @relation(fields: [convenioId], references: [id])
 }
 
 model FichaOrcamentaria {
-  id           String               @id @default(uuid())
+  id           String                @id @default(uuid())
   numero       String
   tipo         TipoFichaOrcamentaria
   descricao    String?
-  valor        Decimal?             @db.Decimal(15, 2)
+  valor        Decimal?              @db.Decimal(15, 2)
   convenioId   String
-  criadoEm     DateTime             @default(now())
-  atualizadoEm DateTime             @updatedAt
+  criadoEm     DateTime              @default(now())
+  atualizadoEm DateTime              @updatedAt
 
   convenio Convenio @relation(fields: [convenioId], references: [id])
+
   @@index([convenioId])
 }
 
 model NotaEmpenho {
-  id           String       @id @default(uuid())
+  id           String      @id @default(uuid())
   numero       String
   tipo         TipoEmpenho
-  valor        Decimal      @db.Decimal(15, 2)
+  valor        Decimal     @db.Decimal(15, 2)
   dataEmissao  DateTime
   observacoes  String?
   convenioId   String
-  criadoEm     DateTime     @default(now())
-  atualizadoEm DateTime     @updatedAt
+  criadoEm     DateTime    @default(now())
+  atualizadoEm DateTime    @updatedAt
 
   convenio Convenio @relation(fields: [convenioId], references: [id])
+
   @@index([convenioId])
 }
 
 model ContratoExecucao {
-  id                   String              @id @default(uuid())
+  id                     String               @id @default(uuid())
   numProcessoLicitatorio String?
-  modalidadeLicitacao  ModalidadeLicitacao?
-  numeroContrato       String?
-  contratadaCnpj       String?
-  contratadaNome       String?
-  dataAssinatura       DateTime?
-  dataVigenciaInicio   DateTime?
-  dataVigenciaFim      DateTime?
-  dataOIS              DateTime?
-  valorContrato        Decimal?            @db.Decimal(15, 2)
-  valorExecutado       Decimal?            @db.Decimal(15, 2)
-  engenheiroResponsavel String?
-  creaEngenheiro       String?
-  artRrt               String?
-  situacao             String?
-  observacoes          String?
-  cno                  String?
-  prazoExecucaoDias    Int?
-  dataTerminoExecucao  DateTime?
-  convenioId           String
-  criadoEm             DateTime            @default(now())
-  atualizadoEm         DateTime            @updatedAt
+  modalidadeLicitacao    ModalidadeLicitacao?
+  numeroContrato         String?
+  contratadaCnpj         String?
+  contratadaNome         String?
+  dataAssinatura         DateTime?
+  dataVigenciaInicio     DateTime?
+  dataVigenciaFim        DateTime?
+  dataOIS                DateTime?
+  valorContrato          Decimal?             @db.Decimal(15, 2)
+  valorExecutado         Decimal?             @db.Decimal(15, 2)
+  engenheiroResponsavel  String?
+  creaEngenheiro         String?
+  artRrt                 String?
+  situacao               String?
+  observacoes            String?
+  cno                    String?
+  prazoExecucaoDias      Int?
+  dataTerminoExecucao    DateTime?
+  convenioId             String
+  criadoEm               DateTime             @default(now())
+  atualizadoEm           DateTime             @updatedAt
 
-  convenio Convenio @relation(fields: [convenioId], references: [id])
+  convenio Convenio  @relation(fields: [convenioId], references: [id])
   medicoes Medicao[]
   aditivos Aditivo[]
+
   @@index([convenioId])
 }
 
 model Medicao {
-  id             String   @id @default(uuid())
-  numeroMedicao  Int
-  dataMedicao    DateTime
-  percentualFisico Decimal? @db.Decimal(5, 2)
-  valorMedido    Decimal  @db.Decimal(15, 2)
-  dataPagamento  DateTime?
-  valorPago      Decimal? @db.Decimal(15, 2)
-  observacoes    String?
-  situacao       String?
-  processoMedicao String?
-  contratoId     String
-  criadoEm       DateTime @default(now())
-  atualizadoEm   DateTime @updatedAt
+  id               String    @id @default(uuid())
+  numeroMedicao    Int
+  dataMedicao      DateTime
+  percentualFisico Decimal?  @db.Decimal(5, 2)
+  valorMedido      Decimal   @db.Decimal(15, 2)
+  dataPagamento    DateTime?
+  valorPago        Decimal?  @db.Decimal(15, 2)
+  observacoes      String?
+  situacao         String?
+  processoMedicao  String?
+  contratoId       String
+  criadoEm         DateTime  @default(now())
+  atualizadoEm     DateTime  @updatedAt
 
   contrato ContratoExecucao @relation(fields: [contratoId], references: [id])
+
   @@index([contratoId])
 }
 
 model Aditivo {
-  id             String     @id @default(uuid())
+  id             String      @id @default(uuid())
   numeroAditivo  Int
   tipoAditivo    TipoAditivo
   dataAssinatura DateTime?
   novaVigencia   DateTime?
-  valorAcrescimo Decimal?   @db.Decimal(15, 2)
-  valorSupressao Decimal?   @db.Decimal(15, 2)
+  valorAcrescimo Decimal?    @db.Decimal(15, 2)
+  valorSupressao Decimal?    @db.Decimal(15, 2)
   motivo         String?
   justificativa  String?
   observacoes    String?
   convenioId     String?
   contratoId     String?
-  criadoEm       DateTime   @default(now())
-  atualizadoEm   DateTime   @updatedAt
+  criadoEm       DateTime    @default(now())
+  atualizadoEm   DateTime    @updatedAt
 
-  convenio Convenio? @relation(fields: [convenioId], references: [id])
+  convenio Convenio?         @relation(fields: [convenioId], references: [id])
   contrato ContratoExecucao? @relation(fields: [contratoId], references: [id])
+
   @@index([convenioId])
   @@index([contratoId])
 }
 
 model Pendencia {
-  id             String         @id @default(uuid())
-  descricao      String
-  responsavel    String?
-  prazo          DateTime?
-  status         StatusPendencia
-  prioridade     Int?
-  resolucao      String?
-  dataResolucao  DateTime?
+  id               String          @id @default(uuid())
+  descricao        String
+  responsavel      String?
+  prazo            DateTime?
+  status           StatusPendencia
+  prioridade       Int?
+  resolucao        String?
+  dataResolucao    DateTime?
   orgaoResponsavel String?
-  convenioId     String
-  criadoPorId    String?
-  criadoEm       DateTime       @default(now())
-  atualizadoEm   DateTime       @updatedAt
+  convenioId       String
+  criadoPorId      String?
+  criadoEm         DateTime        @default(now())
+  atualizadoEm     DateTime        @updatedAt
 
   convenio  Convenio @relation(fields: [convenioId], references: [id])
   criadoPor Usuario? @relation(fields: [criadoPorId], references: [id])
+
   @@index([convenioId])
   @@index([criadoPorId])
 }
 
 model Comunicado {
-  id          String        @id @default(uuid())
-  protocolo   String
-  assunto     String
-  conteudo    String?
-  tipo        TipoComunicado
-  dataRegistro DateTime     @default(now())
-  origem      String?
-  destino     String?
-  responsavel String?
-  arquivoUrl  String?
-  criadoPorId String?
-  criadoEm    DateTime      @default(now())
-  atualizadoEm DateTime     @updatedAt
+  id           String         @id @default(uuid())
+  protocolo    String
+  assunto      String
+  conteudo     String?
+  tipo         TipoComunicado
+  dataRegistro DateTime       @default(now())
+  origem       String?
+  destino      String?
+  responsavel  String?
+  arquivoUrl   String?
+  criadoPorId  String?
+  criadoEm     DateTime       @default(now())
+  atualizadoEm DateTime       @updatedAt
 
   criadoPor Usuario? @relation(fields: [criadoPorId], references: [id])
+
   @@index([criadoPorId])
 }
 
 model EventoAgenda {
-  id          String     @id @default(uuid())
-  titulo      String
-  descricao   String?
-  tipo        TipoEvento
-  dataInicio  DateTime
-  dataFim     DateTime?
-  local       String?
-  responsavel String?
-  convenioId  String?
-  criadoEm    DateTime   @default(now())
-  atualizadoEm DateTime  @updatedAt
+  id           String     @id @default(uuid())
+  titulo       String
+  descricao    String?
+  tipo         TipoEvento
+  dataInicio   DateTime
+  dataFim      DateTime?
+  local        String?
+  responsavel  String?
+  convenioId   String?
+  criadoEm     DateTime   @default(now())
+  atualizadoEm DateTime   @updatedAt
 
   convenio Convenio? @relation(fields: [convenioId], references: [id])
+
   @@index([convenioId])
 }
 
 model AuditLog {
-  id           String         @id @default(uuid())
+  id           Int           @id @default(autoincrement())
   usuarioId    String
   usuarioNome  String
   usuarioEmail String
@@ -437,7 +430,7 @@ model AuditLog {
   dadosNovos   Json?
   ip           String?
   userAgent    String?
-  criadoEm     DateTime       @default(now())
+  criadoEm     DateTime      @default(now())
 
   @@index([usuarioId])
   @@index([entidade, entidadeId])
@@ -445,18 +438,18 @@ model AuditLog {
 }
 
 model ConvenioSnapshot {
-  id            String   @id @default(uuid())
-  convenioId    String
-  versao        Int
-  dados         Json
-  criadoPorId   String?
-  criadoPorNome String?
+  id             String   @id @default(uuid())
+  convenioId     String
+  versao         Int
+  dados          Json
+  criadoPorId    String?
+  criadoPorNome  String?
   motivoSnapshot String?
-  criadoEm      DateTime @default(now())
+  criadoEm       DateTime @default(now())
 
   convenio Convenio @relation(fields: [convenioId], references: [id])
 
+  @@unique([convenioId, versao])
   @@index([convenioId])
   @@index([criadoEm])
-  @@unique([convenioId, versao])
 }

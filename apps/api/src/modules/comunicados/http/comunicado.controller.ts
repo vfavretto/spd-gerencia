@@ -25,9 +25,17 @@ const updateSchema = createSchema.partial();
 export class ComunicadoController {
   private readonly repository = new PrismaComunicadoRepository();
 
-  async index(_req: Request, res: Response) {
+  async index(req: Request, res: Response) {
+    const tipo = req.query.tipo?.toString() as 'ENTRADA' | 'SAIDA' | undefined;
+    const search = req.query.search?.toString();
+    const responsavel = req.query.responsavel?.toString();
+    const dataInicio = req.query.dataInicio?.toString();
+    const dataFim = req.query.dataFim?.toString();
+
     const useCase = new ListComunicadosUseCase(this.repository);
-    const comunicados = await useCase.execute();
+    const comunicados = await useCase.execute({
+      tipo, search, responsavel, dataInicio, dataFim
+    });
     return res.json(comunicados);
   }
 
@@ -45,7 +53,7 @@ export class ComunicadoController {
 
     // Registra auditoria
     await AuditService.logCreate(
-      { id: req.user!.id, email: req.user!.email },
+      { id: req.user!.id, nome: req.user!.nome, email: req.user!.email },
       'Comunicado',
       comunicado.id,
       comunicado as unknown as Record<string, unknown>,
@@ -69,7 +77,7 @@ export class ComunicadoController {
 
     // Registra auditoria
     await AuditService.logUpdate(
-      { id: req.user!.id, email: req.user!.email },
+      { id: req.user!.id, nome: req.user!.nome, email: req.user!.email },
       'Comunicado',
       id,
       dadosAntigos as unknown as Record<string, unknown>,
@@ -93,7 +101,7 @@ export class ComunicadoController {
 
     // Registra auditoria
     await AuditService.logDelete(
-      { id: req.user!.id, email: req.user!.email },
+      { id: req.user!.id, nome: req.user!.nome, email: req.user!.email },
       'Comunicado',
       id,
       dadosAntigos as unknown as Record<string, unknown>,

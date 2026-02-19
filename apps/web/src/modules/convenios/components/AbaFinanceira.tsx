@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Edit2, Save, X, Wallet, Building2 } from "lucide-react";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import type { Convenio } from "@/modules/shared/types";
 import { financeiroService } from "@/modules/convenios/services/financeiroService";
 import { formatCurrency } from "@/modules/shared/utils/format";
@@ -9,6 +9,7 @@ import { Button } from "@/modules/shared/ui/button";
 import { Input } from "@/modules/shared/ui/input";
 import { Label } from "@/modules/shared/ui/label";
 import { toast } from "@/modules/shared/ui/toaster";
+import { CurrencyInput } from "@/modules/shared/ui/currency-input";
 
 type Props = {
   convenio: Convenio;
@@ -34,7 +35,7 @@ export function AbaFinanceira({ convenio, onUpdate }: Props) {
     valorCPExclusiva: number | undefined;
   };
 
-  const { register, handleSubmit, reset } = useForm<FinanceiroFormData>({
+  const { register, handleSubmit, reset, control } = useForm<FinanceiroFormData>({
     defaultValues: {
       banco: financeiro?.banco || "",
       agencia: financeiro?.agencia || '',
@@ -146,22 +147,30 @@ export function AbaFinanceira({ convenio, onUpdate }: Props) {
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <Label>Valor Liberado Total</Label>
-              <Input
-                type="number"
-                step="0.01"
-                {...register("valorLiberadoTotal", {
-                  setValueAs: (v) => (v === "" ? undefined : Number(v))
-                })}
+              <Controller
+                name="valorLiberadoTotal"
+                control={control}
+                render={({ field }) => (
+                  <CurrencyInput
+                    value={field.value ?? null}
+                    onValueChange={(val) => field.onChange(val ?? undefined)}
+                    placeholder="R$ 0,00"
+                  />
+                )}
               />
             </div>
             <div className="space-y-2">
               <Label>Saldo de Rendimentos</Label>
-              <Input
-                type="number"
-                step="0.01"
-                {...register("saldoRendimentos", {
-                  setValueAs: (v) => (v === "" ? undefined : Number(v))
-                })}
+              <Controller
+                name="saldoRendimentos"
+                control={control}
+                render={({ field }) => (
+                  <CurrencyInput
+                    value={field.value ?? null}
+                    onValueChange={(val) => field.onChange(val ?? undefined)}
+                    placeholder="R$ 0,00"
+                  />
+                )}
               />
             </div>
           </div>
@@ -176,12 +185,16 @@ export function AbaFinanceira({ convenio, onUpdate }: Props) {
             </div>
             <div className="space-y-2">
               <Label>CP Exclusiva/Recurso Próprio</Label>
-              <Input
-                type="number"
-                step="0.01"
-                {...register("valorCPExclusiva", {
-                  setValueAs: (v) => (v === "" ? undefined : Number(v))
-                })}
+              <Controller
+                name="valorCPExclusiva"
+                control={control}
+                render={({ field }) => (
+                  <CurrencyInput
+                    value={field.value ?? null}
+                    onValueChange={(val) => field.onChange(val ?? undefined)}
+                    placeholder="R$ 0,00"
+                  />
+                )}
               />
             </div>
           </div>

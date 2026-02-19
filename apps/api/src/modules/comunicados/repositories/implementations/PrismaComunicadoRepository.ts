@@ -1,28 +1,60 @@
-import { prisma, type IComunicado } from '@spd/db';
+import { prisma, type Comunicado } from '@spd/db';
 import type {
   CreateComunicadoDTO,
-  UpdateComunicadoDTO
+  UpdateComunicadoDTO,
+  ComunicadoFilters
 } from '../../dto/ComunicadoDTO';
 import type { ComunicadoRepository } from '../ComunicadoRepository';
+import type { Prisma } from '@prisma/client';
 
 export class PrismaComunicadoRepository implements ComunicadoRepository {
-  async list(): Promise<IComunicado[]> {
+  async list(filters?: ComunicadoFilters): Promise<Comunicado[]> {
+    const where: Prisma.ComunicadoWhereInput = {};
+
+    if (filters?.tipo) {
+      where.tipo = filters.tipo;
+    }
+
+    if (filters?.responsavel) {
+      where.responsavel = { contains: filters.responsavel };
+    }
+
+    if (filters?.search) {
+      where.OR = [
+        { assunto: { contains: filters.search } },
+        { protocolo: { contains: filters.search } },
+        { origem: { contains: filters.search } },
+        { destino: { contains: filters.search } }
+      ];
+    }
+
+    if (filters?.dataInicio || filters?.dataFim) {
+      where.dataRegistro = {};
+      if (filters.dataInicio) {
+        where.dataRegistro.gte = new Date(filters.dataInicio);
+      }
+      if (filters.dataFim) {
+        where.dataRegistro.lte = new Date(filters.dataFim);
+      }
+    }
+
     return prisma.comunicado.findMany({
+      where,
       orderBy: { dataRegistro: 'desc' }
     });
   }
 
-  async findById(id: string): Promise<IComunicado | null> {
+  async findById(id: string): Promise<Comunicado | null> {
     return prisma.comunicado.findUnique({
       where: { id }
     });
   }
 
-  async create(data: CreateComunicadoDTO): Promise<IComunicado> {
+  async create(data: CreateComunicadoDTO): Promise<Comunicado> {
     return prisma.comunicado.create({ data });
   }
 
-  async update(id: string, data: UpdateComunicadoDTO): Promise<IComunicado> {
+  async update(id: string, data: UpdateComunicadoDTO): Promise<Comunicado> {
     return prisma.comunicado.update({
       where: { id },
       data
@@ -33,3 +65,4 @@ export class PrismaComunicadoRepository implements ComunicadoRepository {
     await prisma.comunicado.delete({ where: { id } });
   }
 }
+

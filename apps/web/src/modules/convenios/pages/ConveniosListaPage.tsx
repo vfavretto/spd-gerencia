@@ -4,13 +4,13 @@ import {
   ChevronRight,
   Edit,
   Filter,
-  ListChecks,
+  FileBarChart2,
   PlusCircle,
   RefreshCcw
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { EtapasResumoModal } from "@/modules/convenios/components/modals/EtapasResumoModal";
+import { ResumoModal } from "@/modules/convenios/components/modals/ResumoModal";
 import { PageHeader } from "@/modules/shared/components/PageHeader";
 import { StatusBadge } from "@/modules/shared/components/StatusBadge";
 import { CanCreateConvenio } from "@/modules/shared/components/PermissionGate";
@@ -32,7 +32,7 @@ export const ConveniosListaPage = () => {
   const navigate = useNavigate();
   const [filters, setFilters] = useState<ConvenioFilters>({});
   const [currentPage, setCurrentPage] = useState(1);
-  const [etapasModal, setEtapasModal] = useState<{ id: string; titulo: string } | null>(null);
+  const [resumoModal, setResumoModal] = useState<{ id: string; titulo: string } | null>(null);
 
   const { data: catalogs } = useQuery({
     queryKey: ["catalogs"],
@@ -285,12 +285,12 @@ export const ConveniosListaPage = () => {
                         Detalhes
                       </button>
                       <button
-                        onClick={() => setEtapasModal({ id: convenio.id, titulo: convenio.titulo })}
+                        onClick={() => setResumoModal({ id: convenio.id, titulo: convenio.titulo })}
                         className="inline-flex items-center gap-1 rounded-xl bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-600 transition hover:bg-emerald-100"
-                        title="Gerenciar etapas"
+                        title="Ver resumo"
                       >
-                        <ListChecks className="h-3.5 w-3.5" />
-                        Etapas
+                        <FileBarChart2 className="h-3.5 w-3.5" />
+                        Resumo
                       </button>
                     </div>
                   </td>
@@ -350,11 +350,11 @@ export const ConveniosListaPage = () => {
         )}
       </section>
 
-      {etapasModal && (
-        <EtapasResumoModal
-          convenioId={etapasModal.id}
-          convenioTitulo={etapasModal.titulo}
-          onClose={() => setEtapasModal(null)}
+      {resumoModal && (
+        <ResumoModal
+          convenioId={resumoModal.id}
+          convenioTitulo={resumoModal.titulo}
+          onClose={() => setResumoModal(null)}
         />
       )}
     </div>

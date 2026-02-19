@@ -41,7 +41,7 @@ export class AuthenticateUserUseCase {
     }
 
     const token = jwt.sign(
-      { email: user.email, role: user.role, matricula: user.matricula },
+      { email: user.email, role: user.role, matricula: user.matricula, nome: user.nome },
       env.jwtSecret,
       {
         subject: user.id,

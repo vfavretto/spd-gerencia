@@ -12,6 +12,7 @@
     "dev": "tsc --watch --project tsconfig.json",
     "build": "tsc --project tsconfig.json",
     "seed:admin": "ts-node -r dotenv/config --transpile-only scripts/seed_prisma.ts dotenv_config_path=../../.env",
+    "seed:convenios": "ts-node -r dotenv/config --transpile-only scripts/seed_convenios.ts dotenv_config_path=../../.env",
     "prisma:generate": "dotenv -e ../../.env -- npx prisma generate",
     "prisma:migrate": "dotenv -e ../../.env -- npx prisma migrate dev",
     "prisma:studio": "dotenv -e ../../.env -- npx prisma studio",

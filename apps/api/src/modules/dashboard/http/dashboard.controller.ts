@@ -24,7 +24,7 @@ export class DashboardController {
           take: 5
         }),
         prisma.comunicado.count({
-          where: { status: { in: ['PENDENTE', 'EM ANDAMENTO'] } }
+          where: { tipo: 'ENTRADA' }
         })
       ]);
 

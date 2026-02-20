@@ -118,7 +118,14 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
       dataInicioVigencia: data.dataInicioVigencia || null,
       dataFimVigencia: data.dataFimVigencia || null,
       orgaoId: data.orgaoId || null,
-      programaId: data.programaId || null
+      programaId: data.programaId || null,
+      esfera: data.esfera || null,
+      modalidadeRepasse: data.modalidadeRepasse || null,
+      processoSPD: data.processoSPD || null,
+      processoCreditoAdicional: data.processoCreditoAdicional || null,
+      area: data.area || null,
+      numeroProposta: data.numeroProposta || null,
+      numeroTermo: data.numeroTermo || null
     }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["convenio", String(convenio.id)] });

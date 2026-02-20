@@ -10,6 +10,11 @@ import { GetValoresVigentesUseCase } from '../useCases/GetValoresVigentesUseCase
 import { AuditService } from '../../auditoria/services/AuditService';
 import { SnapshotService } from '../../snapshots/services/SnapshotService';
 
+const parseDate = z.preprocess((arg) => {
+  if (arg === '' || arg === null || arg === undefined) return null;
+  return new Date(arg as string | number | Date);
+}, z.date().nullable().optional());
+
 const commonSchema = {
   codigo: z.string().min(1),
   titulo: z.string().min(1),
@@ -19,10 +24,10 @@ const commonSchema = {
   valorGlobal: z.number().min(0),
   valorRepasse: z.number().min(0).nullable().optional(),
   valorContrapartida: z.number().min(0).nullable().optional(),
-  dataAssinatura: z.coerce.date().nullable().optional(),
-  dataInicioVigencia: z.coerce.date().nullable().optional(),
-  dataFimVigencia: z.coerce.date().nullable().optional(),
-  dataPrestacaoContas: z.coerce.date().nullable().optional(),
+  dataAssinatura: parseDate,
+  dataInicioVigencia: parseDate,
+  dataFimVigencia: parseDate,
+  dataPrestacaoContas: parseDate,
   status: z.enum(
     [
       'RASCUNHO',
@@ -33,6 +38,13 @@ const commonSchema = {
       'CANCELADO'
     ] as const
   ).optional(),
+  numeroProposta: z.string().nullable().optional(),
+  numeroTermo: z.string().nullable().optional(),
+  esfera: z.enum(['FEDERAL', 'ESTADUAL']).nullable().optional(),
+  modalidadeRepasse: z.enum(['CONVENIO', 'CONTRATO_REPASSE', 'TERMO_FOMENTO', 'TERMO_COLABORACAO']).nullable().optional(),
+  processoSPD: z.string().nullable().optional(),
+  processoCreditoAdicional: z.string().nullable().optional(),
+  area: z.string().nullable().optional(),
   secretariaId: z.string(),
   orgaoId: z.string().nullable().optional(),
   programaId: z.string().nullable().optional(),

@@ -40,7 +40,7 @@ export class AuditoriaController {
     const { id } = req.params;
 
     const getAuditLog = new GetAuditLogUseCase(auditLogRepository);
-    const auditLog = await getAuditLog.execute(Number(id));
+    const auditLog = await getAuditLog.execute(id);
 
     return res.json(auditLog);
   }

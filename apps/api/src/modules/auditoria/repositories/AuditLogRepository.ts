@@ -23,7 +23,7 @@ export interface AuditLogFilters {
 }
 
 export interface AuditLogResult {
-  id: number;
+  id: string;
   usuarioId: string;
   usuarioNome: string;
   usuarioEmail: string;
@@ -45,6 +45,6 @@ export interface IAuditLogRepository {
     page: number;
     totalPages: number;
   }>;
-  findById(id: number): Promise<AuditLogResult | null>;
+  findById(id: string): Promise<AuditLogResult | null>;
   findByEntidade(entidade: string, entidadeId: string): Promise<AuditLogResult[]>;
 }

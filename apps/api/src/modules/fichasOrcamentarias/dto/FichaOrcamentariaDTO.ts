@@ -1,8 +1,8 @@
 export type CreateFichaOrcamentariaDTO = {
   numero: string;
   tipo: 'REPASSE' | 'CONTRAPARTIDA' | 'EXCLUSIVO';
-  descricao?: string;
-  valor?: number;
+  descricao?: string | null;
+  valor?: number | null;
   convenioId: string;
 };
 

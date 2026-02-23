@@ -58,7 +58,7 @@ describe('AuthenticateUserUseCase', () => {
     expect(repository.findByMatricula).toHaveBeenCalledWith('12345');
     expect(bcrypt.compare).toHaveBeenCalledWith('senha123', 'hashed-password');
     expect(jwt.sign).toHaveBeenCalledWith(
-      { email: user.email, role: user.role, matricula: user.matricula },
+      { email: user.email, role: user.role, matricula: user.matricula, nome: user.nome },
       'test-secret',
       { subject: user.id, expiresIn: '8h' }
     );

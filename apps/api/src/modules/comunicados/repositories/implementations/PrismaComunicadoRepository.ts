@@ -1,4 +1,4 @@
-import { prisma, type Comunicado } from '@spd/db';
+import { prisma, type IComunicado } from '@spd/db';
 import type {
   CreateComunicadoDTO,
   UpdateComunicadoDTO,
@@ -8,7 +8,7 @@ import type { ComunicadoRepository } from '../ComunicadoRepository';
 import type { Prisma } from '@prisma/client';
 
 export class PrismaComunicadoRepository implements ComunicadoRepository {
-  async list(filters?: ComunicadoFilters): Promise<Comunicado[]> {
+  async list(filters?: ComunicadoFilters): Promise<IComunicado[]> {
     const where: Prisma.ComunicadoWhereInput = {};
 
     if (filters?.tipo) {
@@ -44,17 +44,17 @@ export class PrismaComunicadoRepository implements ComunicadoRepository {
     });
   }
 
-  async findById(id: string): Promise<Comunicado | null> {
+  async findById(id: string): Promise<IComunicado | null> {
     return prisma.comunicado.findUnique({
       where: { id }
     });
   }
 
-  async create(data: CreateComunicadoDTO): Promise<Comunicado> {
+  async create(data: CreateComunicadoDTO): Promise<IComunicado> {
     return prisma.comunicado.create({ data });
   }
 
-  async update(id: string, data: UpdateComunicadoDTO): Promise<Comunicado> {
+  async update(id: string, data: UpdateComunicadoDTO): Promise<IComunicado> {
     return prisma.comunicado.update({
       where: { id },
       data

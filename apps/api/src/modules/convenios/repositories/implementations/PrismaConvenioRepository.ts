@@ -1,4 +1,5 @@
 import { prisma, StatusPendencia, type IConvenio } from '@spd/db';
+import type { Prisma } from '@prisma/client';
 import type {
   ConvenioFilters,
   ConvenioRepository,
@@ -36,7 +37,7 @@ const includeRelations = {
   notasEmpenho: {
     orderBy: [{ tipo: 'asc' }, { dataEmissao: 'desc' }]
   }
-};
+} as const satisfies Prisma.ConvenioInclude;
 
 export class PrismaConvenioRepository implements ConvenioRepository {
   async listLite(filters?: ConvenioFilters): Promise<ConvenioLite[]> {
@@ -101,7 +102,7 @@ export class PrismaConvenioRepository implements ConvenioRepository {
       titulo: conv.titulo,
       objeto: conv.objeto,
       status: conv.status,
-      valorGlobal: conv.valorGlobal,
+      valorGlobal: conv.valorGlobal.toNumber(),
       dataFimVigencia: conv.dataFimVigencia,
       atualizadoEm: conv.atualizadoEm,
       secretaria: conv.secretaria,
@@ -109,43 +110,59 @@ export class PrismaConvenioRepository implements ConvenioRepository {
     }));
   }
 
+  private mapToDomain(conv: Prisma.ConvenioGetPayload<Prisma.ConvenioDefaultArgs>): IConvenio {
+    return {
+      ...conv,
+      valorGlobal: conv.valorGlobal ? conv.valorGlobal.toNumber() : conv.valorGlobal as unknown as number,
+      valorRepasse: conv.valorRepasse ? conv.valorRepasse.toNumber() : conv.valorRepasse as unknown as number,
+      valorContrapartida: conv.valorContrapartida ? conv.valorContrapartida.toNumber() : conv.valorContrapartida as unknown as number,
+      etapas: [],
+      anexos: []
+    } as unknown as IConvenio;
+  }
+
   async list(filters?: ConvenioFilters): Promise<IConvenio[]> {
-    return prisma.convenio.findMany({
+    const convenios = await prisma.convenio.findMany({
       where: {
-        status: filters?.status,
+        status: filters?.status as Prisma.EnumConvenioStatusFilter<'Convenio'> | undefined,
         secretariaId: filters?.secretariaId,
         OR: filters?.search
           ? [
-            { titulo: { contains: filters.search, mode: 'insensitive' } },
-            { codigo: { contains: filters.search, mode: 'insensitive' } }
+            { titulo: { contains: filters.search } },
+            { codigo: { contains: filters.search } }
           ]
           : undefined
       },
       include: includeRelations,
       orderBy: { atualizadoEm: 'desc' }
     });
+    return convenios.map(c => this.mapToDomain(c));
   }
 
   async findById(id: string): Promise<IConvenio | null> {
-    return prisma.convenio.findUnique({
+    const convenio = await prisma.convenio.findUnique({
       where: { id },
       include: includeRelations
     });
+    if (!convenio) return null;
+    return this.mapToDomain(convenio);
   }
 
   async create(data: CreateConvenioDTO): Promise<IConvenio> {
-    return prisma.convenio.create({
+    const convenio = await prisma.convenio.create({
       data,
       include: includeRelations
     });
+    return this.mapToDomain(convenio);
   }
 
   async update(id: string, data: UpdateConvenioDTO): Promise<IConvenio> {
-    return prisma.convenio.update({
+    const convenio = await prisma.convenio.update({
       where: { id },
       data,
       include: includeRelations
     });
+    return this.mapToDomain(convenio);
   }
 
   async delete(id: string): Promise<void> {

@@ -3,7 +3,7 @@ export type CreateNotaEmpenhoDTO = {
   tipo: 'REPASSE' | 'CONTRAPARTIDA' | 'EXCLUSIVO';
   valor: number;
   dataEmissao: Date | string;
-  observacoes?: string;
+  observacoes?: string | null;
   convenioId: string;
 };
 

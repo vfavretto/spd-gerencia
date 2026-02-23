@@ -1,12 +1,12 @@
 export type CreateEmendaDTO = {
   nomeParlamentar: string;
-  partido?: string;
-  codigoEmenda?: string;
-  funcao?: string;
-  subfuncao?: string;
-  programa?: string;
-  valorIndicado?: number;
-  anoEmenda?: number;
+  partido?: string | null;
+  codigoEmenda?: string | null;
+  funcao?: string | null;
+  subfuncao?: string | null;
+  programa?: string | null;
+  valorIndicado?: number | null;
+  anoEmenda?: number | null;
   convenioId: string;
 };
 

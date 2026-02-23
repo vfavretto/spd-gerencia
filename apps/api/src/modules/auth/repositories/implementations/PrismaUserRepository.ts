@@ -1,6 +1,8 @@
 import { prisma, type IUsuario } from '@spd/db';
 import type { CreateUserDTO, UserRepository } from '../UserRepository';
 
+import { UsuarioRole } from '@prisma/client';
+
 export class PrismaUserRepository implements UserRepository {
   async findByEmail(email: string): Promise<IUsuario | null> {
     return prisma.usuario.findUnique({ where: { email } });
@@ -11,7 +13,12 @@ export class PrismaUserRepository implements UserRepository {
   }
 
   async create(data: CreateUserDTO): Promise<IUsuario> {
-    return prisma.usuario.create({ data });
+    return prisma.usuario.create({
+      data: {
+        ...data,
+        role: data.role ?? UsuarioRole.OBSERVADOR
+      }
+    });
   }
 
   async findAll(): Promise<IUsuario[]> {

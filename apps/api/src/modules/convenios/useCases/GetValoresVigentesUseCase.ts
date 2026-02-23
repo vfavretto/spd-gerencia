@@ -1,4 +1,4 @@
-import type { IConvenio, IAditivo, IContratoExecucao, IMedicao } from '@spd/db';
+import type { IConvenio, IAditivo, IContratoExecucao } from '@spd/db';
 import { AppError } from '@shared/errors/AppError';
 import type { ConvenioRepository } from '../repositories/ConvenioRepository';
 

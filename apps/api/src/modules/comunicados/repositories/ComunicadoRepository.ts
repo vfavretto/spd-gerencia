@@ -1,4 +1,4 @@
-import type { Comunicado } from '@spd/db';
+import type { IComunicado } from '@spd/db';
 import type {
   CreateComunicadoDTO,
   UpdateComunicadoDTO,
@@ -6,9 +6,9 @@ import type {
 } from '../dto/ComunicadoDTO';
 
 export interface ComunicadoRepository {
-  list(filters?: ComunicadoFilters): Promise<Comunicado[]>;
-  findById(id: string): Promise<Comunicado | null>;
-  create(data: CreateComunicadoDTO): Promise<Comunicado>;
-  update(id: string, data: UpdateComunicadoDTO): Promise<Comunicado>;
+  list(filters?: ComunicadoFilters): Promise<IComunicado[]>;
+  findById(id: string): Promise<IComunicado | null>;
+  create(data: CreateComunicadoDTO): Promise<IComunicado>;
+  update(id: string, data: UpdateComunicadoDTO): Promise<IComunicado>;
   delete(id: string): Promise<void>;
 }

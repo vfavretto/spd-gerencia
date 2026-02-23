@@ -1,0 +1,4 @@
+interface:
+  display_name: "Code Quality Review"
+  short_description: "Review logic, Clean Code, architecture, and SOLID."
+  default_prompt: "Review this code for logic bugs, regressions, Clean Code, Clean Architecture, and SOLID. Return prioritized findings with concrete fixes and test gaps."

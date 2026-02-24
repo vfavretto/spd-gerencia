@@ -6,6 +6,7 @@ import {
   Filter,
   FileBarChart2,
   FileSpreadsheet,
+  Loader2,
   PlusCircle,
   RefreshCcw
 } from "lucide-react";
@@ -26,6 +27,7 @@ import {
 } from "@/modules/convenios/services/convenioService";
 import { configService } from "@/modules/configuracoes/services/configService";
 import { formatCurrency, formatDate } from "@/modules/shared/utils/format";
+import { toast } from "@/modules/shared/ui/toaster";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -33,6 +35,7 @@ export const ConveniosListaPage = () => {
   const navigate = useNavigate();
   const [filters, setFilters] = useState<ConvenioFilters>({});
   const [currentPage, setCurrentPage] = useState(1);
+  const [isExporting, setIsExporting] = useState(false);
   const [resumoModal, setResumoModal] = useState<{ id: string; titulo: string } | null>(null);
 
   const { data: catalogs } = useQuery({
@@ -68,18 +71,65 @@ export const ConveniosListaPage = () => {
     setCurrentPage(1); // Reset to first page when filters change
   };
 
-  const getExportRows = () => {
-    return convenios.map((convenio) => ({
-      codigo: convenio.codigo,
-      titulo: convenio.titulo,
-      status: convenio.status,
-      secretaria: convenio.secretaria?.nome ?? "",
-      valorGlobal: Number(convenio.valorGlobal ?? 0),
-      dataInicioVigencia: convenio.dataInicioVigencia ? formatDate(convenio.dataInicioVigencia) : "",
-      dataFimVigencia: convenio.dataFimVigencia ? formatDate(convenio.dataFimVigencia) : "",
-      esfera: convenio.esfera ?? "",
-      modalidadeRepasse: convenio.modalidadeRepasse ?? ""
-    }));
+  const getExportRows = async () => {
+    const conveniosDetalhados = await Promise.all(
+      convenios.map((convenio) => convenioService.getById(convenio.id))
+    );
+
+    return conveniosDetalhados.map((convenio) => {
+      const valorGlobal = Number(convenio.valorGlobal ?? 0);
+      const valorRepasse = Number(convenio.valorRepasse ?? 0);
+      const valorContrapartida = Number(convenio.valorContrapartida ?? 0);
+      const valorLiberado = Number(convenio.financeiroContas?.valorLiberadoTotal ?? 0);
+      const rendimentos = Number(convenio.financeiroContas?.saldoRendimentos ?? 0);
+      const cpExclusiva = Number(convenio.financeiroContas?.valorCPExclusiva ?? 0);
+
+      const quantidadeContratos = convenio.contratos?.length ?? 0;
+      const quantidadeAditivos = convenio.aditivos?.filter((a) => !a.contratoId).length ?? 0;
+      const quantidadePendenciasAbertas = convenio.pendencias?.filter(
+        (p) => p.status === "ABERTA" || p.status === "EM_ANDAMENTO"
+      ).length ?? 0;
+      const valorContratado = convenio.contratos?.reduce((acc, c) => acc + Number(c.valorContrato ?? 0), 0) ?? 0;
+      const valorPago = convenio.contratos?.reduce(
+        (acc, c) => acc + (c.medicoes?.reduce((sum, m) => sum + Number(m.valorPago ?? 0), 0) ?? 0),
+        0
+      ) ?? 0;
+
+      return {
+        codigo: convenio.codigo,
+        titulo: convenio.titulo,
+        objeto: convenio.objeto,
+        status: convenio.status,
+        secretaria: convenio.secretaria?.nome ?? "",
+        orgao: convenio.orgao?.nome ?? "",
+        programa: convenio.programa?.nome ?? "",
+        fonte: convenio.fonte?.nome ?? "",
+        numeroTermo: convenio.numeroTermo ?? "",
+        numeroProposta: convenio.numeroProposta ?? "",
+        esfera: convenio.esfera ?? "",
+        modalidadeRepasse: convenio.modalidadeRepasse ?? "",
+        dataAssinatura: convenio.dataAssinatura ? formatDate(convenio.dataAssinatura) : "",
+        dataInicioVigencia: convenio.dataInicioVigencia ? formatDate(convenio.dataInicioVigencia) : "",
+        dataFimVigencia: convenio.dataFimVigencia ? formatDate(convenio.dataFimVigencia) : "",
+        valorGlobal,
+        valorRepasse,
+        valorContrapartida,
+        valorLiberado,
+        rendimentos,
+        cpExclusiva,
+        valorContratado,
+        valorPago,
+        processoSPD: convenio.processoSPD ?? "",
+        processoCreditoAdicional: convenio.processoCreditoAdicional ?? "",
+        area: convenio.area ?? "",
+        banco: convenio.financeiroContas?.banco ?? "",
+        agencia: convenio.financeiroContas?.agencia ?? "",
+        contaBancaria: convenio.financeiroContas?.contaBancaria ?? "",
+        quantidadeContratos,
+        quantidadeAditivos,
+        quantidadePendenciasAbertas
+      };
+    });
   };
 
   const downloadFile = (content: string, fileName: string, mimeType: string) => {
@@ -102,18 +152,50 @@ export const ConveniosListaPage = () => {
     return text;
   };
 
-  const exportCsv = () => {
-    const rows = getExportRows();
+  const exportCsv = async () => {
+    if (!convenios.length) {
+      toast.error("Não há convênios para exportar com os filtros atuais.");
+      return;
+    }
+
+    setIsExporting(true);
+    const loadingToast = toast.loading("Preparando exportação CSV...");
+
+    try {
+      const rows = await getExportRows();
     const headers = [
       "Código",
       "Título",
+      "Objeto",
       "Status",
       "Secretaria",
-      "Valor Global",
+      "Órgão Concedente",
+      "Programa",
+      "Fonte de Recurso",
+      "Nº do Termo",
+      "Nº da Proposta",
+      "Data Assinatura",
       "Vigência Início",
       "Vigência Fim",
       "Esfera",
-      "Modalidade de Repasse"
+      "Modalidade de Repasse",
+      "Valor Global",
+      "Valor Repasse",
+      "Valor Contrapartida",
+      "Valor Liberado",
+      "Rendimentos",
+      "CP Exclusiva/Recurso Próprio",
+      "Valor Contratado",
+      "Valor Pago",
+      "Processo SPD",
+      "Processo Crédito Adicional",
+      "Área",
+      "Banco",
+      "Agência",
+      "Conta Bancária",
+      "Qtd. Contratos",
+      "Qtd. Aditivos (Convênio)",
+      "Qtd. Pendências Abertas"
     ];
 
     const csvLines = [
@@ -122,13 +204,36 @@ export const ConveniosListaPage = () => {
         [
           row.codigo,
           row.titulo,
+          row.objeto,
           row.status,
           row.secretaria,
-          row.valorGlobal.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+          row.orgao,
+          row.programa,
+          row.fonte,
+          row.numeroTermo,
+          row.numeroProposta,
+          row.dataAssinatura,
           row.dataInicioVigencia,
           row.dataFimVigencia,
           row.esfera,
-          row.modalidadeRepasse
+          row.modalidadeRepasse,
+          row.valorGlobal.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+          row.valorRepasse.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+          row.valorContrapartida.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+          row.valorLiberado.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+          row.rendimentos.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+          row.cpExclusiva.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+          row.valorContratado.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+          row.valorPago.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+          row.processoSPD,
+          row.processoCreditoAdicional,
+          row.area,
+          row.banco,
+          row.agencia,
+          row.contaBancaria,
+          row.quantidadeContratos,
+          row.quantidadeAditivos,
+          row.quantidadePendenciasAbertas
         ].map(escapeCsvField).join(";")
       )
     ];
@@ -138,6 +243,13 @@ export const ConveniosListaPage = () => {
       `convenios-${new Date().toISOString().slice(0, 10)}.csv`,
       "text/csv;charset=utf-8;"
     );
+      toast.success("CSV exportado com sucesso.");
+    } catch {
+      toast.error("Erro ao exportar CSV.");
+    } finally {
+      toast.dismiss(loadingToast);
+      setIsExporting(false);
+    }
   };
 
   const escapeHtml = (value: string | number) =>
@@ -148,18 +260,50 @@ export const ConveniosListaPage = () => {
       .replace(/"/g, "&quot;")
       .replace(/'/g, "&#39;");
 
-  const exportExcel = () => {
-    const rows = getExportRows();
+  const exportExcel = async () => {
+    if (!convenios.length) {
+      toast.error("Não há convênios para exportar com os filtros atuais.");
+      return;
+    }
+
+    setIsExporting(true);
+    const loadingToast = toast.loading("Preparando exportação Excel...");
+
+    try {
+      const rows = await getExportRows();
     const headerCells = [
       "Código",
       "Título",
+      "Objeto",
       "Status",
       "Secretaria",
-      "Valor Global",
+      "Órgão Concedente",
+      "Programa",
+      "Fonte de Recurso",
+      "Nº do Termo",
+      "Nº da Proposta",
+      "Data Assinatura",
       "Vigência Início",
       "Vigência Fim",
       "Esfera",
-      "Modalidade de Repasse"
+      "Modalidade de Repasse",
+      "Valor Global",
+      "Valor Repasse",
+      "Valor Contrapartida",
+      "Valor Liberado",
+      "Rendimentos",
+      "CP Exclusiva/Recurso Próprio",
+      "Valor Contratado",
+      "Valor Pago",
+      "Processo SPD",
+      "Processo Crédito Adicional",
+      "Área",
+      "Banco",
+      "Agência",
+      "Conta Bancária",
+      "Qtd. Contratos",
+      "Qtd. Aditivos (Convênio)",
+      "Qtd. Pendências Abertas"
     ]
       .map((header) => `<th>${escapeHtml(header)}</th>`)
       .join("");
@@ -169,13 +313,36 @@ export const ConveniosListaPage = () => {
         const cells = [
           row.codigo,
           row.titulo,
+          row.objeto,
           row.status,
           row.secretaria,
-          formatCurrency(row.valorGlobal),
+          row.orgao,
+          row.programa,
+          row.fonte,
+          row.numeroTermo,
+          row.numeroProposta,
+          row.dataAssinatura,
           row.dataInicioVigencia,
           row.dataFimVigencia,
           row.esfera,
-          row.modalidadeRepasse
+          row.modalidadeRepasse,
+          formatCurrency(row.valorGlobal),
+          formatCurrency(row.valorRepasse),
+          formatCurrency(row.valorContrapartida),
+          formatCurrency(row.valorLiberado),
+          formatCurrency(row.rendimentos),
+          formatCurrency(row.cpExclusiva),
+          formatCurrency(row.valorContratado),
+          formatCurrency(row.valorPago),
+          row.processoSPD,
+          row.processoCreditoAdicional,
+          row.area,
+          row.banco,
+          row.agencia,
+          row.contaBancaria,
+          row.quantidadeContratos,
+          row.quantidadeAditivos,
+          row.quantidadePendenciasAbertas
         ]
           .map((cell) => `<td>${escapeHtml(cell)}</td>`)
           .join("");
@@ -201,6 +368,13 @@ export const ConveniosListaPage = () => {
       `convenios-${new Date().toISOString().slice(0, 10)}.xls`,
       "application/vnd.ms-excel;charset=utf-8;"
     );
+      toast.success("Excel exportado com sucesso.");
+    } catch {
+      toast.error("Erro ao exportar Excel.");
+    } finally {
+      toast.dismiss(loadingToast);
+      setIsExporting(false);
+    }
   };
 
   return (
@@ -212,17 +386,19 @@ export const ConveniosListaPage = () => {
           <div className="flex gap-2">
             <button
               onClick={exportCsv}
+              disabled={isExporting}
               className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 transition hover:text-primary-600"
             >
-              <FileSpreadsheet className="h-4 w-4" />
-              Exportar CSV
+              {isExporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileSpreadsheet className="h-4 w-4" />}
+              CSV
             </button>
             <button
               onClick={exportExcel}
+              disabled={isExporting}
               className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 transition hover:text-primary-600"
             >
-              <FileSpreadsheet className="h-4 w-4" />
-              Exportar Excel
+              {isExporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileSpreadsheet className="h-4 w-4" />}
+              Excel
             </button>
             <button
               onClick={() => conveniosQuery.refetch()}

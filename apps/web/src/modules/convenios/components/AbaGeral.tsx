@@ -519,6 +519,31 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
                     {aditivo.dataAssinatura && formatDateBR(aditivo.dataAssinatura)}
                     {aditivo.motivo && ` • ${aditivo.motivo}`}
                   </p>
+                  {(aditivo.valorAcrescimo || aditivo.valorSupressao || aditivo.novaVigencia) && (
+                    <div className="mt-1 flex flex-wrap items-center gap-2 text-xs">
+                      {aditivo.valorAcrescimo && (
+                        <span className="rounded-full bg-emerald-100 px-2 py-0.5 font-medium text-emerald-700">
+                          Acréscimo: +{new Intl.NumberFormat("pt-BR", {
+                            style: "currency",
+                            currency: "BRL"
+                          }).format(Number(aditivo.valorAcrescimo))}
+                        </span>
+                      )}
+                      {aditivo.valorSupressao && (
+                        <span className="rounded-full bg-rose-100 px-2 py-0.5 font-medium text-rose-700">
+                          Supressão: -{new Intl.NumberFormat("pt-BR", {
+                            style: "currency",
+                            currency: "BRL"
+                          }).format(Number(aditivo.valorSupressao))}
+                        </span>
+                      )}
+                      {aditivo.novaVigencia && (
+                        <span className="rounded-full bg-amber-100 px-2 py-0.5 font-medium text-amber-700">
+                          Prazo até: {formatDateBR(aditivo.novaVigencia)}
+                        </span>
+                      )}
+                    </div>
+                  )}
                 </div>
                 {aditivo.novaVigencia && (
                   <span className="text-sm font-medium text-amber-700">

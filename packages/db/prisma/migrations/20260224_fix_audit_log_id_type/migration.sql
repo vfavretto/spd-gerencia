@@ -1,0 +1,5 @@
+-- Correção do schema Prisma: o campo `id` da tabela `AuditLog` já é VARCHAR(191) no banco.
+-- O schema.prisma havia sido incorretamente definido como `Int @default(autoincrement())`,
+-- causando erro P2011 (Null constraint violation on `id`) ao criar registros de auditoria.
+-- Esta migração não altera a estrutura do banco, pois a coluna já está correta (VARCHAR/uuid).
+-- Apenas reconcilia o histórico do Prisma Migrate com o estado real do banco.

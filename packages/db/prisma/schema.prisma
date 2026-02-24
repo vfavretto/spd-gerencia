@@ -419,7 +419,7 @@ model EventoAgenda {
 }
 
 model AuditLog {
-  id           Int           @id @default(autoincrement())
+  id           String        @id @default(uuid())
   usuarioId    String
   usuarioNome  String
   usuarioEmail String

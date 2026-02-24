@@ -5,6 +5,7 @@ import {
   Edit,
   Filter,
   FileBarChart2,
+  FileSpreadsheet,
   PlusCircle,
   RefreshCcw
 } from "lucide-react";
@@ -67,6 +68,141 @@ export const ConveniosListaPage = () => {
     setCurrentPage(1); // Reset to first page when filters change
   };
 
+  const getExportRows = () => {
+    return convenios.map((convenio) => ({
+      codigo: convenio.codigo,
+      titulo: convenio.titulo,
+      status: convenio.status,
+      secretaria: convenio.secretaria?.nome ?? "",
+      valorGlobal: Number(convenio.valorGlobal ?? 0),
+      dataInicioVigencia: convenio.dataInicioVigencia ? formatDate(convenio.dataInicioVigencia) : "",
+      dataFimVigencia: convenio.dataFimVigencia ? formatDate(convenio.dataFimVigencia) : "",
+      esfera: convenio.esfera ?? "",
+      modalidadeRepasse: convenio.modalidadeRepasse ?? ""
+    }));
+  };
+
+  const downloadFile = (content: string, fileName: string, mimeType: string) => {
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const escapeCsvField = (value: string | number) => {
+    const text = String(value ?? "");
+    if (text.includes(";") || text.includes("\"") || text.includes("\n")) {
+      return `"${text.replace(/"/g, "\"\"")}"`;
+    }
+    return text;
+  };
+
+  const exportCsv = () => {
+    const rows = getExportRows();
+    const headers = [
+      "Código",
+      "Título",
+      "Status",
+      "Secretaria",
+      "Valor Global",
+      "Vigência Início",
+      "Vigência Fim",
+      "Esfera",
+      "Modalidade de Repasse"
+    ];
+
+    const csvLines = [
+      headers.join(";"),
+      ...rows.map((row) =>
+        [
+          row.codigo,
+          row.titulo,
+          row.status,
+          row.secretaria,
+          row.valorGlobal.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+          row.dataInicioVigencia,
+          row.dataFimVigencia,
+          row.esfera,
+          row.modalidadeRepasse
+        ].map(escapeCsvField).join(";")
+      )
+    ];
+
+    downloadFile(
+      `\uFEFF${csvLines.join("\n")}`,
+      `convenios-${new Date().toISOString().slice(0, 10)}.csv`,
+      "text/csv;charset=utf-8;"
+    );
+  };
+
+  const escapeHtml = (value: string | number) =>
+    String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+
+  const exportExcel = () => {
+    const rows = getExportRows();
+    const headerCells = [
+      "Código",
+      "Título",
+      "Status",
+      "Secretaria",
+      "Valor Global",
+      "Vigência Início",
+      "Vigência Fim",
+      "Esfera",
+      "Modalidade de Repasse"
+    ]
+      .map((header) => `<th>${escapeHtml(header)}</th>`)
+      .join("");
+
+    const bodyRows = rows
+      .map((row) => {
+        const cells = [
+          row.codigo,
+          row.titulo,
+          row.status,
+          row.secretaria,
+          formatCurrency(row.valorGlobal),
+          row.dataInicioVigencia,
+          row.dataFimVigencia,
+          row.esfera,
+          row.modalidadeRepasse
+        ]
+          .map((cell) => `<td>${escapeHtml(cell)}</td>`)
+          .join("");
+
+        return `<tr>${cells}</tr>`;
+      })
+      .join("");
+
+    const htmlTable = `
+      <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel">
+        <head><meta charset="UTF-8" /></head>
+        <body>
+          <table>
+            <thead><tr>${headerCells}</tr></thead>
+            <tbody>${bodyRows}</tbody>
+          </table>
+        </body>
+      </html>
+    `;
+
+    downloadFile(
+      `\uFEFF${htmlTable}`,
+      `convenios-${new Date().toISOString().slice(0, 10)}.xls`,
+      "application/vnd.ms-excel;charset=utf-8;"
+    );
+  };
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -74,6 +210,20 @@ export const ConveniosListaPage = () => {
         subtitle="Visualize, edite e gerencie todos os convênios cadastrados."
         actions={
           <div className="flex gap-2">
+            <button
+              onClick={exportCsv}
+              className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 transition hover:text-primary-600"
+            >
+              <FileSpreadsheet className="h-4 w-4" />
+              Exportar CSV
+            </button>
+            <button
+              onClick={exportExcel}
+              className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 transition hover:text-primary-600"
+            >
+              <FileSpreadsheet className="h-4 w-4" />
+              Exportar Excel
+            </button>
             <button
               onClick={() => conveniosQuery.refetch()}
               className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 transition hover:text-primary-600"
@@ -360,4 +510,3 @@ export const ConveniosListaPage = () => {
     </div>
   );
 };
-

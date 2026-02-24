@@ -166,6 +166,46 @@ export class PrismaConvenioRepository implements ConvenioRepository {
   }
 
   async delete(id: string): Promise<void> {
-    await prisma.convenio.delete({ where: { id } });
+    await prisma.$transaction(async (tx) => {
+      const contratos = await tx.contratoExecucao.findMany({
+        where: { convenioId: id },
+        select: { id: true }
+      });
+
+      const contratoIds = contratos.map((contrato) => contrato.id);
+
+      if (contratoIds.length > 0) {
+        await tx.medicao.deleteMany({
+          where: {
+            contratoId: { in: contratoIds }
+          }
+        });
+      }
+
+      await tx.aditivo.deleteMany({ where: { convenioId: id } });
+
+      if (contratoIds.length > 0) {
+        await tx.contratoExecucao.deleteMany({
+          where: { id: { in: contratoIds } }
+        });
+      }
+
+      await tx.pendencia.deleteMany({ where: { convenioId: id } });
+      await tx.fichaOrcamentaria.deleteMany({ where: { convenioId: id } });
+      await tx.notaEmpenho.deleteMany({ where: { convenioId: id } });
+      await tx.emendaParlamentar.deleteMany({ where: { convenioId: id } });
+      await tx.financeiroContas.deleteMany({ where: { convenioId: id } });
+      await tx.convenioAnexo.deleteMany({ where: { convenioId: id } });
+      await tx.convenioSnapshot.deleteMany({ where: { convenioId: id } });
+
+      // Em alguns ambientes o relacionamento pode estar com RESTRICT;
+      // limpar vínculo evita bloqueio por FK opcional.
+      await tx.eventoAgenda.updateMany({
+        where: { convenioId: id },
+        data: { convenioId: null }
+      });
+
+      await tx.convenio.delete({ where: { id } });
+    });
   }
 }

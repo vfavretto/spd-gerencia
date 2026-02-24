@@ -339,6 +339,8 @@ export interface FinanceiroContas {
   codigoReceita?: string | null;
   dataDeposito?: string | null;
   valorCPExclusiva?: string | number | null;
+  ajusteRepasseVigente?: string | number | null;
+  ajusteContrapartidaVigente?: string | number | null;
   convenioId: string;
 }
 
@@ -434,6 +436,7 @@ export interface Aditivo {
   justificativa?: string | null;
   observacoes?: string | null;
   convenioId: string;
+  contratoId?: string | null;
 }
 
 export type CreateAditivoDTO = Omit<Aditivo, 'id' | '_id' | 'convenioId'>;

@@ -245,6 +245,8 @@ model FinanceiroContas {
   codigoReceita       String?
   dataDeposito        DateTime?
   valorCPExclusiva    Decimal?  @db.Decimal(15, 2)
+  ajusteRepasseVigente      Decimal?  @db.Decimal(15, 2)
+  ajusteContrapartidaVigente Decimal? @db.Decimal(15, 2)
   convenioId          String    @unique
   criadoEm            DateTime  @default(now())
   atualizadoEm        DateTime  @updatedAt

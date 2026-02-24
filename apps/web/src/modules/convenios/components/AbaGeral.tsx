@@ -267,7 +267,8 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
   }
 
   const podeRegistrarAssinatura = !convenio.dataAssinatura && convenio.status === "RASCUNHO";
-  const numeroAditivos = convenio.aditivos?.length || 0;
+  const aditivosConvenio = (convenio.aditivos || []).filter((aditivo) => !aditivo.contratoId);
+  const numeroAditivos = aditivosConvenio.length;
 
   return (
     <div className="space-y-6">
@@ -501,11 +502,11 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
       </div>
 
       {/* Aditivos */}
-      {convenio.aditivos && convenio.aditivos.length > 0 && (
+      {aditivosConvenio.length > 0 && (
         <div className="space-y-3">
           <h4 className="font-medium text-slate-700">Histórico de Aditivos</h4>
           <div className="space-y-2">
-            {convenio.aditivos.map((aditivo) => (
+            {aditivosConvenio.map((aditivo) => (
               <div
                 key={aditivo.id}
                 className="flex items-center justify-between rounded-xl bg-amber-50 px-4 py-3"
@@ -573,4 +574,3 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
     </div>
   );
 }
-

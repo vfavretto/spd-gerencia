@@ -115,6 +115,8 @@ export interface IFinanceiroContas extends BaseDocument {
   codigoReceita?: string | null;
   dataDeposito?: Date | null;
   valorCPExclusiva?: number | null;
+  ajusteRepasseVigente?: number | null;
+  ajusteContrapartidaVigente?: number | null;
   convenioId: string;
 }
 
@@ -342,4 +344,3 @@ export interface IConvenioSnapshot {
   criadoEm: Date;
   convenio?: IConvenio;
 }
-

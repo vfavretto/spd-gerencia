@@ -6,6 +6,11 @@ export type CreateFinanceiroDTO = {
   saldoRendimentos?: number | null;
   fichasOrcamentarias?: string | null;
   observacoes?: string | null;
+  codigoReceita?: string | null;
+  dataDeposito?: Date | null;
+  valorCPExclusiva?: number | null;
+  ajusteRepasseVigente?: number | null;
+  ajusteContrapartidaVigente?: number | null;
   convenioId: string;
 };
 

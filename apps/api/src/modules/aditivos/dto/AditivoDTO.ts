@@ -9,6 +9,7 @@ export type CreateAditivoDTO = {
   justificativa?: string | null;
   observacoes?: string | null;
   convenioId: string;
+  contratoId?: string | null;
 };
 
 export type UpdateAditivoDTO = Partial<Omit<CreateAditivoDTO, 'convenioId' | 'numeroAditivo'>>;

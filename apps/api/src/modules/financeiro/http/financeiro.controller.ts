@@ -5,6 +5,11 @@ import { GetFinanceiroUseCase } from '../useCases/GetFinanceiroUseCase';
 import { UpsertFinanceiroUseCase } from '../useCases/UpsertFinanceiroUseCase';
 import { DeleteFinanceiroUseCase } from '../useCases/DeleteFinanceiroUseCase';
 
+const parseDate = z.preprocess((arg) => {
+  if (arg === '' || arg === null || arg === undefined) return null;
+  return new Date(arg as string | number | Date);
+}, z.date().nullable().optional());
+
 const upsertSchema = z.object({
   banco: z.string().nullable().optional(),
   agencia: z.string().nullable().optional(),
@@ -12,7 +17,12 @@ const upsertSchema = z.object({
   valorLiberadoTotal: z.number().min(0).nullable().optional(),
   saldoRendimentos: z.number().min(0).nullable().optional(),
   fichasOrcamentarias: z.string().nullable().optional(),
-  observacoes: z.string().nullable().optional()
+  observacoes: z.string().nullable().optional(),
+  codigoReceita: z.string().nullable().optional(),
+  dataDeposito: parseDate,
+  valorCPExclusiva: z.number().min(0).nullable().optional(),
+  ajusteRepasseVigente: z.number().nullable().optional(),
+  ajusteContrapartidaVigente: z.number().nullable().optional()
 });
 
 export class FinanceiroController {

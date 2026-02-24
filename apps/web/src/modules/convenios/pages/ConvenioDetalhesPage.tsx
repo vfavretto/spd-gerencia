@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   FileText,
   Wallet,
@@ -8,18 +8,23 @@ import {
   Loader2,
   ArrowLeft,
   Calendar,
-  AlertTriangle
+  AlertTriangle,
+  Trash2
 } from "lucide-react";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/modules/shared/ui/tabs";
 import { StatusBadge, TrafficLightBadge, getTrafficLightColor } from "@/modules/shared/ui/badge";
 import { Progress } from "@/modules/shared/ui/progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/modules/shared/ui/card";
 import { Button } from "@/modules/shared/ui/button";
+import { ConfirmDialog } from "@/modules/shared/components/ConfirmDialog";
+import { usePermissions } from "@/modules/shared/hooks";
 import { convenioService } from "@/modules/convenios/services/convenioService";
 import { aditivoService } from "@/modules/convenios/services/aditivoService";
 import { formatCurrency } from "@/modules/shared/utils/format";
 import { formatDateBR } from "@/modules/shared/lib/date";
+import { toast } from "@/modules/shared/ui/toaster";
 
 // Componentes das Abas
 import { AbaGeral } from "@/modules/convenios/components/AbaGeral";
@@ -31,6 +36,9 @@ import { AbaDiario } from "@/modules/convenios/components/AbaDiario";
 export const ConvenioDetalhesPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { canDelete } = usePermissions();
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const { data: convenio, isLoading, refetch } = useQuery({
     queryKey: ["convenio", id],
@@ -42,6 +50,24 @@ export const ConvenioDetalhesPage = () => {
     queryKey: ["vigencia", id],
     queryFn: () => aditivoService.getVigencia(id!),
     enabled: !!id
+  });
+
+  const { data: valoresVigentes } = useQuery({
+    queryKey: ["convenio-valores-vigentes", id],
+    queryFn: () => convenioService.getValoresVigentes(id!),
+    enabled: !!id
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: () => convenioService.remove(id!),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["convenios"] });
+      toast.success("Convênio excluído com sucesso!");
+      navigate("/convenios");
+    },
+    onError: () => {
+      toast.error("Erro ao excluir convênio");
+    }
   });
 
   if (isLoading) {
@@ -76,7 +102,7 @@ export const ConvenioDetalhesPage = () => {
   }
 
   // Calcular valores financeiros
-  const valorGlobal = Number(convenio.valorGlobal) || 0;
+  const valorGlobal = valoresVigentes?.valorGlobalVigente ?? (Number(convenio.valorGlobal) || 0);
   const valorContratado = convenio.contratos?.reduce(
     (acc, c) => acc + Number(c.valorContrato || 0),
     0
@@ -98,15 +124,27 @@ export const ConvenioDetalhesPage = () => {
 
   return (
     <div className="space-y-6">
-      {/* Botão Voltar */}
-      <Button
-        variant="ghost"
-        onClick={() => navigate("/convenios")}
-        className="text-muted-foreground"
-      >
-        <ArrowLeft className="h-4 w-4 mr-2" />
-        Voltar para lista
-      </Button>
+      <div className="flex items-center justify-between">
+        <Button
+          variant="ghost"
+          onClick={() => navigate("/convenios")}
+          className="text-muted-foreground"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Voltar para lista
+        </Button>
+
+        {canDelete("convenio") && (
+          <Button
+            variant="outline"
+            onClick={() => setShowDeleteConfirm(true)}
+            className="border-rose-200 text-rose-700 hover:bg-rose-50"
+          >
+            <Trash2 className="h-4 w-4 mr-2" />
+            Excluir Convênio
+          </Button>
+        )}
+      </div>
 
       {/* Alerta de Vigência Expirada */}
       {vigenciaExpirada && convenio.status !== "CONCLUIDO" && convenio.status !== "CANCELADO" && (
@@ -243,15 +281,15 @@ export const ConvenioDetalhesPage = () => {
             </TabsContent>
 
             <TabsContent value="financeira">
-              <AbaFinanceira convenio={convenio} onUpdate={refetch} />
+              <AbaFinanceira convenio={convenio} valoresVigentes={valoresVigentes} onUpdate={refetch} />
             </TabsContent>
 
             <TabsContent value="engenharia">
-              <AbaEngenharia convenio={convenio} onUpdate={refetch} />
+              <AbaEngenharia convenio={convenio} valoresVigentes={valoresVigentes} onUpdate={refetch} />
             </TabsContent>
 
             <TabsContent value="execucao">
-              <AbaExecucao convenio={convenio} />
+              <AbaExecucao convenio={convenio} valoresVigentes={valoresVigentes} />
             </TabsContent>
 
             <TabsContent value="diario">
@@ -260,6 +298,20 @@ export const ConvenioDetalhesPage = () => {
           </CardContent>
         </Tabs>
       </Card>
+
+      <ConfirmDialog
+        open={showDeleteConfirm}
+        onOpenChange={setShowDeleteConfirm}
+        title="Excluir convênio"
+        description={`Deseja realmente excluir o convênio "${convenio.titulo}"? Esta ação não pode ser desfeita.`}
+        confirmLabel={deleteMutation.isPending ? "Excluindo..." : "Excluir"}
+        onConfirm={() => {
+          if (!deleteMutation.isPending) {
+            deleteMutation.mutate();
+          }
+        }}
+        variant="danger"
+      />
     </div>
   );
 };

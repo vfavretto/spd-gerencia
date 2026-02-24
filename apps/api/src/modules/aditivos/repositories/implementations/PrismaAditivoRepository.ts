@@ -30,13 +30,26 @@ export class PrismaAditivoRepository implements AditivoRepository {
     return this.mapToDomain(aditivo);
   }
 
-  async getNextNumeroAditivo(convenioId: string): Promise<number> {
+  async getNextNumeroAditivo(convenioId: string, contratoId?: string | null): Promise<number> {
+    const where = contratoId
+      ? { convenioId, contratoId }
+      : { convenioId, contratoId: null };
+
     const lastAditivo = await prisma.aditivo.aggregate({
-      where: { convenioId },
+      where,
       _max: { numeroAditivo: true }
     });
 
     return (lastAditivo._max.numeroAditivo ?? 0) + 1;
+  }
+
+  async isContratoDoConvenio(contratoId: string, convenioId: string): Promise<boolean> {
+    const contrato = await prisma.contratoExecucao.findFirst({
+      where: { id: contratoId, convenioId },
+      select: { id: true }
+    });
+
+    return Boolean(contrato);
   }
 
   async getUltimaVigencia(convenioId: string): Promise<Date | null> {

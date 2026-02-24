@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Edit2, Save, X, Wallet, Building2 } from "lucide-react";
 import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
-import type { Convenio } from "@/modules/shared/types";
+import type { Convenio, ValoresVigentes } from "@/modules/shared/types";
 import { financeiroService } from "@/modules/convenios/services/financeiroService";
 import { formatCurrency } from "@/modules/shared/utils/format";
 import { Button } from "@/modules/shared/ui/button";
@@ -13,10 +13,11 @@ import { CurrencyInput } from "@/modules/shared/ui/currency-input";
 
 type Props = {
   convenio: Convenio;
+  valoresVigentes?: ValoresVigentes;
   onUpdate: () => void;
 };
 
-export function AbaFinanceira({ convenio, onUpdate }: Props) {
+export function AbaFinanceira({ convenio, valoresVigentes, onUpdate }: Props) {
   const queryClient = useQueryClient();
   const [isEditing, setIsEditing] = useState(false);
   const financeiro = convenio.financeiroContas;
@@ -80,9 +81,9 @@ export function AbaFinanceira({ convenio, onUpdate }: Props) {
   };
 
   // Calcular valores
-  const valorGlobal = Number(convenio.valorGlobal) || 0;
-  const valorRepasse = Number(convenio.valorRepasse) || 0;
-  const valorContrapartida = Number(convenio.valorContrapartida) || 0;
+  const valorGlobal = valoresVigentes?.valorGlobalVigente ?? (Number(convenio.valorGlobal) || 0);
+  const valorRepasse = valoresVigentes?.valorRepasseVigente ?? (Number(convenio.valorRepasse) || 0);
+  const valorContrapartida = valoresVigentes?.valorContrapartidaVigente ?? (Number(convenio.valorContrapartida) || 0);
   const valorLiberado = Number(financeiro?.valorLiberadoTotal) || 0;
   const saldoRendimentos = Number(financeiro?.saldoRendimentos) || 0;
 
@@ -349,4 +350,3 @@ export function AbaFinanceira({ convenio, onUpdate }: Props) {
     </div>
   );
 }
-

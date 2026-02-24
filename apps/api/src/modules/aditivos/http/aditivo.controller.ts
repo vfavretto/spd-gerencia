@@ -26,10 +26,11 @@ const createSchema = z.object({
   motivo: z.string().nullable().optional(),
   justificativa: z.string().nullable().optional(),
   observacoes: z.string().nullable().optional(),
-  convenioId: z.string()
+  convenioId: z.string(),
+  contratoId: z.string().nullable().optional()
 });
 
-const updateSchema = createSchema.omit({ convenioId: true, numeroAditivo: true }).partial();
+const updateSchema = createSchema.omit({ convenioId: true, numeroAditivo: true, contratoId: true }).partial();
 
 export class AditivoController {
   private readonly repository = new PrismaAditivoRepository();

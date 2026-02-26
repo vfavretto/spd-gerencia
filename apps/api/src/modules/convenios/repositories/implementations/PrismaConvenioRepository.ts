@@ -110,15 +110,62 @@ export class PrismaConvenioRepository implements ConvenioRepository {
     }));
   }
 
-  private mapToDomain(conv: Prisma.ConvenioGetPayload<Prisma.ConvenioDefaultArgs>): IConvenio {
+  private mapToDomain(
+    conv: Prisma.ConvenioGetPayload<{ include: typeof includeRelations }>
+  ): IConvenio {
     return {
       ...conv,
-      valorGlobal: conv.valorGlobal ? conv.valorGlobal.toNumber() : conv.valorGlobal as unknown as number,
-      valorRepasse: conv.valorRepasse ? conv.valorRepasse.toNumber() : conv.valorRepasse as unknown as number,
-      valorContrapartida: conv.valorContrapartida ? conv.valorContrapartida.toNumber() : conv.valorContrapartida as unknown as number,
+      // Valores financeiros do convênio
+      valorGlobal: conv.valorGlobal.toNumber(),
+      valorRepasse: conv.valorRepasse ? conv.valorRepasse.toNumber() : null,
+      valorContrapartida: conv.valorContrapartida ? conv.valorContrapartida.toNumber() : null,
       etapas: [],
-      anexos: []
-    } as unknown as IConvenio;
+      anexos: [],
+      // Emendas parlamentares
+      emendas: (conv.emendas ?? []).map((e) => ({
+        ...e,
+        valorIndicado: e.valorIndicado ? e.valorIndicado.toNumber() : e.valorIndicado
+      })),
+      // Financeiro contas
+      financeiroContas: conv.financeiroContas
+        ? {
+            ...conv.financeiroContas,
+            valorLiberadoTotal: conv.financeiroContas.valorLiberadoTotal ? conv.financeiroContas.valorLiberadoTotal.toNumber() : conv.financeiroContas.valorLiberadoTotal,
+            saldoRendimentos: conv.financeiroContas.saldoRendimentos ? conv.financeiroContas.saldoRendimentos.toNumber() : conv.financeiroContas.saldoRendimentos,
+            valorCPExclusiva: conv.financeiroContas.valorCPExclusiva ? conv.financeiroContas.valorCPExclusiva.toNumber() : conv.financeiroContas.valorCPExclusiva,
+            ajusteRepasseVigente: conv.financeiroContas.ajusteRepasseVigente ? conv.financeiroContas.ajusteRepasseVigente.toNumber() : conv.financeiroContas.ajusteRepasseVigente,
+            ajusteContrapartidaVigente: conv.financeiroContas.ajusteContrapartidaVigente ? conv.financeiroContas.ajusteContrapartidaVigente.toNumber() : conv.financeiroContas.ajusteContrapartidaVigente,
+          }
+        : null,
+      // Contratos com medições
+      contratos: (conv.contratos ?? []).map((c) => ({
+        ...c,
+        valorContrato: c.valorContrato ? c.valorContrato.toNumber() : c.valorContrato,
+        valorExecutado: c.valorExecutado ? c.valorExecutado.toNumber() : c.valorExecutado,
+        medicoes: (c.medicoes ?? []).map((m) => ({
+          ...m,
+          percentualFisico: m.percentualFisico ? m.percentualFisico.toNumber() : m.percentualFisico,
+          valorMedido: m.valorMedido.toNumber(),
+          valorPago: m.valorPago ? m.valorPago.toNumber() : m.valorPago,
+        })),
+      })),
+      // Aditivos
+      aditivos: (conv.aditivos ?? []).map((a) => ({
+        ...a,
+        valorAcrescimo: a.valorAcrescimo ? a.valorAcrescimo.toNumber() : a.valorAcrescimo,
+        valorSupressao: a.valorSupressao ? a.valorSupressao.toNumber() : a.valorSupressao,
+      })),
+      // Fichas orçamentárias
+      fichasOrcamentarias: (conv.fichasOrcamentarias ?? []).map((f) => ({
+        ...f,
+        valor: f.valor ? f.valor.toNumber() : f.valor,
+      })),
+      // Notas de empenho
+      notasEmpenho: (conv.notasEmpenho ?? []).map((n) => ({
+        ...n,
+        valor: n.valor.toNumber(),
+      })),
+    } as IConvenio;
   }
 
   async list(filters?: ConvenioFilters): Promise<IConvenio[]> {

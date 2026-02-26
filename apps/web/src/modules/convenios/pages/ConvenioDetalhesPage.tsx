@@ -101,19 +101,12 @@ export const ConvenioDetalhesPage = () => {
     );
   }
 
-  // Calcular valores financeiros
-  const valorGlobal = valoresVigentes?.valorGlobalVigente ?? (Number(convenio.valorGlobal) || 0);
-  const valorContratado = convenio.contratos?.reduce(
-    (acc, c) => acc + Number(c.valorContrato || 0),
-    0
-  ) ?? 0;
-  const valorPago = convenio.contratos?.reduce(
-    (total, c) => 
-      total + (c.medicoes?.reduce((m, med) => m + Number(med.valorPago || 0), 0) ?? 0),
-    0
-  ) ?? 0;
-  const saldoDisponivel = valorGlobal - valorContratado;
-  const percentualExecutado = valorGlobal > 0 ? (valorPago / valorGlobal) * 100 : 0;
+  // Usar valores financeiros do endpoint valoresVigentes (fonte autoritativa)
+  const valorGlobal = valoresVigentes?.valorGlobalVigente ?? 0;
+  const valorContratado = valoresVigentes?.valorTotalContratado ?? 0;
+  const valorPago = valoresVigentes?.valorTotalPago ?? 0;
+  const saldoDisponivel = valoresVigentes?.saldoAContratar ?? 0;
+  const percentualExecutado = valoresVigentes?.percentualExecutado ?? 0;
 
   const pendenciasAbertas = convenio.pendencias?.filter(
     (p) => p.status === "ABERTA" || p.status === "EM_ANDAMENTO"

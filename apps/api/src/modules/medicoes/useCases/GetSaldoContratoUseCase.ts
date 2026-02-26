@@ -45,7 +45,9 @@ export class GetSaldoContratoUseCase {
       totalPago,
       saldoMedir: valorContrato - totalMedido,
       saldoPagar: totalMedido - totalPago,
-      percentualExecutado: valorContrato > 0 ? (totalMedido / valorContrato) * 100 : 0
+      percentualExecutado: valorContrato > 0
+        ? Math.round((totalMedido / valorContrato) * 10000) / 100
+        : 0
     };
   }
 }

@@ -21,7 +21,7 @@ const commonSchema = {
   objeto: z.string().min(1),
   descricao: z.string().nullable().optional(),
   observacoes: z.string().nullable().optional(),
-  valorGlobal: z.number().min(0),
+  valorGlobal: z.number().min(0).optional(),
   valorRepasse: z.number().min(0).nullable().optional(),
   valorContrapartida: z.number().min(0).nullable().optional(),
   dataAssinatura: parseDate,
@@ -86,8 +86,10 @@ export class ConvenioController {
 
   async create(req: Request, res: Response) {
     const payload = createSchema.parse(req.body);
+    // Auto-calcular valorGlobal = valorRepasse + valorContrapartida
+    payload.valorGlobal = (payload.valorRepasse ?? 0) + (payload.valorContrapartida ?? 0);
     const useCase = new CreateConvenioUseCase(this.repository);
-    const convenio = await useCase.execute(payload);
+    const convenio = await useCase.execute(payload as Required<Pick<typeof payload, 'valorGlobal'>> & typeof payload);
 
     // Registra auditoria
     await AuditService.logCreate(
@@ -105,6 +107,10 @@ export class ConvenioController {
   async update(req: Request, res: Response) {
     const id = req.params.id;
     const payload = updateSchema.parse(req.body);
+    // Auto-calcular valorGlobal se repasse ou contrapartida foram enviados
+    if (payload.valorRepasse !== undefined || payload.valorContrapartida !== undefined) {
+      payload.valorGlobal = (payload.valorRepasse ?? 0) + (payload.valorContrapartida ?? 0);
+    }
 
     // Busca dados antigos para auditoria e snapshot
     const getUseCase = new GetConvenioUseCase(this.repository);

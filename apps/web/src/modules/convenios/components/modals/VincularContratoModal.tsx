@@ -3,6 +3,7 @@ import { Building, FileText } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -17,6 +18,7 @@ import { Label } from "@/modules/shared/ui/label";
 import { CurrencyInput } from "@/modules/shared/ui/currency-input";
 import { contratoService } from "@/modules/convenios/services/contratoService";
 import { toast } from "@/modules/shared/ui/toaster";
+import type { ContratoExecucao } from "@/modules/shared/types";
 
 const schema = z.object({
   numProcessoLicitatorio: z.string().optional(),
@@ -50,6 +52,7 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   convenioId: string;
+  contrato?: ContratoExecucao | null;
   onSuccess: () => void;
 };
 
@@ -61,8 +64,9 @@ const modalidadeOptions = [
   { value: "INEXIGIBILIDADE", label: "Inexigibilidade" }
 ];
 
-export function VincularContratoModal({ isOpen, onClose, convenioId, onSuccess }: Props) {
+export function VincularContratoModal({ isOpen, onClose, convenioId, contrato, onSuccess }: Props) {
   const queryClient = useQueryClient();
+  const isEditing = Boolean(contrato);
 
   const {
     register,
@@ -75,7 +79,50 @@ export function VincularContratoModal({ isOpen, onClose, convenioId, onSuccess }
     resolver: zodResolver(schema)
   });
 
-  const mutation = useMutation({
+  useEffect(() => {
+    if (contrato) {
+      reset({
+        numProcessoLicitatorio: contrato.numProcessoLicitatorio || undefined,
+        modalidadeLicitacao: contrato.modalidadeLicitacao || undefined,
+        numeroContrato: contrato.numeroContrato || "",
+        contratadaCnpj: contrato.contratadaCnpj || undefined,
+        contratadaNome: contrato.contratadaNome || "",
+        dataAssinatura: contrato.dataAssinatura?.split("T")[0] || undefined,
+        dataVigenciaInicio: contrato.dataVigenciaInicio?.split("T")[0] || undefined,
+        dataVigenciaFim: contrato.dataVigenciaFim?.split("T")[0] || undefined,
+        dataOIS: contrato.dataOIS?.split("T")[0] || undefined,
+        valorContrato: Number(contrato.valorContrato) || 0,
+        engenheiroResponsavel: contrato.engenheiroResponsavel || undefined,
+        creaEngenheiro: contrato.creaEngenheiro || undefined,
+        artRrt: contrato.artRrt || undefined,
+        cno: contrato.cno || undefined,
+        prazoExecucaoDias: contrato.prazoExecucaoDias ?? undefined,
+        dataTerminoExecucao: contrato.dataTerminoExecucao?.split("T")[0] || undefined
+      });
+      return;
+    }
+
+    reset({
+      numProcessoLicitatorio: undefined,
+      modalidadeLicitacao: undefined,
+      numeroContrato: "",
+      contratadaCnpj: undefined,
+      contratadaNome: "",
+      dataAssinatura: undefined,
+      dataVigenciaInicio: undefined,
+      dataVigenciaFim: undefined,
+      dataOIS: undefined,
+      valorContrato: 0,
+      engenheiroResponsavel: undefined,
+      creaEngenheiro: undefined,
+      artRrt: undefined,
+      cno: undefined,
+      prazoExecucaoDias: undefined,
+      dataTerminoExecucao: undefined
+    });
+  }, [contrato, reset]);
+
+  const createMutation = useMutation({
     mutationFn: (data: FormData) =>
       contratoService.create(convenioId, {
         ...data,
@@ -105,8 +152,43 @@ export function VincularContratoModal({ isOpen, onClose, convenioId, onSuccess }
     }
   });
 
+  const updateMutation = useMutation({
+    mutationFn: (data: FormData) =>
+      contratoService.update(convenioId, contrato!.id, {
+        ...data,
+        dataAssinatura: data.dataAssinatura || null,
+        dataVigenciaInicio: data.dataVigenciaInicio || null,
+        dataVigenciaFim: data.dataVigenciaFim || null,
+        dataOIS: data.dataOIS || null,
+        modalidadeLicitacao: data.modalidadeLicitacao || null,
+        numProcessoLicitatorio: data.numProcessoLicitatorio || null,
+        engenheiroResponsavel: data.engenheiroResponsavel || null,
+        creaEngenheiro: data.creaEngenheiro || null,
+        artRrt: data.artRrt || null,
+        contratadaCnpj: data.contratadaCnpj || null,
+        cno: data.cno || null,
+        prazoExecucaoDias: data.prazoExecucaoDias || null,
+        dataTerminoExecucao: data.dataTerminoExecucao || null
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["convenio", String(convenioId)] });
+      toast.success("Contrato atualizado com sucesso!");
+      reset();
+      onClose();
+      onSuccess();
+    },
+    onError: () => {
+      toast.error("Erro ao atualizar contrato");
+    }
+  });
+
   const onSubmit = (data: FormData) => {
-    mutation.mutate(data);
+    if (isEditing) {
+      updateMutation.mutate(data);
+      return;
+    }
+
+    createMutation.mutate(data);
   };
 
   const handleClose = () => {
@@ -118,9 +200,11 @@ export function VincularContratoModal({ isOpen, onClose, convenioId, onSuccess }
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Vincular Contrato</DialogTitle>
+          <DialogTitle>{isEditing ? "Editar Contrato" : "Vincular Contrato"}</DialogTitle>
           <DialogDescription>
-            Cadastre o contrato de execução vinculado ao convênio
+            {isEditing
+              ? "Atualize os dados do contrato de execução"
+              : "Cadastre o contrato de execução vinculado ao convênio"}
           </DialogDescription>
         </DialogHeader>
 
@@ -305,13 +389,13 @@ export function VincularContratoModal({ isOpen, onClose, convenioId, onSuccess }
             <Button type="button" variant="outline" onClick={handleClose}>
               Cancelar
             </Button>
-            <Button type="submit" disabled={mutation.isPending}>
-              {mutation.isPending ? (
-                "Vinculando..."
+            <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>
+              {createMutation.isPending || updateMutation.isPending ? (
+                isEditing ? "Salvando..." : "Vinculando..."
               ) : (
                 <>
                   <Building className="h-4 w-4 mr-2" />
-                  Vincular Contrato
+                  {isEditing ? "Salvar Alterações" : "Vincular Contrato"}
                 </>
               )}
             </Button>

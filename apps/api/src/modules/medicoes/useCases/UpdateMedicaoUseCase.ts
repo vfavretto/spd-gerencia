@@ -51,6 +51,15 @@ export class UpdateMedicaoUseCase {
       }
     }
 
-    return this.repository.update(id, data);
+    const medicao = await this.repository.update(id, data);
+
+    // Auto-atualizar valorExecutado do contrato
+    const novoTotalMedido = await this.repository.getTotalMedido(medicaoAtual.contratoId);
+    await prisma.contratoExecucao.update({
+      where: { id: medicaoAtual.contratoId },
+      data: { valorExecutado: novoTotalMedido }
+    });
+
+    return medicao;
   }
 }

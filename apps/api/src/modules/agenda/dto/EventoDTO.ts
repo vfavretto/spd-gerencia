@@ -1,11 +1,11 @@
 export type CreateEventoDTO = {
   titulo: string;
-  descricao?: string;
-  tipo?: 'REUNIAO' | 'PRESTACAO_CONTAS' | 'ENTREGA_DOCUMENTOS' | 'VENCIMENTO_ETAPA' | 'OUTROS';
+  descricao?: string | null;
+  tipo?: 'REUNIAO' | 'PRESTACAO_CONTAS' | 'ENTREGA_DOCUMENTOS' | 'VENCIMENTO_ETAPA' | 'OUTROS' | null;
   dataInicio: Date;
   dataFim?: Date | null;
-  local?: string;
-  responsavel?: string;
+  local?: string | null;
+  responsavel?: string | null;
   convenioId?: string | null;
 };
 

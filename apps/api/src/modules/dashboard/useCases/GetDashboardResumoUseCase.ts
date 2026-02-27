@@ -61,36 +61,20 @@ export class GetDashboardResumoUseCase {
     ha60Dias.setDate(ha60Dias.getDate() - 60);
 
     const [
-      porEsfera,
       porStatus,
-      totaisConvenio,
       pendenciasAbertas,
       pendenciasEmAndamento,
       pendenciasVencidas,
       totalPendencias,
-      contratos,
+      contratosRaw,
       medicoes,
       conveniosVencendo,
-      topConveniosRaw
+      conveniosParaCalculo
     ] = await Promise.all([
-      // Agrupamento por esfera
-      prisma.convenio.groupBy({
-        by: ['esfera'],
-        _sum: { valorGlobal: true },
-        _count: { id: true }
-      }),
       // Agrupamento por status
       prisma.convenio.groupBy({
         by: ['status'],
         _count: { status: true }
-      }),
-      // Totais financeiros do convênio
-      prisma.convenio.aggregate({
-        _sum: {
-          valorRepasse: true,
-          valorContrapartida: true,
-          valorGlobal: true
-        }
       }),
       // Pendências abertas
       prisma.pendencia.count({ where: { status: 'ABERTA' } }),
@@ -128,61 +112,129 @@ export class GetDashboardResumoUseCase {
           status: { notIn: ['CONCLUIDO', 'CANCELADO'] }
         }
       }),
-      // Top 5 convênios por valor
+      // Todos os convênios com dados para cálculo de valores vigentes
       prisma.convenio.findMany({
-        take: 5,
-        orderBy: { valorGlobal: 'desc' },
         select: {
           id: true,
           codigo: true,
           titulo: true,
-          valorGlobal: true,
           status: true,
+          esfera: true,
+          valorGlobal: true,
+          valorRepasse: true,
+          valorContrapartida: true,
+          financeiroContas: {
+            select: {
+              ajusteRepasseVigente: true,
+              ajusteContrapartidaVigente: true
+            }
+          },
+          aditivos: {
+            where: { contratoId: null },
+            select: {
+              tipoAditivo: true,
+              valorAcrescimo: true,
+              valorSupressao: true
+            }
+          },
           contratos: {
             select: {
               valorContrato: true,
               medicoes: { select: { valorMedido: true } }
             }
           }
-        }
+        },
+        orderBy: { valorGlobal: 'desc' }
       })
     ]);
 
+    // Calcular valores vigentes por convênio
+    let somaRepassesVigente = 0;
+    let somaContrapartidasVigente = 0;
+    let valorGlobalTotalVigente = 0;
+    const porEsferaMap = new Map<string | null, { total: number; quantidade: number }>();
+
+    for (const conv of conveniosParaCalculo) {
+      const repasseOriginal = Number(conv.valorRepasse ?? 0);
+      const contrapartidaOriginal = Number(conv.valorContrapartida ?? 0);
+      const ajusteRepasse = Number(conv.financeiroContas?.ajusteRepasseVigente ?? 0);
+      const ajusteContrapartida = Number(conv.financeiroContas?.ajusteContrapartidaVigente ?? 0);
+
+      let totalAcrescimos = 0;
+      let totalSupressoes = 0;
+      for (const aditivo of conv.aditivos) {
+        if (['VALOR', 'PRAZO_E_VALOR', 'ACRESCIMO'].includes(aditivo.tipoAditivo)) {
+          totalAcrescimos += Number(aditivo.valorAcrescimo ?? 0);
+        }
+        if (['VALOR', 'PRAZO_E_VALOR', 'SUPRESSAO'].includes(aditivo.tipoAditivo)) {
+          totalSupressoes += Number(aditivo.valorSupressao ?? 0);
+        }
+      }
+
+      const repasseVigente = repasseOriginal + totalAcrescimos - totalSupressoes + ajusteRepasse;
+      const contrapartidaVigente = contrapartidaOriginal + ajusteContrapartida;
+      const globalVigente = repasseVigente + contrapartidaVigente;
+
+      somaRepassesVigente += repasseVigente;
+      somaContrapartidasVigente += contrapartidaVigente;
+      valorGlobalTotalVigente += globalVigente;
+
+      // Agrupar por esfera
+      const esfera = conv.esfera;
+      const existing = porEsferaMap.get(esfera) ?? { total: 0, quantidade: 0 };
+      porEsferaMap.set(esfera, {
+        total: existing.total + globalVigente,
+        quantidade: existing.quantidade + 1
+      });
+    }
+
     // Calcular valores de contratos
-    const valorTotalContratado = contratos.reduce(
+    const valorTotalContratado = contratosRaw.reduce(
       (sum, c) => sum + Number(c.valorContrato ?? 0),
       0
     );
-    const contratosEmExecucao = contratos.filter(
+    const contratosEmExecucao = contratosRaw.filter(
       (c) => c.situacao?.toLowerCase().includes('execu') || c._count.medicoes > 0
     ).length;
-    const contratosConcluidos = contratos.filter(
+    const contratosConcluidos = contratosRaw.filter(
       (c) => c.situacao?.toLowerCase().includes('conclu')
     ).length;
 
     // Valores de execução
     const valorTotalMedido = Number(medicoes._sum.valorMedido ?? 0);
     const valorTotalPago = Number(medicoes._sum.valorPago ?? 0);
-    const valorGlobalTotal = Number(totaisConvenio._sum.valorGlobal ?? 0);
 
-    // Top convênios com percentual
-    const topConvenios = topConveniosRaw.map((c) => {
+    // Top 5 convênios com percentual vigente
+    const topConvenios = conveniosParaCalculo.slice(0, 5).map((c) => {
       const totalMedido = c.contratos.reduce(
         (sum, contrato) =>
           sum +
           contrato.medicoes.reduce((s, m) => s + Number(m.valorMedido ?? 0), 0),
         0
       );
+
+      // Calcular valor global vigente para este convênio
+      const repasseOrig = Number(c.valorRepasse ?? 0);
+      const ajR = Number(c.financeiroContas?.ajusteRepasseVigente ?? 0);
+      const ajC = Number(c.financeiroContas?.ajusteContrapartidaVigente ?? 0);
+      let acr = 0;
+      let sup = 0;
+      for (const a of c.aditivos) {
+        if (['VALOR', 'PRAZO_E_VALOR', 'ACRESCIMO'].includes(a.tipoAditivo)) acr += Number(a.valorAcrescimo ?? 0);
+        if (['VALOR', 'PRAZO_E_VALOR', 'SUPRESSAO'].includes(a.tipoAditivo)) sup += Number(a.valorSupressao ?? 0);
+      }
+      const globalVigente = (repasseOrig + acr - sup + ajR) + (Number(c.valorContrapartida ?? 0) + ajC);
+
       const percentualExecutado =
-        Number(c.valorGlobal) > 0
-          ? (totalMedido / Number(c.valorGlobal)) * 100
+        globalVigente > 0
+          ? (totalMedido / globalVigente) * 100
           : 0;
 
       return {
         id: c.id,
         codigo: c.codigo,
         titulo: c.titulo,
-        valorGlobal: Number(c.valorGlobal),
+        valorGlobal: globalVigente,
         status: c.status,
         percentualExecutado: Math.round(percentualExecutado * 10) / 10
       };
@@ -203,30 +255,30 @@ export class GetDashboardResumoUseCase {
     });
 
     return {
-      totalPorEsfera: porEsfera.map((item) => ({
-        esfera: item.esfera,
-        total: Number(item._sum.valorGlobal ?? 0),
-        quantidade: item._count.id
+      totalPorEsfera: Array.from(porEsferaMap.entries()).map(([esfera, data]) => ({
+        esfera,
+        total: data.total,
+        quantidade: data.quantidade
       })),
       conveniosPorStatus: porStatus.map((item) => ({
         status: item.status,
         total: item._count.status
       })),
-      somaRepasses: Number(totaisConvenio._sum.valorRepasse ?? 0),
-      somaContrapartidas: Number(totaisConvenio._sum.valorContrapartida ?? 0),
-      valorGlobalTotal,
+      somaRepasses: somaRepassesVigente,
+      somaContrapartidas: somaContrapartidasVigente,
+      valorGlobalTotal: valorGlobalTotalVigente,
 
       execucao: {
         valorTotalContratado,
         valorTotalMedido,
         valorTotalPago,
         percentualMedido:
-          valorGlobalTotal > 0
-            ? Math.round((valorTotalMedido / valorGlobalTotal) * 1000) / 10
+          valorGlobalTotalVigente > 0
+            ? Math.round((valorTotalMedido / valorGlobalTotalVigente) * 1000) / 10
             : 0,
         percentualPago:
-          valorGlobalTotal > 0
-            ? Math.round((valorTotalPago / valorGlobalTotal) * 1000) / 10
+          valorGlobalTotalVigente > 0
+            ? Math.round((valorTotalPago / valorGlobalTotalVigente) * 1000) / 10
             : 0
       },
 
@@ -238,7 +290,7 @@ export class GetDashboardResumoUseCase {
       },
 
       contratos: {
-        total: contratos.length,
+        total: contratosRaw.length,
         emExecucao: contratosEmExecucao,
         concluidos: contratosConcluidos,
         valorTotal: valorTotalContratado

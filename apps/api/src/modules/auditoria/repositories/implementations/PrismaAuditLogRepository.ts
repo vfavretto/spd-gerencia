@@ -1,12 +1,11 @@
-import { PrismaClient, type Prisma } from '@prisma/client';
+import { type Prisma } from '@prisma/client';
+import { prisma } from '@spd/db';
 import type {
   IAuditLogRepository,
   CreateAuditLogDTO,
   AuditLogFilters,
   AuditLogResult
 } from '../AuditLogRepository';
-
-const prisma = new PrismaClient();
 
 export class PrismaAuditLogRepository implements IAuditLogRepository {
   async create(data: CreateAuditLogDTO): Promise<AuditLogResult> {

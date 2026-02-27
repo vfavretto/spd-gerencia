@@ -7,6 +7,7 @@ type TokenPayload = {
   sub: string;
   email: string;
   role: string;
+  nome: string;
 };
 
 export const ensureAuthenticated = (
@@ -27,7 +28,8 @@ export const ensureAuthenticated = (
     req.user = {
       id: decoded.sub,
       email: decoded.email,
-      role: decoded.role
+      role: decoded.role,
+      nome: decoded.nome
     };
     return next();
   } catch {

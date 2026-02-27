@@ -1,14 +1,15 @@
 import { BarChart3, TrendingUp, Calendar, DollarSign } from "lucide-react";
-import type { Convenio } from "@/modules/shared/types";
+import type { Convenio, ValoresVigentes } from "@/modules/shared/types";
 import { formatDateBR } from "@/modules/shared/lib/date";
 import { formatCurrency } from "@/modules/shared/utils/format";
 import { Progress, ProgressCircle } from "@/modules/shared/ui/progress";
 
 type Props = {
   convenio: Convenio;
+  valoresVigentes?: ValoresVigentes;
 };
 
-export function AbaExecucao({ convenio }: Props) {
+export function AbaExecucao({ convenio, valoresVigentes }: Props) {
   const contratos = convenio.contratos || [];
 
   // Agregar todas as medições
@@ -20,7 +21,7 @@ export function AbaExecucao({ convenio }: Props) {
   ).sort((a, b) => new Date(b.dataMedicao).getTime() - new Date(a.dataMedicao).getTime());
 
   // Calcular totais
-  const valorGlobal = Number(convenio.valorGlobal) || 0;
+  const valorGlobal = valoresVigentes?.valorGlobalVigente ?? (Number(convenio.valorGlobal) || 0);
   const totalContratado = contratos.reduce((acc, c) => acc + Number(c.valorContrato || 0), 0);
   const totalMedido = todasMedicoes.reduce((acc, m) => acc + Number(m.valorMedido || 0), 0);
   const totalPago = todasMedicoes.reduce((acc, m) => acc + Number(m.valorPago || 0), 0);
@@ -226,4 +227,3 @@ export function AbaExecucao({ convenio }: Props) {
     </div>
   );
 }
-

@@ -1,12 +1,13 @@
 export type CreateMedicaoDTO = {
   numeroMedicao: number;
   dataMedicao: Date;
-  percentualFisico?: number;
+  percentualFisico?: number | null;
   valorMedido: number;
   dataPagamento?: Date | null;
-  valorPago?: number;
-  observacoes?: string;
-  situacao?: string;
+  valorPago?: number | null;
+  observacoes?: string | null;
+  situacao?: string | null;
+  processoMedicao?: string | null;
   contratoId: string;
 };
 

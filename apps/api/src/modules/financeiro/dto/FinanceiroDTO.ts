@@ -1,11 +1,16 @@
 export type CreateFinanceiroDTO = {
-  banco?: string;
-  agencia?: string;
-  contaBancaria?: string;
-  valorLiberadoTotal?: number;
-  saldoRendimentos?: number;
-  fichasOrcamentarias?: string;
-  observacoes?: string;
+  banco?: string | null;
+  agencia?: string | null;
+  contaBancaria?: string | null;
+  valorLiberadoTotal?: number | null;
+  saldoRendimentos?: number | null;
+  fichasOrcamentarias?: string | null;
+  observacoes?: string | null;
+  codigoReceita?: string | null;
+  dataDeposito?: Date | null;
+  valorCPExclusiva?: number | null;
+  ajusteRepasseVigente?: number | null;
+  ajusteContrapartidaVigente?: number | null;
   convenioId: string;
 };
 

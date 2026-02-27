@@ -10,19 +10,24 @@ import { GetValoresVigentesUseCase } from '../useCases/GetValoresVigentesUseCase
 import { AuditService } from '../../auditoria/services/AuditService';
 import { SnapshotService } from '../../snapshots/services/SnapshotService';
 
+const parseDate = z.preprocess((arg) => {
+  if (arg === '' || arg === null || arg === undefined) return null;
+  return new Date(arg as string | number | Date);
+}, z.date().nullable().optional());
+
 const commonSchema = {
   codigo: z.string().min(1),
   titulo: z.string().min(1),
   objeto: z.string().min(1),
   descricao: z.string().nullable().optional(),
   observacoes: z.string().nullable().optional(),
-  valorGlobal: z.number().min(0),
+  valorGlobal: z.number().min(0).optional(),
   valorRepasse: z.number().min(0).nullable().optional(),
   valorContrapartida: z.number().min(0).nullable().optional(),
-  dataAssinatura: z.coerce.date().nullable().optional(),
-  dataInicioVigencia: z.coerce.date().nullable().optional(),
-  dataFimVigencia: z.coerce.date().nullable().optional(),
-  dataPrestacaoContas: z.coerce.date().nullable().optional(),
+  dataAssinatura: parseDate,
+  dataInicioVigencia: parseDate,
+  dataFimVigencia: parseDate,
+  dataPrestacaoContas: parseDate,
   status: z.enum(
     [
       'RASCUNHO',
@@ -33,6 +38,13 @@ const commonSchema = {
       'CANCELADO'
     ] as const
   ).optional(),
+  numeroProposta: z.string().nullable().optional(),
+  numeroTermo: z.string().nullable().optional(),
+  esfera: z.enum(['FEDERAL', 'ESTADUAL']).nullable().optional(),
+  modalidadeRepasse: z.enum(['CONVENIO', 'CONTRATO_REPASSE', 'TERMO_FOMENTO', 'TERMO_COLABORACAO']).nullable().optional(),
+  processoSPD: z.string().nullable().optional(),
+  processoCreditoAdicional: z.string().nullable().optional(),
+  area: z.string().nullable().optional(),
   secretariaId: z.string(),
   orgaoId: z.string().nullable().optional(),
   programaId: z.string().nullable().optional(),
@@ -74,12 +86,14 @@ export class ConvenioController {
 
   async create(req: Request, res: Response) {
     const payload = createSchema.parse(req.body);
+    // Auto-calcular valorGlobal = valorRepasse + valorContrapartida
+    payload.valorGlobal = (payload.valorRepasse ?? 0) + (payload.valorContrapartida ?? 0);
     const useCase = new CreateConvenioUseCase(this.repository);
-    const convenio = await useCase.execute(payload);
+    const convenio = await useCase.execute(payload as Required<Pick<typeof payload, 'valorGlobal'>> & typeof payload);
 
     // Registra auditoria
     await AuditService.logCreate(
-      { id: req.user!.id, email: req.user!.email },
+      { id: req.user!.id, nome: req.user!.nome, email: req.user!.email },
       'Convenio',
       convenio.id,
       convenio as unknown as Record<string, unknown>,
@@ -93,6 +107,10 @@ export class ConvenioController {
   async update(req: Request, res: Response) {
     const id = req.params.id;
     const payload = updateSchema.parse(req.body);
+    // Auto-calcular valorGlobal se repasse ou contrapartida foram enviados
+    if (payload.valorRepasse !== undefined || payload.valorContrapartida !== undefined) {
+      payload.valorGlobal = (payload.valorRepasse ?? 0) + (payload.valorContrapartida ?? 0);
+    }
 
     // Busca dados antigos para auditoria e snapshot
     const getUseCase = new GetConvenioUseCase(this.repository);
@@ -110,7 +128,7 @@ export class ConvenioController {
 
     // Registra auditoria
     await AuditService.logUpdate(
-      { id: req.user!.id, email: req.user!.email },
+      { id: req.user!.id, nome: req.user!.nome, email: req.user!.email },
       'Convenio',
       id,
       dadosAntigos as unknown as Record<string, unknown>,
@@ -134,7 +152,7 @@ export class ConvenioController {
 
     // Registra auditoria
     await AuditService.logDelete(
-      { id: req.user!.id, email: req.user!.email },
+      { id: req.user!.id, nome: req.user!.nome, email: req.user!.email },
       'Convenio',
       id,
       dadosAntigos as unknown as Record<string, unknown>,

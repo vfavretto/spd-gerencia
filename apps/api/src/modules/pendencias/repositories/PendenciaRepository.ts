@@ -1,8 +1,8 @@
-import type { IPendencia } from '@spd/db';
+import type { IPendencia, StatusPendencia } from '@spd/db';
 import type { CreatePendenciaDTO, UpdatePendenciaDTO } from '../dto/PendenciaDTO';
 
 export type PendenciaFilters = {
-  status?: string;
+  status?: StatusPendencia;
   prioridade?: number;
 };
 

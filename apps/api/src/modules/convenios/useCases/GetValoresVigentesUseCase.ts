@@ -1,4 +1,4 @@
-import type { IConvenio, IAditivo, IContratoExecucao, IMedicao } from '@spd/db';
+import type { IConvenio, IAditivo, IContratoExecucao } from '@spd/db';
 import { AppError } from '@shared/errors/AppError';
 import type { ConvenioRepository } from '../repositories/ConvenioRepository';
 
@@ -53,14 +53,20 @@ export class GetValoresVigentesUseCase {
     const valorGlobal = Number(convenio.valorGlobal) || 0;
     const valorRepasseOriginal = Number(convenio.valorRepasse) || 0;
     const valorContrapartidaOriginal = Number(convenio.valorContrapartida) || 0;
+    const ajusteRepasseVigente = Number(convenio.financeiroContas?.ajusteRepasseVigente) || 0;
+    const ajusteContrapartidaVigente = Number(convenio.financeiroContas?.ajusteContrapartidaVigente) || 0;
     
     // Calcular totais de aditivos
-    const aditivos = convenio.aditivos || [];
+    const aditivos = (convenio.aditivos || []).filter((aditivo) => !aditivo.contratoId);
     const { totalAcrescimos, totalSupressoes } = this.calcularTotaisAditivos(aditivos);
     
-    // Valores vigentes (após aditivos)
-    const valorRepasseVigente = valorRepasseOriginal + totalAcrescimos - totalSupressoes;
-    const valorContrapartidaVigente = valorContrapartidaOriginal; // Contrapartida geralmente não muda
+    // Valores vigentes base (após aditivos de convênio)
+    const valorRepasseVigenteBase = valorRepasseOriginal + totalAcrescimos - totalSupressoes;
+    const valorContrapartidaVigenteBase = valorContrapartidaOriginal; // Contrapartida geralmente não muda por aditivo
+
+    // Valores vigentes finais (com ajuste manual)
+    const valorRepasseVigente = valorRepasseVigenteBase + ajusteRepasseVigente;
+    const valorContrapartidaVigente = valorContrapartidaVigenteBase + ajusteContrapartidaVigente;
     const valorGlobalVigente = valorRepasseVigente + valorContrapartidaVigente;
     
     // Calcular valores executados

@@ -5,6 +5,7 @@ SET @constraint_name = (
     WHERE TABLE_SCHEMA = DATABASE() 
     AND TABLE_NAME = 'Comunicado' 
     AND COLUMN_NAME = 'convenioId' 
+    AND REFERENCED_TABLE_NAME IS NOT NULL
     AND CONSTRAINT_NAME != 'PRIMARY'
     LIMIT 1
 );

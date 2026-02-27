@@ -40,6 +40,7 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   convenioId: string;
+  contratoId?: string | null;
   vigenciaAtual?: string | null;
   numeroAditivos: number;
   onSuccess: () => void;
@@ -57,6 +58,7 @@ export function AditivarModal({
   isOpen,
   onClose,
   convenioId,
+  contratoId,
   vigenciaAtual,
   numeroAditivos,
   onSuccess
@@ -81,6 +83,7 @@ export function AditivarModal({
       aditivoService.create(convenioId, {
         ...data,
         numeroAditivo: numeroAditivos + 1,
+        contratoId: contratoId || null,
         dataAssinatura: data.dataAssinatura || null,
         novaVigencia: data.novaVigencia || null,
         valorAcrescimo: data.valorAcrescimo || null,
@@ -91,6 +94,7 @@ export function AditivarModal({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["convenio", String(convenioId)] });
       queryClient.invalidateQueries({ queryKey: ["vigencia", String(convenioId)] });
+      queryClient.invalidateQueries({ queryKey: ["convenio-valores-vigentes", String(convenioId)] });
       toast.success("Aditivo registrado com sucesso!");
       reset();
       onClose();
@@ -114,14 +118,15 @@ export function AditivarModal({
   const showValorFields = ["VALOR", "PRAZO_E_VALOR", "ACRESCIMO", "SUPRESSAO"].includes(tipoAditivo);
   const showAcrescimo = ["VALOR", "PRAZO_E_VALOR", "ACRESCIMO"].includes(tipoAditivo);
   const showSupressao = ["VALOR", "PRAZO_E_VALOR", "SUPRESSAO"].includes(tipoAditivo);
+  const contexto = contratoId ? "contrato" : "convênio";
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{`Novo Aditivo (${numeroAditivos + 1}º)`}</DialogTitle>
+          <DialogTitle>{`Novo Aditivo de ${contexto} (${numeroAditivos + 1}º)`}</DialogTitle>
           <DialogDescription>
-            Registre um aditivo ao convênio
+            Registre um aditivo ao {contexto}
           </DialogDescription>
         </DialogHeader>
 
@@ -130,9 +135,10 @@ export function AditivarModal({
           <div className="rounded-lg bg-amber-50 p-4 text-sm text-amber-700 flex items-start gap-3">
             <AlertTriangle className="h-5 w-5 mt-0.5 flex-shrink-0" />
             <div>
-              <strong>Importante:</strong> Os aditivos criam um histórico de alterações e não modificam
-              os valores originais do convênio. Para aditivos de prazo, a nova vigência será considerada
-              como a vigência atual.
+              <strong>Importante:</strong> Os aditivos criam um histórico de alterações.
+              {contratoId
+                ? " Aditivos de contrato não alteram os valores macro vigentes do convênio."
+                : " Para aditivos de prazo, a nova vigência será considerada como a vigência atual."}
             </div>
           </div>
 

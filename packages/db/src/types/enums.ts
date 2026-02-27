@@ -1,83 +1,16 @@
 // ==================== ENUMS ====================
-
-export enum UsuarioRole {
-  ADMIN = 'ADMIN',
-  ANALISTA = 'ANALISTA',
-  ESTAGIARIO = 'ESTAGIARIO',
-  OBSERVADOR = 'OBSERVADOR'
-}
-
-export enum AcaoAuditoria {
-  CREATE = 'CREATE',
-  UPDATE = 'UPDATE',
-  DELETE = 'DELETE'
-}
-
-export enum ConvenioStatus {
-  RASCUNHO = 'RASCUNHO',
-  EM_ANALISE = 'EM_ANALISE',
-  APROVADO = 'APROVADO',
-  EM_EXECUCAO = 'EM_EXECUCAO',
-  CONCLUIDO = 'CONCLUIDO',
-  CANCELADO = 'CANCELADO'
-}
-
-export enum TipoComunicado {
-  ENTRADA = 'ENTRADA',
-  SAIDA = 'SAIDA'
-}
-
-export enum TipoEvento {
-  REUNIAO = 'REUNIAO',
-  PRESTACAO_CONTAS = 'PRESTACAO_CONTAS',
-  ENTREGA_DOCUMENTOS = 'ENTREGA_DOCUMENTOS',
-  VENCIMENTO_ETAPA = 'VENCIMENTO_ETAPA',
-  OUTROS = 'OUTROS'
-}
-
-export enum ModalidadeRepasse {
-  CONVENIO = 'CONVENIO',
-  CONTRATO_REPASSE = 'CONTRATO_REPASSE',
-  TERMO_FOMENTO = 'TERMO_FOMENTO',
-  TERMO_COLABORACAO = 'TERMO_COLABORACAO'
-}
-
-export enum EsferaGoverno {
-  FEDERAL = 'FEDERAL',
-  ESTADUAL = 'ESTADUAL'
-}
-
-export enum ModalidadeLicitacao {
-  PREGAO = 'PREGAO',
-  TOMADA_PRECOS = 'TOMADA_PRECOS',
-  CONCORRENCIA = 'CONCORRENCIA',
-  DISPENSA = 'DISPENSA',
-  INEXIGIBILIDADE = 'INEXIGIBILIDADE'
-}
-
-export enum StatusPendencia {
-  ABERTA = 'ABERTA',
-  EM_ANDAMENTO = 'EM_ANDAMENTO',
-  RESOLVIDA = 'RESOLVIDA',
-  CANCELADA = 'CANCELADA'
-}
-
-export enum TipoAditivo {
-  PRAZO = 'PRAZO',
-  VALOR = 'VALOR',
-  PRAZO_E_VALOR = 'PRAZO_E_VALOR',
-  SUPRESSAO = 'SUPRESSAO',
-  ACRESCIMO = 'ACRESCIMO'
-}
-
-export enum TipoFichaOrcamentaria {
-  REPASSE = 'REPASSE',
-  CONTRAPARTIDA = 'CONTRAPARTIDA',
-  EXCLUSIVO = 'EXCLUSIVO'
-}
-
-export enum TipoEmpenho {
-  REPASSE = 'REPASSE',
-  CONTRAPARTIDA = 'CONTRAPARTIDA',
-  EXCLUSIVO = 'EXCLUSIVO'
-}
+// Re-export enums directly from Prisma Client to ensure type compatibility
+export {
+  UsuarioRole,
+  AcaoAuditoria,
+  ConvenioStatus,
+  TipoComunicado,
+  TipoEvento,
+  ModalidadeRepasse,
+  EsferaGoverno,
+  ModalidadeLicitacao,
+  StatusPendencia,
+  TipoAditivo,
+  TipoFichaOrcamentaria,
+  TipoEmpenho
+} from '@prisma/client';

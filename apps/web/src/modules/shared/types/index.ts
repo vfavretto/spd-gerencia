@@ -36,7 +36,7 @@ export interface UserListItem {
 export type AcaoAuditoria = 'CREATE' | 'UPDATE' | 'DELETE';
 
 export interface AuditLog {
-  id: string;
+  id: number;
   usuarioId: string;
   usuarioNome: string;
   usuarioEmail: string;
@@ -191,19 +191,10 @@ export interface Convenio {
   aditivos?: Aditivo[];
   fichasOrcamentarias?: FichaOrcamentaria[];
   notasEmpenho?: NotaEmpenho[];
-  etapas?: EtapaConvenio[];
+
 }
 
-export interface EtapaConvenio {
-  id: string;
-  titulo: string;
-  descricao?: string | null;
-  dataPrevista?: string | null;
-  dataRealizada?: string | null;
-  responsavel?: string | null;
-  situacao?: string | null;
-  convenioId: string;
-}
+
 
 export type TipoComunicado = 'ENTRADA' | 'SAIDA';
 
@@ -348,6 +339,8 @@ export interface FinanceiroContas {
   codigoReceita?: string | null;
   dataDeposito?: string | null;
   valorCPExclusiva?: string | number | null;
+  ajusteRepasseVigente?: string | number | null;
+  ajusteContrapartidaVigente?: string | number | null;
   convenioId: string;
 }
 
@@ -443,6 +436,7 @@ export interface Aditivo {
   justificativa?: string | null;
   observacoes?: string | null;
   convenioId: string;
+  contratoId?: string | null;
 }
 
 export type CreateAditivoDTO = Omit<Aditivo, 'id' | '_id' | 'convenioId'>;

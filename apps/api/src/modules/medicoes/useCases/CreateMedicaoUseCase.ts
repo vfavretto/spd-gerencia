@@ -40,9 +40,18 @@ export class CreateMedicaoUseCase {
     // Obter próximo número de medição automaticamente se não informado
     const numeroMedicao = data.numeroMedicao || await this.repository.getNextNumeroMedicao(data.contratoId);
 
-    return this.repository.create({
+    const medicao = await this.repository.create({
       ...data,
       numeroMedicao
     });
+
+    // Auto-atualizar valorExecutado do contrato
+    const novoTotalMedido = await this.repository.getTotalMedido(data.contratoId);
+    await prisma.contratoExecucao.update({
+      where: { id: data.contratoId },
+      data: { valorExecutado: novoTotalMedido }
+    });
+
+    return medicao;
   }
 }

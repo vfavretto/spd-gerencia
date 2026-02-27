@@ -4,13 +4,15 @@ import {
   ChevronRight,
   Edit,
   Filter,
-  ListChecks,
+  FileBarChart2,
+  FileSpreadsheet,
+  Loader2,
   PlusCircle,
   RefreshCcw
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { EtapasResumoModal } from "@/modules/convenios/components/modals/EtapasResumoModal";
+import { ResumoModal } from "@/modules/convenios/components/modals/ResumoModal";
 import { PageHeader } from "@/modules/shared/components/PageHeader";
 import { StatusBadge } from "@/modules/shared/components/StatusBadge";
 import { CanCreateConvenio } from "@/modules/shared/components/PermissionGate";
@@ -25,6 +27,7 @@ import {
 } from "@/modules/convenios/services/convenioService";
 import { configService } from "@/modules/configuracoes/services/configService";
 import { formatCurrency, formatDate } from "@/modules/shared/utils/format";
+import { toast } from "@/modules/shared/ui/toaster";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -32,7 +35,8 @@ export const ConveniosListaPage = () => {
   const navigate = useNavigate();
   const [filters, setFilters] = useState<ConvenioFilters>({});
   const [currentPage, setCurrentPage] = useState(1);
-  const [etapasModal, setEtapasModal] = useState<{ id: string; titulo: string } | null>(null);
+  const [isExporting, setIsExporting] = useState(false);
+  const [resumoModal, setResumoModal] = useState<{ id: string; titulo: string } | null>(null);
 
   const { data: catalogs } = useQuery({
     queryKey: ["catalogs"],
@@ -67,6 +71,312 @@ export const ConveniosListaPage = () => {
     setCurrentPage(1); // Reset to first page when filters change
   };
 
+  const getExportRows = async () => {
+    const conveniosDetalhados = await Promise.all(
+      convenios.map((convenio) => convenioService.getById(convenio.id))
+    );
+
+    return conveniosDetalhados.map((convenio) => {
+      const valorGlobal = Number(convenio.valorGlobal ?? 0);
+      const valorRepasse = Number(convenio.valorRepasse ?? 0);
+      const valorContrapartida = Number(convenio.valorContrapartida ?? 0);
+      const valorLiberado = Number(convenio.financeiroContas?.valorLiberadoTotal ?? 0);
+      const rendimentos = Number(convenio.financeiroContas?.saldoRendimentos ?? 0);
+      const cpExclusiva = Number(convenio.financeiroContas?.valorCPExclusiva ?? 0);
+
+      const quantidadeContratos = convenio.contratos?.length ?? 0;
+      const quantidadeAditivos = convenio.aditivos?.filter((a) => !a.contratoId).length ?? 0;
+      const quantidadePendenciasAbertas = convenio.pendencias?.filter(
+        (p) => p.status === "ABERTA" || p.status === "EM_ANDAMENTO"
+      ).length ?? 0;
+      const valorContratado = convenio.contratos?.reduce((acc, c) => acc + Number(c.valorContrato ?? 0), 0) ?? 0;
+      const valorPago = convenio.contratos?.reduce(
+        (acc, c) => acc + (c.medicoes?.reduce((sum, m) => sum + Number(m.valorPago ?? 0), 0) ?? 0),
+        0
+      ) ?? 0;
+
+      return {
+        codigo: convenio.codigo,
+        titulo: convenio.titulo,
+        objeto: convenio.objeto,
+        status: convenio.status,
+        secretaria: convenio.secretaria?.nome ?? "",
+        orgao: convenio.orgao?.nome ?? "",
+        programa: convenio.programa?.nome ?? "",
+        fonte: convenio.fonte?.nome ?? "",
+        numeroTermo: convenio.numeroTermo ?? "",
+        numeroProposta: convenio.numeroProposta ?? "",
+        esfera: convenio.esfera ?? "",
+        modalidadeRepasse: convenio.modalidadeRepasse ?? "",
+        dataAssinatura: convenio.dataAssinatura ? formatDate(convenio.dataAssinatura) : "",
+        dataInicioVigencia: convenio.dataInicioVigencia ? formatDate(convenio.dataInicioVigencia) : "",
+        dataFimVigencia: convenio.dataFimVigencia ? formatDate(convenio.dataFimVigencia) : "",
+        valorGlobal,
+        valorRepasse,
+        valorContrapartida,
+        valorLiberado,
+        rendimentos,
+        cpExclusiva,
+        valorContratado,
+        valorPago,
+        processoSPD: convenio.processoSPD ?? "",
+        processoCreditoAdicional: convenio.processoCreditoAdicional ?? "",
+        area: convenio.area ?? "",
+        banco: convenio.financeiroContas?.banco ?? "",
+        agencia: convenio.financeiroContas?.agencia ?? "",
+        contaBancaria: convenio.financeiroContas?.contaBancaria ?? "",
+        quantidadeContratos,
+        quantidadeAditivos,
+        quantidadePendenciasAbertas
+      };
+    });
+  };
+
+  const downloadFile = (content: string, fileName: string, mimeType: string) => {
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const escapeCsvField = (value: string | number) => {
+    const text = String(value ?? "");
+    if (text.includes(";") || text.includes("\"") || text.includes("\n")) {
+      return `"${text.replace(/"/g, "\"\"")}"`;
+    }
+    return text;
+  };
+
+  const exportCsv = async () => {
+    if (!convenios.length) {
+      toast.error("Não há convênios para exportar com os filtros atuais.");
+      return;
+    }
+
+    setIsExporting(true);
+    const loadingToast = toast.loading("Preparando exportação CSV...");
+
+    try {
+      const rows = await getExportRows();
+    const headers = [
+      "Código",
+      "Título",
+      "Objeto",
+      "Status",
+      "Secretaria",
+      "Órgão Concedente",
+      "Programa",
+      "Fonte de Recurso",
+      "Nº do Termo",
+      "Nº da Proposta",
+      "Data Assinatura",
+      "Vigência Início",
+      "Vigência Fim",
+      "Esfera",
+      "Modalidade de Repasse",
+      "Valor Global",
+      "Valor Repasse",
+      "Valor Contrapartida",
+      "Valor Liberado",
+      "Rendimentos",
+      "CP Exclusiva/Recurso Próprio",
+      "Valor Contratado",
+      "Valor Pago",
+      "Processo SPD",
+      "Processo Crédito Adicional",
+      "Área",
+      "Banco",
+      "Agência",
+      "Conta Bancária",
+      "Qtd. Contratos",
+      "Qtd. Aditivos (Convênio)",
+      "Qtd. Pendências Abertas"
+    ];
+
+    const csvLines = [
+      headers.join(";"),
+      ...rows.map((row) =>
+        [
+          row.codigo,
+          row.titulo,
+          row.objeto,
+          row.status,
+          row.secretaria,
+          row.orgao,
+          row.programa,
+          row.fonte,
+          row.numeroTermo,
+          row.numeroProposta,
+          row.dataAssinatura,
+          row.dataInicioVigencia,
+          row.dataFimVigencia,
+          row.esfera,
+          row.modalidadeRepasse,
+          row.valorGlobal.toFixed(2),
+          row.valorRepasse.toFixed(2),
+          row.valorContrapartida.toFixed(2),
+          row.valorLiberado.toFixed(2),
+          row.rendimentos.toFixed(2),
+          row.cpExclusiva.toFixed(2),
+          row.valorContratado.toFixed(2),
+          row.valorPago.toFixed(2),
+          row.processoSPD,
+          row.processoCreditoAdicional,
+          row.area,
+          row.banco,
+          row.agencia,
+          row.contaBancaria,
+          row.quantidadeContratos,
+          row.quantidadeAditivos,
+          row.quantidadePendenciasAbertas
+        ].map(escapeCsvField).join(";")
+      )
+    ];
+
+    downloadFile(
+      `\uFEFF${csvLines.join("\n")}`,
+      `convenios-${new Date().toISOString().slice(0, 10)}.csv`,
+      "text/csv;charset=utf-8;"
+    );
+      toast.success("CSV exportado com sucesso.");
+    } catch {
+      toast.error("Erro ao exportar CSV.");
+    } finally {
+      toast.dismiss(loadingToast);
+      setIsExporting(false);
+    }
+  };
+
+  const escapeHtml = (value: string | number) =>
+    String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+
+  const exportExcel = async () => {
+    if (!convenios.length) {
+      toast.error("Não há convênios para exportar com os filtros atuais.");
+      return;
+    }
+
+    setIsExporting(true);
+    const loadingToast = toast.loading("Preparando exportação Excel...");
+
+    try {
+      const rows = await getExportRows();
+    const headerCells = [
+      "Código",
+      "Título",
+      "Objeto",
+      "Status",
+      "Secretaria",
+      "Órgão Concedente",
+      "Programa",
+      "Fonte de Recurso",
+      "Nº do Termo",
+      "Nº da Proposta",
+      "Data Assinatura",
+      "Vigência Início",
+      "Vigência Fim",
+      "Esfera",
+      "Modalidade de Repasse",
+      "Valor Global",
+      "Valor Repasse",
+      "Valor Contrapartida",
+      "Valor Liberado",
+      "Rendimentos",
+      "CP Exclusiva/Recurso Próprio",
+      "Valor Contratado",
+      "Valor Pago",
+      "Processo SPD",
+      "Processo Crédito Adicional",
+      "Área",
+      "Banco",
+      "Agência",
+      "Conta Bancária",
+      "Qtd. Contratos",
+      "Qtd. Aditivos (Convênio)",
+      "Qtd. Pendências Abertas"
+    ]
+      .map((header) => `<th>${escapeHtml(header)}</th>`)
+      .join("");
+
+    const bodyRows = rows
+      .map((row) => {
+        const cells = [
+          row.codigo,
+          row.titulo,
+          row.objeto,
+          row.status,
+          row.secretaria,
+          row.orgao,
+          row.programa,
+          row.fonte,
+          row.numeroTermo,
+          row.numeroProposta,
+          row.dataAssinatura,
+          row.dataInicioVigencia,
+          row.dataFimVigencia,
+          row.esfera,
+          row.modalidadeRepasse,
+          formatCurrency(row.valorGlobal),
+          formatCurrency(row.valorRepasse),
+          formatCurrency(row.valorContrapartida),
+          formatCurrency(row.valorLiberado),
+          formatCurrency(row.rendimentos),
+          formatCurrency(row.cpExclusiva),
+          formatCurrency(row.valorContratado),
+          formatCurrency(row.valorPago),
+          row.processoSPD,
+          row.processoCreditoAdicional,
+          row.area,
+          row.banco,
+          row.agencia,
+          row.contaBancaria,
+          row.quantidadeContratos,
+          row.quantidadeAditivos,
+          row.quantidadePendenciasAbertas
+        ]
+          .map((cell) => `<td>${escapeHtml(cell)}</td>`)
+          .join("");
+
+        return `<tr>${cells}</tr>`;
+      })
+      .join("");
+
+    const htmlTable = `
+      <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel">
+        <head><meta charset="UTF-8" /></head>
+        <body>
+          <table>
+            <thead><tr>${headerCells}</tr></thead>
+            <tbody>${bodyRows}</tbody>
+          </table>
+        </body>
+      </html>
+    `;
+
+    downloadFile(
+      `\uFEFF${htmlTable}`,
+      `convenios-${new Date().toISOString().slice(0, 10)}.xls`,
+      "application/vnd.ms-excel;charset=utf-8;"
+    );
+      toast.success("Excel exportado com sucesso.");
+    } catch {
+      toast.error("Erro ao exportar Excel.");
+    } finally {
+      toast.dismiss(loadingToast);
+      setIsExporting(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -74,6 +384,22 @@ export const ConveniosListaPage = () => {
         subtitle="Visualize, edite e gerencie todos os convênios cadastrados."
         actions={
           <div className="flex gap-2">
+            <button
+              onClick={exportCsv}
+              disabled={isExporting}
+              className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 transition hover:text-primary-600"
+            >
+              {isExporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileSpreadsheet className="h-4 w-4" />}
+              CSV
+            </button>
+            <button
+              onClick={exportExcel}
+              disabled={isExporting}
+              className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 transition hover:text-primary-600"
+            >
+              {isExporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileSpreadsheet className="h-4 w-4" />}
+              Excel
+            </button>
             <button
               onClick={() => conveniosQuery.refetch()}
               className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 transition hover:text-primary-600"
@@ -285,12 +611,12 @@ export const ConveniosListaPage = () => {
                         Detalhes
                       </button>
                       <button
-                        onClick={() => setEtapasModal({ id: convenio.id, titulo: convenio.titulo })}
+                        onClick={() => setResumoModal({ id: convenio.id, titulo: convenio.titulo })}
                         className="inline-flex items-center gap-1 rounded-xl bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-600 transition hover:bg-emerald-100"
-                        title="Gerenciar etapas"
+                        title="Ver resumo"
                       >
-                        <ListChecks className="h-3.5 w-3.5" />
-                        Etapas
+                        <FileBarChart2 className="h-3.5 w-3.5" />
+                        Resumo
                       </button>
                     </div>
                   </td>
@@ -350,14 +676,13 @@ export const ConveniosListaPage = () => {
         )}
       </section>
 
-      {etapasModal && (
-        <EtapasResumoModal
-          convenioId={etapasModal.id}
-          convenioTitulo={etapasModal.titulo}
-          onClose={() => setEtapasModal(null)}
+      {resumoModal && (
+        <ResumoModal
+          convenioId={resumoModal.id}
+          convenioTitulo={resumoModal.titulo}
+          onClose={() => setResumoModal(null)}
         />
       )}
     </div>
   );
 };
-

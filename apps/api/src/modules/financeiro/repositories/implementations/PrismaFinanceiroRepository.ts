@@ -11,7 +11,6 @@ export class PrismaFinanceiroRepository implements FinanceiroRepository {
       ...financeiro,
       valorLiberadoTotal: financeiro.valorLiberadoTotal ? financeiro.valorLiberadoTotal.toNumber() : financeiro.valorLiberadoTotal,
       saldoRendimentos: financeiro.saldoRendimentos ? financeiro.saldoRendimentos.toNumber() : financeiro.saldoRendimentos,
-      valorCPExclusiva: financeiro.valorCPExclusiva ? financeiro.valorCPExclusiva.toNumber() : financeiro.valorCPExclusiva,
       ajusteRepasseVigente: financeiro.ajusteRepasseVigente ? financeiro.ajusteRepasseVigente.toNumber() : financeiro.ajusteRepasseVigente,
       ajusteContrapartidaVigente: financeiro.ajusteContrapartidaVigente ? financeiro.ajusteContrapartidaVigente.toNumber() : financeiro.ajusteContrapartidaVigente,
     };

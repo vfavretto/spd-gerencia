@@ -114,7 +114,6 @@ export interface IFinanceiroContas extends BaseDocument {
   // Novos campos
   codigoReceita?: string | null;
   dataDeposito?: Date | null;
-  valorCPExclusiva?: number | null;
   ajusteRepasseVigente?: number | null;
   ajusteContrapartidaVigente?: number | null;
   convenioId: string;
@@ -179,6 +178,7 @@ export interface IContratoExecucao extends BaseDocument {
   cno?: string | null;
   prazoExecucaoDias?: number | null;
   dataTerminoExecucao?: Date | null;
+  valorCPExclusiva?: number | null;
   convenioId: string;
   // Virtual populate
   medicoes?: IMedicao[];

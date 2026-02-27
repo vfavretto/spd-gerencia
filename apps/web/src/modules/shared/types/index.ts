@@ -340,7 +340,6 @@ export interface FinanceiroContas {
   // Novos campos
   codigoReceita?: string | null;
   dataDeposito?: string | null;
-  valorCPExclusiva?: string | number | null;
   ajusteRepasseVigente?: string | number | null;
   ajusteContrapartidaVigente?: string | number | null;
   convenioId: string;
@@ -371,6 +370,7 @@ export interface ContratoExecucao {
   cno?: string | null;
   prazoExecucaoDias?: number | null;
   dataTerminoExecucao?: string | null;
+  valorCPExclusiva?: string | number | null;
   convenioId: string;
   medicoes?: Medicao[];
 }
@@ -505,6 +505,9 @@ export interface ValoresVigentes {
   saldoRepasse: number;
   saldoContrapartida: number;
   saldoAContratar: number;
+  saldoConvenio: number;
+  saldoExecucao: number;
+  totalCPExclusiva: number;
   
   // Percentuais
   percentualExecutado: number;

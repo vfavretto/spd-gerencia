@@ -26,6 +26,9 @@ export interface ValoresVigentes {
   saldoRepasse: number;
   saldoContrapartida: number;
   saldoAContratar: number;
+  saldoConvenio: number;
+  saldoExecucao: number;
+  totalCPExclusiva: number;
   
   // Percentuais
   percentualExecutado: number;
@@ -71,13 +74,17 @@ export class GetValoresVigentesUseCase {
     
     // Calcular valores executados
     const contratos = convenio.contratos || [];
-    const { valorTotalContratado, valorTotalMedido, valorTotalPago, dataUltimaMedicao } = 
+    const { valorTotalContratado, valorTotalMedido, valorTotalPago, totalCPExclusiva, dataUltimaMedicao } = 
       this.calcularValoresExecutados(contratos);
     
     // Saldos
     const saldoRepasse = valorRepasseVigente - valorTotalPago;
     const saldoContrapartida = valorContrapartidaVigente;
     const saldoAContratar = valorGlobalVigente - valorTotalContratado;
+    // Saldo do convênio: valor global - pago (limitado a 100% do valor)
+    const saldoConvenio = Math.max(0, valorGlobalVigente - valorTotalPago);
+    // Saldo de execução: inclui CP Exclusiva para cobrir excedentes
+    const saldoExecucao = valorGlobalVigente + totalCPExclusiva - valorTotalContratado;
     
     // Percentuais
     const percentualExecutado = valorGlobalVigente > 0 
@@ -107,6 +114,9 @@ export class GetValoresVigentesUseCase {
       saldoRepasse,
       saldoContrapartida,
       saldoAContratar,
+      saldoConvenio,
+      saldoExecucao,
+      totalCPExclusiva,
       percentualExecutado: Math.round(percentualExecutado * 100) / 100,
       percentualPago: Math.round(percentualPago * 100) / 100,
       dataUltimaMedicao,
@@ -135,15 +145,18 @@ export class GetValoresVigentesUseCase {
     valorTotalContratado: number;
     valorTotalMedido: number;
     valorTotalPago: number;
+    totalCPExclusiva: number;
     dataUltimaMedicao: Date | null;
   } {
     let valorTotalContratado = 0;
     let valorTotalMedido = 0;
     let valorTotalPago = 0;
+    let totalCPExclusiva = 0;
     let dataUltimaMedicao: Date | null = null;
     
     for (const contrato of contratos) {
       valorTotalContratado += Number(contrato.valorContrato) || 0;
+      totalCPExclusiva += Number(contrato.valorCPExclusiva) || 0;
       
       const medicoes = contrato.medicoes || [];
       for (const medicao of medicoes) {
@@ -157,6 +170,6 @@ export class GetValoresVigentesUseCase {
       }
     }
     
-    return { valorTotalContratado, valorTotalMedido, valorTotalPago, dataUltimaMedicao };
+    return { valorTotalContratado, valorTotalMedido, valorTotalPago, totalCPExclusiva, dataUltimaMedicao };
   }
 }

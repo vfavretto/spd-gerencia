@@ -29,6 +29,7 @@ const createSchema = z.object({
   dataOIS: z.coerce.date().nullable().optional(),
   valorContrato: z.number().min(0).optional().nullable(),
   valorExecutado: z.number().min(0).optional().nullable(),
+  valorCPExclusiva: z.number().min(0).optional().nullable(),
   engenheiroResponsavel: z.string().optional().nullable(),
   creaEngenheiro: z.string().optional().nullable(),
   artRrt: z.string().optional().nullable(),

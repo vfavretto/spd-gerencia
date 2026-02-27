@@ -1,5 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { BarChart3, TrendingUp, Calendar, DollarSign, CheckCircle2, XCircle } from "lucide-react";
+import {
+  BarChart3,
+  TrendingUp,
+  Calendar,
+  DollarSign,
+  CheckCircle2,
+  XCircle,
+} from "lucide-react";
 import { useState } from "react";
 import type { Convenio, ValoresVigentes } from "@/modules/shared/types";
 import { formatDateBR } from "@/modules/shared/lib/date";
@@ -24,29 +31,55 @@ export function AbaExecucao({ convenio, valoresVigentes, onUpdate }: Props) {
   const contratos = convenio.contratos || [];
 
   // Agregar todas as medições
-  const todasMedicoes = contratos.flatMap((c) =>
-    (c.medicoes || []).map((m) => ({
-      ...m,
-      contratoNumero: c.numeroContrato || `Contrato ${c.id}`
-    }))
-  ).sort((a, b) => new Date(b.dataMedicao).getTime() - new Date(a.dataMedicao).getTime());
+  const todasMedicoes = contratos
+    .flatMap((c) =>
+      (c.medicoes || []).map((m) => ({
+        ...m,
+        contratoNumero: c.numeroContrato || `Contrato ${c.id}`,
+      })),
+    )
+    .sort(
+      (a, b) =>
+        new Date(b.dataMedicao).getTime() - new Date(a.dataMedicao).getTime(),
+    );
 
   // Calcular totais
-  const valorGlobal = valoresVigentes?.valorGlobalVigente ?? (Number(convenio.valorGlobal) || 0);
-  const totalContratado = contratos.reduce((acc, c) => acc + Number(c.valorContrato || 0), 0);
-  const totalMedido = todasMedicoes.reduce((acc, m) => acc + Number(m.valorMedido || 0), 0);
-  const totalPago = todasMedicoes.reduce((acc, m) => acc + Number(m.valorPago || 0), 0);
+  const valorGlobal =
+    valoresVigentes?.valorGlobalVigente ?? (Number(convenio.valorGlobal) || 0);
+  const totalContratado = contratos.reduce(
+    (acc, c) => acc + Number(c.valorContrato || 0),
+    0,
+  );
+  const totalMedido = todasMedicoes.reduce(
+    (acc, m) => acc + Number(m.valorMedido || 0),
+    0,
+  );
+  const totalPago = todasMedicoes.reduce(
+    (acc, m) => acc + Number(m.valorPago || 0),
+    0,
+  );
 
-  const percentualContratado = valorGlobal > 0 ? (totalContratado / valorGlobal) * 100 : 0;
-  const percentualMedido = totalContratado > 0 ? (totalMedido / totalContratado) * 100 : 0;
+  const percentualContratado =
+    valorGlobal > 0 ? (totalContratado / valorGlobal) * 100 : 0;
+  const percentualMedido =
+    totalContratado > 0 ? (totalMedido / totalContratado) * 100 : 0;
   const percentualPago = totalMedido > 0 ? (totalPago / totalMedido) * 100 : 0;
+
+  // Saldos
+  const saldoConvenio =
+    valoresVigentes?.saldoConvenio ?? Math.max(0, valorGlobal - totalPago);
+  const saldoExecucao =
+    valoresVigentes?.saldoExecucao ?? valorGlobal - totalContratado;
+  const totalCPExclusiva = valoresVigentes?.totalCPExclusiva ?? 0;
+  const saldoAContratar =
+    valoresVigentes?.saldoAContratar ?? valorGlobal - totalContratado;
 
   // Calcular dias sem medição
   const ultimaMedicao = todasMedicoes[0];
   const diasSemMedicao = ultimaMedicao
     ? Math.floor(
         (new Date().getTime() - new Date(ultimaMedicao.dataMedicao).getTime()) /
-          (1000 * 60 * 60 * 24)
+          (1000 * 60 * 60 * 24),
       )
     : null;
 
@@ -56,7 +89,9 @@ export function AbaExecucao({ convenio, valoresVigentes, onUpdate }: Props) {
   const concluirMutation = useMutation({
     mutationFn: () => convenioService.concluir(convenio.id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["convenio", String(convenio.id)] });
+      queryClient.invalidateQueries({
+        queryKey: ["convenio", String(convenio.id)],
+      });
       queryClient.invalidateQueries({ queryKey: ["convenios"] });
       toast.success("Convênio concluído com sucesso!");
       setShowConcluirConfirm(false);
@@ -64,13 +99,15 @@ export function AbaExecucao({ convenio, valoresVigentes, onUpdate }: Props) {
     },
     onError: () => {
       toast.error("Erro ao concluir convênio.");
-    }
+    },
   });
 
   const cancelarMutation = useMutation({
     mutationFn: () => convenioService.cancelar(convenio.id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["convenio", String(convenio.id)] });
+      queryClient.invalidateQueries({
+        queryKey: ["convenio", String(convenio.id)],
+      });
       queryClient.invalidateQueries({ queryKey: ["convenios"] });
       toast.success("Convênio cancelado com sucesso!");
       setShowCancelarConfirm(false);
@@ -78,7 +115,7 @@ export function AbaExecucao({ convenio, valoresVigentes, onUpdate }: Props) {
     },
     onError: () => {
       toast.error("Erro ao cancelar convênio.");
-    }
+    },
   });
 
   return (
@@ -151,7 +188,11 @@ export function AbaExecucao({ convenio, valoresVigentes, onUpdate }: Props) {
                 {percentualPago.toFixed(1)}% do medido
               </p>
             </div>
-            <ProgressCircle value={percentualPago} size={48} variant="success" />
+            <ProgressCircle
+              value={percentualPago}
+              size={48}
+              variant="success"
+            />
           </div>
         </div>
 
@@ -172,6 +213,48 @@ export function AbaExecucao({ convenio, valoresVigentes, onUpdate }: Props) {
               <Calendar className="h-6 w-6 text-slate-600" />
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Cards de Saldos */}
+      <div className="grid gap-4 md:grid-cols-3">
+        <div className="rounded-2xl bg-white border border-slate-200 p-4">
+          <p className="text-sm text-slate-500">Saldo do Convênio</p>
+          <p
+            className={`text-xl font-bold mt-1 ${saldoConvenio > 0 ? "text-emerald-600" : "text-slate-900"}`}
+          >
+            {formatCurrency(saldoConvenio)}
+          </p>
+          <p className="text-xs text-slate-500 mt-1">Valor Convênio - Pago</p>
+        </div>
+
+        <div className="rounded-2xl bg-white border border-slate-200 p-4">
+          <p className="text-sm text-slate-500">Saldo a Contratar</p>
+          <p
+            className={`text-xl font-bold mt-1 ${saldoAContratar < 0 ? "text-rose-600" : "text-slate-900"}`}
+          >
+            {formatCurrency(saldoAContratar)}
+          </p>
+          <p className="text-xs text-slate-500 mt-1">Global - Contratado</p>
+        </div>
+
+        <div className="rounded-2xl bg-white border border-slate-200 p-4">
+          <p className="text-sm text-slate-500">Saldo de Execução</p>
+          <p
+            className={`text-xl font-bold mt-1 ${saldoExecucao >= 0 ? "text-emerald-600" : "text-rose-600"}`}
+          >
+            {formatCurrency(saldoExecucao)}
+          </p>
+          {totalCPExclusiva > 0 && (
+            <p className="text-xs text-amber-600 mt-1">
+              Inclui CP Exclusiva: {formatCurrency(totalCPExclusiva)}
+            </p>
+          )}
+          {saldoAContratar < 0 && saldoExecucao >= 0 && (
+            <p className="text-xs text-emerald-600 mt-1 font-medium">
+              CP Exclusiva cobre o excedente
+            </p>
+          )}
         </div>
       </div>
 
@@ -248,7 +331,8 @@ export function AbaExecucao({ convenio, valoresVigentes, onUpdate }: Props) {
                         Medição Nº {medicao.numeroMedicao}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        {(medicao as { contratoNumero: string }).contratoNumero} • {formatDateBR(medicao.dataMedicao)}
+                        {(medicao as { contratoNumero: string }).contratoNumero}{" "}
+                        • {formatDateBR(medicao.dataMedicao)}
                       </p>
                     </div>
                     <div className="text-right">
@@ -292,7 +376,11 @@ export function AbaExecucao({ convenio, valoresVigentes, onUpdate }: Props) {
         onOpenChange={setShowConcluirConfirm}
         title="Concluir convênio"
         description={`Deseja realmente concluir o convênio "${convenio.titulo}"? Esta ação marcará o convênio como finalizado e não poderá ser desfeita.`}
-        confirmLabel={concluirMutation.isPending ? "Concluindo..." : "Sim, concluir convênio"}
+        confirmLabel={
+          concluirMutation.isPending
+            ? "Concluindo..."
+            : "Sim, concluir convênio"
+        }
         onConfirm={() => {
           if (!concluirMutation.isPending) {
             concluirMutation.mutate();
@@ -306,7 +394,11 @@ export function AbaExecucao({ convenio, valoresVigentes, onUpdate }: Props) {
         onOpenChange={setShowCancelarConfirm}
         title="Cancelar convênio"
         description={`Deseja realmente cancelar o convênio "${convenio.titulo}"? Esta ação é irreversível e o convênio não poderá mais ser executado.`}
-        confirmLabel={cancelarMutation.isPending ? "Cancelando..." : "Sim, cancelar convênio"}
+        confirmLabel={
+          cancelarMutation.isPending
+            ? "Cancelando..."
+            : "Sim, cancelar convênio"
+        }
         onConfirm={() => {
           if (!cancelarMutation.isPending) {
             cancelarMutation.mutate();

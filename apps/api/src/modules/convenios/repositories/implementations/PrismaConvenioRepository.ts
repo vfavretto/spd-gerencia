@@ -134,7 +134,6 @@ export class PrismaConvenioRepository implements ConvenioRepository {
             ...conv.financeiroContas,
             valorLiberadoTotal: conv.financeiroContas.valorLiberadoTotal ? conv.financeiroContas.valorLiberadoTotal.toNumber() : conv.financeiroContas.valorLiberadoTotal,
             saldoRendimentos: conv.financeiroContas.saldoRendimentos ? conv.financeiroContas.saldoRendimentos.toNumber() : conv.financeiroContas.saldoRendimentos,
-            valorCPExclusiva: conv.financeiroContas.valorCPExclusiva ? conv.financeiroContas.valorCPExclusiva.toNumber() : conv.financeiroContas.valorCPExclusiva,
             ajusteRepasseVigente: conv.financeiroContas.ajusteRepasseVigente ? conv.financeiroContas.ajusteRepasseVigente.toNumber() : conv.financeiroContas.ajusteRepasseVigente,
             ajusteContrapartidaVigente: conv.financeiroContas.ajusteContrapartidaVigente ? conv.financeiroContas.ajusteContrapartidaVigente.toNumber() : conv.financeiroContas.ajusteContrapartidaVigente,
           }
@@ -144,6 +143,7 @@ export class PrismaConvenioRepository implements ConvenioRepository {
         ...c,
         valorContrato: c.valorContrato ? c.valorContrato.toNumber() : c.valorContrato,
         valorExecutado: c.valorExecutado ? c.valorExecutado.toNumber() : c.valorExecutado,
+        valorCPExclusiva: c.valorCPExclusiva ? c.valorCPExclusiva.toNumber() : c.valorCPExclusiva,
         medicoes: (c.medicoes ?? []).map((m) => ({
           ...m,
           percentualFisico: m.percentualFisico ? m.percentualFisico.toNumber() : m.percentualFisico,

@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Edit2, Save, X, CalendarCheck, FileSignature, Plus, Pencil, Trash2, Landmark } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import type { Convenio, EmendaParlamentar } from "@/modules/shared/types";
 import { ConfirmDialog } from "@/modules/shared/components/ConfirmDialog";
@@ -82,34 +82,42 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
     area: string;
   };
 
+  const formValues = {
+    codigo: convenio.codigo,
+    titulo: convenio.titulo,
+    objeto: convenio.objeto,
+    descricao: convenio.descricao || "",
+    numeroProposta: convenio.numeroProposta || '',
+    numeroTermo: convenio.numeroTermo || '',
+    dataAssinatura: convenio.dataAssinatura
+      ? new Date(convenio.dataAssinatura).toISOString().split('T')[0]
+      : '',
+    dataInicioVigencia: convenio.dataInicioVigencia
+      ? new Date(convenio.dataInicioVigencia).toISOString().split('T')[0]
+      : '',
+    dataFimVigencia: convenio.dataFimVigencia
+      ? new Date(convenio.dataFimVigencia).toISOString().split('T')[0]
+      : '',
+    esfera: convenio.esfera || '',
+    modalidadeRepasse: convenio.modalidadeRepasse || '',
+    secretariaId: convenio.secretaria?.id,
+    orgaoId: convenio.orgao?.id,
+    programaId: convenio.programa?.id,
+    // Novos campos de processo
+    processoSPD: convenio.processoSPD || '',
+    processoCreditoAdicional: convenio.processoCreditoAdicional || '',
+    area: convenio.area || ""
+  };
+
   const { register, handleSubmit, reset } = useForm<ConvenioFormData>({
-    defaultValues: {
-      codigo: convenio.codigo,
-      titulo: convenio.titulo,
-      objeto: convenio.objeto,
-      descricao: convenio.descricao || "",
-      numeroProposta: convenio.numeroProposta || '',
-      numeroTermo: convenio.numeroTermo || '',
-      dataAssinatura: convenio.dataAssinatura
-        ? new Date(convenio.dataAssinatura).toISOString().split('T')[0]
-        : '',
-      dataInicioVigencia: convenio.dataInicioVigencia
-        ? new Date(convenio.dataInicioVigencia).toISOString().split('T')[0]
-        : '',
-      dataFimVigencia: convenio.dataFimVigencia
-        ? new Date(convenio.dataFimVigencia).toISOString().split('T')[0]
-        : '',
-      esfera: convenio.esfera || '',
-      modalidadeRepasse: convenio.modalidadeRepasse || '',
-      secretariaId: convenio.secretaria?.id,
-      orgaoId: convenio.orgao?.id,
-      programaId: convenio.programa?.id,
-      // Novos campos de processo
-      processoSPD: convenio.processoSPD || '',
-      processoCreditoAdicional: convenio.processoCreditoAdicional || '',
-      area: convenio.area || ""
-    }
+    defaultValues: formValues
   });
+
+  // Atualiza os valores do formulário quando os dados do convênio mudam
+  // (ex: após registro de assinatura, aditivação, etc.)
+  useEffect(() => {
+    reset(formValues);
+  }, [convenio.atualizadoEm]);
 
   const updateMutation = useMutation({
     mutationFn: (data: Record<string, unknown>) => convenioService.update(convenio.id, {

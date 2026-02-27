@@ -81,6 +81,7 @@ export class PrismaConvenioRepository implements ConvenioRepository {
         objeto: true,
         status: true,
         valorGlobal: true,
+        dataInicioVigencia: true,
         dataFimVigencia: true,
         atualizadoEm: true,
         secretaria: {
@@ -103,6 +104,7 @@ export class PrismaConvenioRepository implements ConvenioRepository {
       objeto: conv.objeto,
       status: conv.status,
       valorGlobal: conv.valorGlobal.toNumber(),
+      dataInicioVigencia: conv.dataInicioVigencia,
       dataFimVigencia: conv.dataFimVigencia,
       atualizadoEm: conv.atualizadoEm,
       secretaria: conv.secretaria,

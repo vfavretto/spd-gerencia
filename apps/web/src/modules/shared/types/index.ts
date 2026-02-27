@@ -191,6 +191,8 @@ export interface Convenio {
   aditivos?: Aditivo[];
   fichasOrcamentarias?: FichaOrcamentaria[];
   notasEmpenho?: NotaEmpenho[];
+  criadoEm?: string;
+  atualizadoEm?: string;
 
 }
 

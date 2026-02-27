@@ -12,34 +12,12 @@ export class UpdateConvenioUseCase {
       throw new AppError('Convênio não encontrado', 404);
     }
 
-    if (data.status === 'CONCLUIDO') {
-      const totalEmpenhos = (existing.notasEmpenho ?? []).reduce(
-        (acc, nota) => acc + Number(nota.valor ?? 0),
-        0
-      );
+    // O campo status não pode ser alterado via update genérico.
+    // Status é gerenciado automaticamente pelo ConvenioStatusService
+    // ou por ações explícitas (concluir / cancelar).
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { status: _status, ...safeData } = data;
 
-      const totalMedicoesPagas = (existing.contratos ?? []).reduce(
-        (acc, contrato) =>
-          acc +
-          (contrato.medicoes ?? []).reduce(
-            (sum, medicao) => sum + Number(medicao.valorPago ?? 0),
-            0
-          ),
-        0
-      );
-
-      const saldo = totalEmpenhos - totalMedicoesPagas;
-      const pendenciasAbertas = (existing.pendencias ?? []).length > 0;
-
-      if (saldo > 0) {
-        throw new AppError('Não é possível concluir: saldo financeiro pendente.', 400);
-      }
-
-      if (pendenciasAbertas) {
-        throw new AppError('Não é possível concluir: existem pendências em aberto.', 400);
-      }
-    }
-
-    return this.repository.update(id, data);
+    return this.repository.update(id, safeData);
   }
 }

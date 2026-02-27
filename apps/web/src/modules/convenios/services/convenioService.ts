@@ -52,5 +52,15 @@ export const convenioService = {
   async getValoresVigentes(id: string): Promise<ValoresVigentes> {
     const { data } = await api.get<ValoresVigentes>(`/convenios/${id}/valores-vigentes`);
     return data;
+  },
+
+  async concluir(id: string): Promise<Convenio> {
+    const { data } = await api.post<Convenio>(`/convenios/${id}/concluir`);
+    return data;
+  },
+
+  async cancelar(id: string): Promise<Convenio> {
+    const { data } = await api.post<Convenio>(`/convenios/${id}/cancelar`);
+    return data;
   }
 };

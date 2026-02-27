@@ -282,7 +282,7 @@ export const ConvenioDetalhesPage = () => {
             </TabsContent>
 
             <TabsContent value="execucao">
-              <AbaExecucao convenio={convenio} valoresVigentes={valoresVigentes} />
+              <AbaExecucao convenio={convenio} valoresVigentes={valoresVigentes} onUpdate={refetch} />
             </TabsContent>
 
             <TabsContent value="diario">

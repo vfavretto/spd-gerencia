@@ -69,67 +69,17 @@ describe('UpdateConvenioUseCase', () => {
     expect(repository.update).not.toHaveBeenCalled();
   });
 
-  it('deve lançar erro ao tentar concluir com saldo pendente', async () => {
-    const convenioComSaldo = makeConvenio({
-      notasEmpenho: [
-        { id: 'ne-1', numero: 'NE-001', tipo: TipoEmpenho.REPASSE, valor: 50000, dataEmissao: new Date(), convenioId: 'conv-1', criadoEm: new Date(), atualizadoEm: new Date() }
-      ],
-      contratos: [
-        {
-          id: 'ct-1',
-          convenioId: 'conv-1',
-          criadoEm: new Date(),
-          atualizadoEm: new Date(),
-          medicoes: [
-            { id: 'med-1', numeroMedicao: 1, dataMedicao: new Date(), valorMedido: 10000, valorPago: 10000, contratoId: 'ct-1', criadoEm: new Date(), atualizadoEm: new Date() }
-          ]
-        } as IContratoExecucao
-      ],
-      pendencias: []
-    });
+  it('deve ignorar o campo status no update genérico', async () => {
+    const existing = makeConvenio();
+    const updated = makeConvenio({ titulo: 'Título Atualizado' });
 
-    repository.findById.mockResolvedValue(convenioComSaldo);
+    repository.findById.mockResolvedValue(existing);
+    repository.update.mockResolvedValue(updated);
 
-    await expect(
-      sut.execute('conv-1', { status: 'CONCLUIDO' })
-    ).rejects.toEqual(expect.objectContaining({
-      message: 'Não é possível concluir: saldo financeiro pendente.',
-      statusCode: 400
-    }));
+    await sut.execute('conv-1', { titulo: 'Título Atualizado', status: 'CONCLUIDO' });
 
-    expect(repository.update).not.toHaveBeenCalled();
-  });
-
-  it('deve lançar erro ao tentar concluir com pendências abertas', async () => {
-    const convenioComPendencias = makeConvenio({
-      notasEmpenho: [
-        { id: 'ne-1', numero: 'NE-001', tipo: TipoEmpenho.REPASSE, valor: 10000, dataEmissao: new Date(), convenioId: 'conv-1', criadoEm: new Date(), atualizadoEm: new Date() }
-      ],
-      contratos: [
-        {
-          id: 'ct-1',
-          convenioId: 'conv-1',
-          criadoEm: new Date(),
-          atualizadoEm: new Date(),
-          medicoes: [
-            { id: 'med-1', numeroMedicao: 1, dataMedicao: new Date(), valorMedido: 10000, valorPago: 10000, contratoId: 'ct-1', criadoEm: new Date(), atualizadoEm: new Date() }
-          ]
-        } as IContratoExecucao
-      ],
-      pendencias: [
-        { id: 'pend-1', descricao: 'Pendência aberta', status: 'ABERTA', convenioId: 'conv-1', criadoEm: new Date(), atualizadoEm: new Date() } as IPendencia
-      ]
-    });
-
-    repository.findById.mockResolvedValue(convenioComPendencias);
-
-    await expect(
-      sut.execute('conv-1', { status: 'CONCLUIDO' })
-    ).rejects.toEqual(expect.objectContaining({
-      message: 'Não é possível concluir: existem pendências em aberto.',
-      statusCode: 400
-    }));
-
-    expect(repository.update).not.toHaveBeenCalled();
+    // O campo status deve ser removido do payload antes de chegar ao repository
+    expect(repository.update).toHaveBeenCalledWith('conv-1', { titulo: 'Título Atualizado' });
   });
 });
+

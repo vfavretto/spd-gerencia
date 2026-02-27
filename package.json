@@ -27,7 +27,7 @@
     "test:cov:web": "npm --workspace apps/web run test:cov",
     "test:cov": "npm-run-all test:cov:api test:cov:web",
     "build:railway:api": "npx prisma generate --schema packages/db/prisma/schema.prisma && npm run build:db && npm run build:api",
-    "start:railway:api": "npx prisma migrate deploy --schema packages/db/prisma/schema.prisma"
+    "start:railway:api": "npx prisma migrate deploy --schema packages/db/prisma/schema.prisma && node apps/api/dist/main.js"
   },
   "workspaces": [
     "apps/*",

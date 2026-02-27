@@ -12,7 +12,17 @@ export class UpdateConvenioUseCase {
       throw new AppError('Convênio não encontrado', 404);
     }
 
-    // O campo status não pode ser alterado via update genérico.
+    // Permite a transição para APROVADO ao registrar assinatura
+    // (dataAssinatura sendo definida pela primeira vez).
+    const isRegistrandoAssinatura =
+      data.dataAssinatura && !existing.dataAssinatura;
+
+    if (isRegistrandoAssinatura && data.status === 'APROVADO') {
+      // Mantém o status APROVADO no payload
+      return this.repository.update(id, data);
+    }
+
+    // Para todos os outros casos, o campo status é ignorado.
     // Status é gerenciado automaticamente pelo ConvenioStatusService
     // ou por ações explícitas (concluir / cancelar).
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

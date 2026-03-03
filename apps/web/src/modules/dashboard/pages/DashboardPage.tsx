@@ -359,7 +359,7 @@ export const DashboardPage = () => {
                 <thead>
                   <tr className="border-b border-slate-100 text-left text-slate-500">
                     <th className="pb-3 font-medium">Código</th>
-                    <th className="pb-4 font-medium">Título</th>
+                    <th className="pb-3 font-medium">Título</th>
                     <th className="pb-3 font-medium text-right">Valor global</th>
                     <th className="pb-3 font-medium text-center">Status</th>
                     <th className="pb-3 font-medium text-right">Execução</th>
@@ -373,7 +373,7 @@ export const DashboardPage = () => {
                           {conv.codigo}
                         </Link>
                       </td>
-                      <td className="py-3 text-slate-700 line-clamp-1 max-w-xs">{conv.titulo}</td>
+                      <td className="py-4 text-slate-700 line-clamp-1 max-w-xs">{conv.titulo}</td>
                       <td className="py-3 text-right font-medium text-slate-900">
                         {formatCurrency(conv.valorGlobal)}
                       </td>

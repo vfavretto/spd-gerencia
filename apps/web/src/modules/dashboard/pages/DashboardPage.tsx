@@ -359,7 +359,7 @@ export const DashboardPage = () => {
                 <thead>
                   <tr className="border-b border-slate-100 text-left text-slate-500">
                     <th className="pb-3 font-medium">Código</th>
-                    <th className="pb-3 font-medium">Título</th>
+                    <th className="pb-4 font-medium">Título</th>
                     <th className="pb-3 font-medium text-right">Valor global</th>
                     <th className="pb-3 font-medium text-center">Status</th>
                     <th className="pb-3 font-medium text-right">Execução</th>

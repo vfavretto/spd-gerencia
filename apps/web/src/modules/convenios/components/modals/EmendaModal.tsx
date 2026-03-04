@@ -14,7 +14,6 @@ import {
 import { Button } from "@/modules/shared/ui/button";
 import { Input } from "@/modules/shared/ui/input";
 import { Label } from "@/modules/shared/ui/label";
-import { CurrencyInput } from "@/modules/shared/ui/currency-input";
 import { emendaService } from "@/modules/convenios/services/emendaService";
 import { toast } from "@/modules/shared/ui/toaster";
 import type { EmendaParlamentar } from "@/modules/shared/types";
@@ -26,8 +25,6 @@ const schema = z.object({
   codigoEmenda: z.string().optional(),
   funcao: z.string().optional(),
   subfuncao: z.string().optional(),
-  programa: z.string().optional(),
-  valorIndicado: z.number().optional(),
   anoEmenda: z.number().int().min(2000).max(2100).optional()
 });
 
@@ -55,8 +52,6 @@ export function EmendaModal({
     register,
     handleSubmit,
     reset,
-    setValue,
-    watch,
     formState: { errors }
   } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -66,8 +61,6 @@ export function EmendaModal({
       codigoEmenda: '',
       funcao: '',
       subfuncao: '',
-      programa: '',
-      valorIndicado: undefined,
       anoEmenda: new Date().getFullYear()
     }
   });
@@ -81,8 +74,6 @@ export function EmendaModal({
         codigoEmenda: emenda.codigoEmenda || '',
         funcao: emenda.funcao || '',
         subfuncao: emenda.subfuncao || '',
-        programa: emenda.programa || '',
-        valorIndicado: emenda.valorIndicado ? Number(emenda.valorIndicado) : undefined,
         anoEmenda: emenda.anoEmenda || new Date().getFullYear()
       });
     } else {
@@ -92,8 +83,6 @@ export function EmendaModal({
         codigoEmenda: '',
         funcao: '',
         subfuncao: '',
-        programa: "",
-        valorIndicado: undefined,
         anoEmenda: new Date().getFullYear()
       });
     }
@@ -208,16 +197,6 @@ export function EmendaModal({
             />
           </div>
 
-          {/* Valor Indicado */}
-          <div className="space-y-2">
-            <Label>Valor Indicado</Label>
-            <CurrencyInput
-              value={watch("valorIndicado")}
-              onValueChange={(value) => setValue("valorIndicado", value ?? undefined)}
-              placeholder="R$ 0,00"
-            />
-          </div>
-
           {/* Função e Subfunção */}
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
@@ -236,16 +215,6 @@ export function EmendaModal({
                 {...register("subfuncao")}
               />
             </div>
-          </div>
-
-          {/* Programa */}
-          <div className="space-y-2">
-            <Label htmlFor="programa">Programa</Label>
-            <Input
-              id="programa"
-              placeholder="Nome do programa"
-              {...register("programa")}
-            />
           </div>
 
           <DialogFooter className="gap-2 sm:gap-0 pt-4">

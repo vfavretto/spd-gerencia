@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Edit2, Save, X, CalendarCheck, FileSignature, Plus, Pencil, Trash2, Landmark } from "lucide-react";
+import { Edit2, Save, X, CalendarCheck, FileSignature, Plus, Pencil, Trash2, Landmark, ChevronDown } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import type { Convenio, EmendaParlamentar } from "@/modules/shared/types";
@@ -27,6 +27,7 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
   const [showAssinaturaModal, setShowAssinaturaModal] = useState(false);
   const [showAditivoModal, setShowAditivoModal] = useState(false);
   const [showEmendaModal, setShowEmendaModal] = useState(false);
+  const [expandedEmendaId, setExpandedEmendaId] = useState<string | null>(null);
   const [emendaParaEditar, setEmendaParaEditar] = useState<EmendaParlamentar | null>(null);
   const [emendaParaDeletar, setEmendaParaDeletar] = useState<EmendaParlamentar | null>(null);
 
@@ -54,6 +55,10 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
 
   const handleDeletarEmenda = (emenda: EmendaParlamentar) => {
     setEmendaParaDeletar(emenda);
+  };
+
+  const handleToggleEmenda = (emendaId: string) => {
+    setExpandedEmendaId((current) => (current === emendaId ? null : emendaId));
   };
 
   const { data: catalogs } = useQuery({
@@ -447,47 +452,101 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
         {convenio.emendas && convenio.emendas.length > 0 ? (
           <div className="space-y-2">
             {convenio.emendas.map((emenda) => (
-              <div
-                key={emenda.id}
-                className="flex items-center justify-between rounded-xl bg-slate-50 px-4 py-3 group"
-              >
-                <div className="flex-1">
-                  <p className="font-medium text-slate-900">
-                    {emenda.nomeParlamentar}
-                  </p>
-                  <p className="text-xs text-slate-500">
-                    {emenda.partido && <span>{emenda.partido}</span>}
-                    {emenda.anoEmenda && <span> • Ano: {emenda.anoEmenda}</span>}
-                    {emenda.codigoEmenda && <span> • Código: {emenda.codigoEmenda}</span>}
-                  </p>
-                </div>
-                <div className="flex items-center gap-3">
-                  {emenda.valorIndicado && (
-                    <span className="text-sm font-semibold text-emerald-600">
-                      {new Intl.NumberFormat("pt-BR", {
-                        style: "currency",
-                        currency: "BRL"
-                      }).format(Number(emenda.valorIndicado))}
-                    </span>
-                  )}
-                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button
-                      onClick={() => handleEditarEmenda(emenda)}
-                      className="p-1.5 rounded-lg text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 transition"
-                      title="Editar emenda"
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </button>
-                    <button
-                      onClick={() => handleDeletarEmenda(emenda)}
-                      className="p-1.5 rounded-lg text-slate-500 hover:text-red-600 hover:bg-red-50 transition"
-                      title="Remover emenda"
-                      disabled={deletarEmendaMutation.isPending}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
+              <div key={emenda.id} className="rounded-xl bg-slate-50 px-4 py-3 group">
+                <div
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Expandir emenda de ${emenda.nomeParlamentar}`}
+                  aria-expanded={expandedEmendaId === emenda.id}
+                  aria-controls={`emenda-detalhes-${emenda.id}`}
+                  onClick={() => handleToggleEmenda(emenda.id)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      handleToggleEmenda(emenda.id);
+                    }
+                  }}
+                  className="flex items-start justify-between gap-3 cursor-pointer"
+                >
+                  <div className="flex-1">
+                    <p className="font-medium text-slate-900">
+                      {emenda.nomeParlamentar}
+                    </p>
+                    <p className="text-xs text-slate-500">
+                      {emenda.partido && <span>{emenda.partido}</span>}
+                      {emenda.anoEmenda && <span> • Ano: {emenda.anoEmenda}</span>}
+                      {emenda.codigoEmenda && <span> • Código: {emenda.codigoEmenda}</span>}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          handleEditarEmenda(emenda);
+                        }}
+                        className="p-1.5 rounded-lg text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 transition"
+                        title="Editar emenda"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </button>
+                      <button
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          handleDeletarEmenda(emenda);
+                        }}
+                        className="p-1.5 rounded-lg text-slate-500 hover:text-red-600 hover:bg-red-50 transition"
+                        title="Remover emenda"
+                        disabled={deletarEmendaMutation.isPending}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                    <ChevronDown
+                      className={`h-4 w-4 text-slate-500 transition-transform ${expandedEmendaId === emenda.id ? "rotate-180" : ""}`}
+                    />
                   </div>
                 </div>
+
+                {expandedEmendaId === emenda.id && (
+                  <div
+                    id={`emenda-detalhes-${emenda.id}`}
+                    className="mt-3 border-t border-slate-200 pt-3"
+                  >
+                    <dl className="grid gap-2 text-sm md:grid-cols-2">
+                      {emenda.partido && (
+                        <div className="rounded-lg bg-white px-3 py-2">
+                          <dt className="text-xs text-slate-500">Partido</dt>
+                          <dd className="font-medium text-slate-900">{emenda.partido}</dd>
+                        </div>
+                      )}
+                      {emenda.anoEmenda && (
+                        <div className="rounded-lg bg-white px-3 py-2">
+                          <dt className="text-xs text-slate-500">Ano da Emenda</dt>
+                          <dd className="font-medium text-slate-900">{emenda.anoEmenda}</dd>
+                        </div>
+                      )}
+                      {emenda.codigoEmenda && (
+                        <div className="rounded-lg bg-white px-3 py-2">
+                          <dt className="text-xs text-slate-500">Código da Emenda</dt>
+                          <dd className="font-medium text-slate-900">{emenda.codigoEmenda}</dd>
+                        </div>
+                      )}
+                      {emenda.funcao && (
+                        <div className="rounded-lg bg-white px-3 py-2">
+                          <dt className="text-xs text-slate-500">Função</dt>
+                          <dd className="font-medium text-slate-900">{emenda.funcao}</dd>
+                        </div>
+                      )}
+                      {emenda.subfuncao && (
+                        <div className="rounded-lg bg-white px-3 py-2">
+                          <dt className="text-xs text-slate-500">Subfunção</dt>
+                          <dd className="font-medium text-slate-900">{emenda.subfuncao}</dd>
+                        </div>
+                      )}
+                    </dl>
+                  </div>
+                )}
               </div>
             ))}
           </div>

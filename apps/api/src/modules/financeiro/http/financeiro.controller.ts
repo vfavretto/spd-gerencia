@@ -20,7 +20,6 @@ const upsertSchema = z.object({
   observacoes: z.string().nullable().optional(),
   codigoReceita: z.string().nullable().optional(),
   dataDeposito: parseDate,
-  valorCPExclusiva: z.number().min(0).nullable().optional(),
   ajusteRepasseVigente: z.number().nullable().optional(),
   ajusteContrapartidaVigente: z.number().nullable().optional()
 });

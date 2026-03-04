@@ -30,13 +30,7 @@ const wizardSchema = z.object({
   // Step 3: Classificação (IDs são strings do MongoDB ObjectId)
   orgaoId: z.string().optional(),
   programaId: z.string().optional(),
-  fonteId: z.string().optional(),
-  modalidadeRepasse: z.enum([
-    "CONVENIO",
-    "CONTRATO_REPASSE",
-    "TERMO_FOMENTO",
-    "TERMO_COLABORACAO"
-  ]).optional()
+  modalidadeRepasseId: z.string().optional()
 });
 
 type WizardFormData = z.infer<typeof wizardSchema>;
@@ -62,13 +56,6 @@ const wizardSteps: WizardStep[] = [
 const esferaOptions = [
   { value: "FEDERAL", label: "Federal" },
   { value: "ESTADUAL", label: "Estadual" }
-];
-
-const modalidadeOptions = [
-  { value: "CONVENIO", label: "Convênio" },
-  { value: "CONTRATO_REPASSE", label: "Contrato de Repasse" },
-  { value: "TERMO_FOMENTO", label: "Termo de Fomento" },
-  { value: "TERMO_COLABORACAO", label: "Termo de Colaboração" }
 ];
 
 export const ConveniosCadastroPage = () => {
@@ -107,7 +94,7 @@ export const ConveniosCadastroPage = () => {
         // Converter strings vazias para null (IDs do MongoDB)
         orgaoId: payload.orgaoId || null,
         programaId: payload.programaId || null,
-        fonteId: payload.fonteId || null,
+        modalidadeRepasseId: payload.modalidadeRepasseId || null,
         valorRepasse: payload.valorRepasse ?? null,
         valorContrapartida: payload.valorContrapartida ?? null
       }),
@@ -423,19 +410,19 @@ export const ConveniosCadastroPage = () => {
                     <label className="form-label">Modalidade de Repasse</label>
                     <select
                       className="form-input"
-                      {...register("modalidadeRepasse")}
+                      {...register("modalidadeRepasseId")}
                     >
                       <option value="">Selecione</option>
-                      {modalidadeOptions.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
+                      {catalogs?.modalidadesRepasse.map((modalidade) => (
+                        <option key={modalidade.id} value={modalidade.id}>
+                          {modalidade.nome}
                         </option>
                       ))}
                     </select>
                   </div>
                 </div>
 
-                <div className="grid gap-4 md:grid-cols-2">
+                <div className="grid gap-4">
                   <div>
                     <label className="form-label">Programa</label>
                     <select
@@ -446,20 +433,6 @@ export const ConveniosCadastroPage = () => {
                       {catalogs?.programas.map((programa) => (
                         <option key={programa.id} value={programa.id}>
                           {programa.nome}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="form-label">Fonte de Recurso</label>
-                    <select
-                      className="form-input"
-                      {...register("fonteId")}
-                    >
-                      <option value="">Selecione</option>
-                      {catalogs?.fontes.map((fonte) => (
-                        <option key={fonte.id} value={fonte.id}>
-                          {fonte.nome}
                         </option>
                       ))}
                     </select>

@@ -22,13 +22,15 @@ import type { ContratoExecucao } from "@/modules/shared/types";
 
 const schema = z.object({
   numProcessoLicitatorio: z.string().optional(),
-  modalidadeLicitacao: z.enum([
-    "PREGAO",
-    "TOMADA_PRECOS",
-    "CONCORRENCIA",
-    "DISPENSA",
-    "INEXIGIBILIDADE"
-  ]).optional(),
+  modalidadeLicitacao: z
+    .enum([
+      "PREGAO",
+      "TOMADA_PRECOS",
+      "CONCORRENCIA",
+      "DISPENSA",
+      "INEXIGIBILIDADE",
+    ])
+    .optional(),
   numeroContrato: z.string().min(1, "Informe o número do contrato"),
   contratadaCnpj: z.string().optional(),
   contratadaNome: z.string().min(1, "Informe o nome da contratada"),
@@ -36,14 +38,17 @@ const schema = z.object({
   dataVigenciaInicio: z.string().optional(),
   dataVigenciaFim: z.string().optional(),
   dataOIS: z.string().optional(),
-  valorContrato: z.number({ required_error: "Informe o valor do contrato" }).min(0),
+  valorContrato: z
+    .number({ required_error: "Informe o valor do contrato" })
+    .min(0),
   engenheiroResponsavel: z.string().optional(),
   creaEngenheiro: z.string().optional(),
   artRrt: z.string().optional(),
   // Novos campos
   cno: z.string().optional(),
   prazoExecucaoDias: z.number().int().min(0).optional(),
-  dataTerminoExecucao: z.string().optional()
+  dataTerminoExecucao: z.string().optional(),
+  valorCPExclusiva: z.number().min(0).optional(),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -61,10 +66,16 @@ const modalidadeOptions = [
   { value: "TOMADA_PRECOS", label: "Tomada de Preços" },
   { value: "CONCORRENCIA", label: "Concorrência" },
   { value: "DISPENSA", label: "Dispensa" },
-  { value: "INEXIGIBILIDADE", label: "Inexigibilidade" }
+  { value: "INEXIGIBILIDADE", label: "Inexigibilidade" },
 ];
 
-export function VincularContratoModal({ isOpen, onClose, convenioId, contrato, onSuccess }: Props) {
+export function VincularContratoModal({
+  isOpen,
+  onClose,
+  convenioId,
+  contrato,
+  onSuccess,
+}: Props) {
   const queryClient = useQueryClient();
   const isEditing = Boolean(contrato);
 
@@ -74,9 +85,9 @@ export function VincularContratoModal({ isOpen, onClose, convenioId, contrato, o
     reset,
     setValue,
     watch,
-    formState: { errors }
+    formState: { errors },
   } = useForm<FormData>({
-    resolver: zodResolver(schema)
+    resolver: zodResolver(schema),
   });
 
   useEffect(() => {
@@ -88,7 +99,8 @@ export function VincularContratoModal({ isOpen, onClose, convenioId, contrato, o
         contratadaCnpj: contrato.contratadaCnpj || undefined,
         contratadaNome: contrato.contratadaNome || "",
         dataAssinatura: contrato.dataAssinatura?.split("T")[0] || undefined,
-        dataVigenciaInicio: contrato.dataVigenciaInicio?.split("T")[0] || undefined,
+        dataVigenciaInicio:
+          contrato.dataVigenciaInicio?.split("T")[0] || undefined,
         dataVigenciaFim: contrato.dataVigenciaFim?.split("T")[0] || undefined,
         dataOIS: contrato.dataOIS?.split("T")[0] || undefined,
         valorContrato: Number(contrato.valorContrato) || 0,
@@ -97,7 +109,9 @@ export function VincularContratoModal({ isOpen, onClose, convenioId, contrato, o
         artRrt: contrato.artRrt || undefined,
         cno: contrato.cno || undefined,
         prazoExecucaoDias: contrato.prazoExecucaoDias ?? undefined,
-        dataTerminoExecucao: contrato.dataTerminoExecucao?.split("T")[0] || undefined
+        dataTerminoExecucao:
+          contrato.dataTerminoExecucao?.split("T")[0] || undefined,
+        valorCPExclusiva: Number(contrato.valorCPExclusiva) || undefined,
       });
       return;
     }
@@ -118,7 +132,8 @@ export function VincularContratoModal({ isOpen, onClose, convenioId, contrato, o
       artRrt: undefined,
       cno: undefined,
       prazoExecucaoDias: undefined,
-      dataTerminoExecucao: undefined
+      dataTerminoExecucao: undefined,
+      valorCPExclusiva: undefined,
     });
   }, [contrato, reset]);
 
@@ -138,10 +153,13 @@ export function VincularContratoModal({ isOpen, onClose, convenioId, contrato, o
         contratadaCnpj: data.contratadaCnpj || null,
         cno: data.cno || null,
         prazoExecucaoDias: data.prazoExecucaoDias || null,
-        dataTerminoExecucao: data.dataTerminoExecucao || null
+        dataTerminoExecucao: data.dataTerminoExecucao || null,
+        valorCPExclusiva: data.valorCPExclusiva || null,
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["convenio", String(convenioId)] });
+      queryClient.invalidateQueries({
+        queryKey: ["convenio", String(convenioId)],
+      });
       toast.success("Contrato vinculado com sucesso!");
       reset();
       onClose();
@@ -149,7 +167,7 @@ export function VincularContratoModal({ isOpen, onClose, convenioId, contrato, o
     },
     onError: () => {
       toast.error("Erro ao vincular contrato");
-    }
+    },
   });
 
   const updateMutation = useMutation({
@@ -168,10 +186,13 @@ export function VincularContratoModal({ isOpen, onClose, convenioId, contrato, o
         contratadaCnpj: data.contratadaCnpj || null,
         cno: data.cno || null,
         prazoExecucaoDias: data.prazoExecucaoDias || null,
-        dataTerminoExecucao: data.dataTerminoExecucao || null
+        dataTerminoExecucao: data.dataTerminoExecucao || null,
+        valorCPExclusiva: data.valorCPExclusiva || null,
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["convenio", String(convenioId)] });
+      queryClient.invalidateQueries({
+        queryKey: ["convenio", String(convenioId)],
+      });
       toast.success("Contrato atualizado com sucesso!");
       reset();
       onClose();
@@ -179,7 +200,7 @@ export function VincularContratoModal({ isOpen, onClose, convenioId, contrato, o
     },
     onError: () => {
       toast.error("Erro ao atualizar contrato");
-    }
+    },
   });
 
   const onSubmit = (data: FormData) => {
@@ -200,7 +221,9 @@ export function VincularContratoModal({ isOpen, onClose, convenioId, contrato, o
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{isEditing ? "Editar Contrato" : "Vincular Contrato"}</DialogTitle>
+          <DialogTitle>
+            {isEditing ? "Editar Contrato" : "Vincular Contrato"}
+          </DialogTitle>
           <DialogDescription>
             {isEditing
               ? "Atualize os dados do contrato de execução"
@@ -217,7 +240,9 @@ export function VincularContratoModal({ isOpen, onClose, convenioId, contrato, o
             </h4>
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="numProcessoLicitatorio">Nº Processo Licitatório</Label>
+                <Label htmlFor="numProcessoLicitatorio">
+                  Nº Processo Licitatório
+                </Label>
                 <Input
                   id="numProcessoLicitatorio"
                   {...register("numProcessoLicitatorio")}
@@ -257,18 +282,24 @@ export function VincularContratoModal({ isOpen, onClose, convenioId, contrato, o
                   placeholder="Ex: CT 001/2025"
                 />
                 {errors.numeroContrato && (
-                  <p className="text-xs text-destructive">{errors.numeroContrato.message}</p>
+                  <p className="text-xs text-destructive">
+                    {errors.numeroContrato.message}
+                  </p>
                 )}
               </div>
               <div className="space-y-2">
                 <Label>Valor do Contrato *</Label>
                 <CurrencyInput
                   value={watch("valorContrato")}
-                  onValueChange={(value) => setValue("valorContrato", value ?? 0)}
+                  onValueChange={(value) =>
+                    setValue("valorContrato", value ?? 0)
+                  }
                   placeholder="R$ 0,00"
                 />
                 {errors.valorContrato && (
-                  <p className="text-xs text-destructive">{errors.valorContrato.message}</p>
+                  <p className="text-xs text-destructive">
+                    {errors.valorContrato.message}
+                  </p>
                 )}
               </div>
             </div>
@@ -286,7 +317,9 @@ export function VincularContratoModal({ isOpen, onClose, convenioId, contrato, o
                   placeholder="Nome da empresa"
                 />
                 {errors.contratadaNome && (
-                  <p className="text-xs text-destructive">{errors.contratadaNome.message}</p>
+                  <p className="text-xs text-destructive">
+                    {errors.contratadaNome.message}
+                  </p>
                 )}
               </div>
               <div className="space-y-2">
@@ -306,20 +339,34 @@ export function VincularContratoModal({ isOpen, onClose, convenioId, contrato, o
             <div className="grid gap-4 md:grid-cols-4">
               <div className="space-y-2">
                 <Label htmlFor="dataAssinatura">Assinatura</Label>
-                <Input type="date" id="dataAssinatura" {...register("dataAssinatura")} />
+                <Input
+                  type="date"
+                  id="dataAssinatura"
+                  {...register("dataAssinatura")}
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="dataVigenciaInicio">Início Vigência</Label>
-                <Input type="date" id="dataVigenciaInicio" {...register("dataVigenciaInicio")} />
+                <Input
+                  type="date"
+                  id="dataVigenciaInicio"
+                  {...register("dataVigenciaInicio")}
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="dataVigenciaFim">Fim Vigência</Label>
-                <Input type="date" id="dataVigenciaFim" {...register("dataVigenciaFim")} />
+                <Input
+                  type="date"
+                  id="dataVigenciaFim"
+                  {...register("dataVigenciaFim")}
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="dataOIS">OIS</Label>
                 <Input type="date" id="dataOIS" {...register("dataOIS")} />
-                <p className="text-xs text-muted-foreground">Ordem de Início de Serviço</p>
+                <p className="text-xs text-muted-foreground">
+                  Ordem de Início de Serviço
+                </p>
               </div>
             </div>
           </div>
@@ -368,19 +415,45 @@ export function VincularContratoModal({ isOpen, onClose, convenioId, contrato, o
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="prazoExecucaoDias">Prazo de Execução (dias)</Label>
+                <Label htmlFor="prazoExecucaoDias">
+                  Prazo de Execução (dias)
+                </Label>
                 <Input
                   type="number"
                   id="prazoExecucaoDias"
                   {...register("prazoExecucaoDias", {
-                    setValueAs: (v) => (v === "" ? undefined : Number(v))
+                    setValueAs: (v) => (v === "" ? undefined : Number(v)),
                   })}
                   placeholder="Ex: 180"
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="dataTerminoExecucao">Término Previsto</Label>
-                <Input type="date" id="dataTerminoExecucao" {...register("dataTerminoExecucao")} />
+                <Input
+                  type="date"
+                  id="dataTerminoExecucao"
+                  {...register("dataTerminoExecucao")}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Seção: Recursos Próprios */}
+          <div className="space-y-4">
+            <h4 className="font-medium">Recursos Próprios</h4>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label>CP Exclusiva/Recurso Próprio</Label>
+                <CurrencyInput
+                  value={watch("valorCPExclusiva")}
+                  onValueChange={(value) =>
+                    setValue("valorCPExclusiva", value ?? undefined)
+                  }
+                  placeholder="R$ 0,00"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Contrapartida exclusiva da prefeitura para este contrato
+                </p>
               </div>
             </div>
           </div>
@@ -389,9 +462,16 @@ export function VincularContratoModal({ isOpen, onClose, convenioId, contrato, o
             <Button type="button" variant="outline" onClick={handleClose}>
               Cancelar
             </Button>
-            <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>
+            <Button
+              type="submit"
+              disabled={createMutation.isPending || updateMutation.isPending}
+            >
               {createMutation.isPending || updateMutation.isPending ? (
-                isEditing ? "Salvando..." : "Vinculando..."
+                isEditing ? (
+                  "Salvando..."
+                ) : (
+                  "Vinculando..."
+                )
               ) : (
                 <>
                   <Building className="h-4 w-4 mr-2" />

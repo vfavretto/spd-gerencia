@@ -6,6 +6,8 @@ import { GetConvenioUseCase } from '../useCases/GetConvenioUseCase';
 import { CreateConvenioUseCase } from '../useCases/CreateConvenioUseCase';
 import { UpdateConvenioUseCase } from '../useCases/UpdateConvenioUseCase';
 import { DeleteConvenioUseCase } from '../useCases/DeleteConvenioUseCase';
+import { ConcluirConvenioUseCase } from '../useCases/ConcluirConvenioUseCase';
+import { CancelarConvenioUseCase } from '../useCases/CancelarConvenioUseCase';
 import { GetValoresVigentesUseCase } from '../useCases/GetValoresVigentesUseCase';
 import { AuditService } from '../../auditoria/services/AuditService';
 import { SnapshotService } from '../../snapshots/services/SnapshotService';
@@ -41,14 +43,13 @@ const commonSchema = {
   numeroProposta: z.string().nullable().optional(),
   numeroTermo: z.string().nullable().optional(),
   esfera: z.enum(['FEDERAL', 'ESTADUAL']).nullable().optional(),
-  modalidadeRepasse: z.enum(['CONVENIO', 'CONTRATO_REPASSE', 'TERMO_FOMENTO', 'TERMO_COLABORACAO']).nullable().optional(),
+  modalidadeRepasseId: z.string().nullable().optional(),
   processoSPD: z.string().nullable().optional(),
   processoCreditoAdicional: z.string().nullable().optional(),
   area: z.string().nullable().optional(),
   secretariaId: z.string(),
   orgaoId: z.string().nullable().optional(),
-  programaId: z.string().nullable().optional(),
-  fonteId: z.string().nullable().optional()
+  programaId: z.string().nullable().optional()
 };
 
 const createSchema = z.object(commonSchema);
@@ -62,7 +63,7 @@ export class ConvenioController {
     const status = req.query.status?.toString();
     const secretariaId = req.query.secretariaId?.toString();
     const esfera = req.query.esfera?.toString();
-    const modalidadeRepasse = req.query.modalidadeRepasse?.toString();
+    const modalidadeRepasseId = req.query.modalidadeRepasseId?.toString();
     const dataInicioVigencia = req.query.dataInicioVigencia?.toString();
     const dataFimVigencia = req.query.dataFimVigencia?.toString();
     const valorMin = req.query.valorMin ? Number(req.query.valorMin) : undefined;
@@ -71,7 +72,7 @@ export class ConvenioController {
     // Usa listLite para performance na listagem
     const useCase = new ListConveniosLiteUseCase(this.repository);
     const convenios = await useCase.execute({
-      search, status, secretariaId, esfera, modalidadeRepasse,
+      search, status, secretariaId, esfera, modalidadeRepasseId,
       dataInicioVigencia, dataFimVigencia, valorMin, valorMax
     });
     return res.json(convenios);
@@ -168,5 +169,63 @@ export class ConvenioController {
     const useCase = new GetValoresVigentesUseCase(this.repository);
     const valores = await useCase.execute(id);
     return res.json(valores);
+  }
+
+  async concluir(req: Request, res: Response) {
+    const id = req.params.id;
+
+    // Busca dados antigos para auditoria e snapshot
+    const getUseCase = new GetConvenioUseCase(this.repository);
+    const dadosAntigos = await getUseCase.execute(id);
+
+    await SnapshotService.beforeUpdate(
+      id,
+      dadosAntigos as unknown as Record<string, unknown>,
+      { id: req.user!.id }
+    );
+
+    const useCase = new ConcluirConvenioUseCase(this.repository);
+    const convenio = await useCase.execute(id);
+
+    await AuditService.logUpdate(
+      { id: req.user!.id, nome: req.user!.nome, email: req.user!.email },
+      'Convenio',
+      id,
+      dadosAntigos as unknown as Record<string, unknown>,
+      convenio as unknown as Record<string, unknown>,
+      req.ip,
+      req.get('user-agent')
+    );
+
+    return res.json(convenio);
+  }
+
+  async cancelar(req: Request, res: Response) {
+    const id = req.params.id;
+
+    // Busca dados antigos para auditoria e snapshot
+    const getUseCase = new GetConvenioUseCase(this.repository);
+    const dadosAntigos = await getUseCase.execute(id);
+
+    await SnapshotService.beforeUpdate(
+      id,
+      dadosAntigos as unknown as Record<string, unknown>,
+      { id: req.user!.id }
+    );
+
+    const useCase = new CancelarConvenioUseCase(this.repository);
+    const convenio = await useCase.execute(id);
+
+    await AuditService.logUpdate(
+      { id: req.user!.id, nome: req.user!.nome, email: req.user!.email },
+      'Convenio',
+      id,
+      dadosAntigos as unknown as Record<string, unknown>,
+      convenio as unknown as Record<string, unknown>,
+      req.ip,
+      req.get('user-agent')
+    );
+
+    return res.json(convenio);
   }
 }

@@ -33,42 +33,42 @@ export function AbaFinanceira({ convenio, valoresVigentes, onUpdate }: Props) {
     // Novos campos
     codigoReceita: string;
     dataDeposito: string;
-    valorCPExclusiva: number | undefined;
   };
 
-  const { register, handleSubmit, reset, control } = useForm<FinanceiroFormData>({
-    defaultValues: {
-      banco: financeiro?.banco || "",
-      agencia: financeiro?.agencia || '',
-      contaBancaria: financeiro?.contaBancaria || '',
-      valorLiberadoTotal: financeiro?.valorLiberadoTotal
-        ? Number(financeiro.valorLiberadoTotal)
-        : undefined,
-      saldoRendimentos: financeiro?.saldoRendimentos
-        ? Number(financeiro.saldoRendimentos)
-        : undefined,
-      fichasOrcamentarias: financeiro?.fichasOrcamentarias || '',
-      observacoes: financeiro?.observacoes || '',
-      // Novos campos
-      codigoReceita: financeiro?.codigoReceita || '',
-      dataDeposito: financeiro?.dataDeposito?.split('T')[0] || "",
-      valorCPExclusiva: financeiro?.valorCPExclusiva
-        ? Number(financeiro.valorCPExclusiva)
-        : undefined
-    }
-  });
+  const { register, handleSubmit, reset, control } =
+    useForm<FinanceiroFormData>({
+      defaultValues: {
+        banco: financeiro?.banco || "",
+        agencia: financeiro?.agencia || "",
+        contaBancaria: financeiro?.contaBancaria || "",
+        valorLiberadoTotal: financeiro?.valorLiberadoTotal
+          ? Number(financeiro.valorLiberadoTotal)
+          : undefined,
+        saldoRendimentos: financeiro?.saldoRendimentos
+          ? Number(financeiro.saldoRendimentos)
+          : undefined,
+        fichasOrcamentarias: financeiro?.fichasOrcamentarias || "",
+        observacoes: financeiro?.observacoes || "",
+        // Novos campos
+        codigoReceita: financeiro?.codigoReceita || "",
+        dataDeposito: financeiro?.dataDeposito?.split("T")[0] || "",
+      },
+    });
 
   const upsertMutation = useMutation({
-    mutationFn: (data: Record<string, unknown>) => financeiroService.upsert(convenio.id, data),
+    mutationFn: (data: Record<string, unknown>) =>
+      financeiroService.upsert(convenio.id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["convenio", String(convenio.id)] });
+      queryClient.invalidateQueries({
+        queryKey: ["convenio", String(convenio.id)],
+      });
       toast.success("Dados financeiros salvos!");
       setIsEditing(false);
       onUpdate();
     },
     onError: () => {
       toast.error("Erro ao salvar dados");
-    }
+    },
   });
 
   const handleCancel = () => {
@@ -81,22 +81,31 @@ export function AbaFinanceira({ convenio, valoresVigentes, onUpdate }: Props) {
   };
 
   // Calcular valores
-  const valorGlobal = valoresVigentes?.valorGlobalVigente ?? (Number(convenio.valorGlobal) || 0);
-  const valorRepasse = valoresVigentes?.valorRepasseVigente ?? (Number(convenio.valorRepasse) || 0);
-  const valorContrapartida = valoresVigentes?.valorContrapartidaVigente ?? (Number(convenio.valorContrapartida) || 0);
+  const valorGlobal =
+    valoresVigentes?.valorGlobalVigente ?? (Number(convenio.valorGlobal) || 0);
+  const valorRepasse =
+    valoresVigentes?.valorRepasseVigente ??
+    (Number(convenio.valorRepasse) || 0);
+  const valorContrapartida =
+    valoresVigentes?.valorContrapartidaVigente ??
+    (Number(convenio.valorContrapartida) || 0);
   const valorLiberado = Number(financeiro?.valorLiberadoTotal) || 0;
   const saldoRendimentos = Number(financeiro?.saldoRendimentos) || 0;
 
-  const valorContratado = convenio.contratos?.reduce(
-    (acc, c) => acc + Number(c.valorContrato || 0),
-    0
-  ) || 0;
+  const valorContratado =
+    convenio.contratos?.reduce(
+      (acc, c) => acc + Number(c.valorContrato || 0),
+      0,
+    ) || 0;
 
-  const valorPago = convenio.contratos?.reduce(
-    (acc, c) =>
-      acc + (c.medicoes?.reduce((m, med) => m + Number(med.valorPago || 0), 0) || 0),
-    0
-  ) || 0;
+  const valorPago =
+    convenio.contratos?.reduce(
+      (acc, c) =>
+        acc +
+        (c.medicoes?.reduce((m, med) => m + Number(med.valorPago || 0), 0) ||
+          0),
+      0,
+    ) || 0;
 
   const saldoDisponivel = valorLiberado + saldoRendimentos - valorPago;
 
@@ -175,28 +184,17 @@ export function AbaFinanceira({ convenio, valoresVigentes, onUpdate }: Props) {
               />
             </div>
           </div>
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <Label>Código da Receita</Label>
-              <Input {...register("codigoReceita")} placeholder="Código da receita" />
+              <Input
+                {...register("codigoReceita")}
+                placeholder="Código da receita"
+              />
             </div>
             <div className="space-y-2">
               <Label>Data do Depósito</Label>
               <Input type="date" {...register("dataDeposito")} />
-            </div>
-            <div className="space-y-2">
-              <Label>CP Exclusiva/Recurso Próprio</Label>
-              <Controller
-                name="valorCPExclusiva"
-                control={control}
-                render={({ field }) => (
-                  <CurrencyInput
-                    value={field.value ?? null}
-                    onValueChange={(val) => field.onChange(val ?? undefined)}
-                    placeholder="R$ 0,00"
-                  />
-                )}
-              />
             </div>
           </div>
         </div>
@@ -246,11 +244,15 @@ export function AbaFinanceira({ convenio, valoresVigentes, onUpdate }: Props) {
         </div>
         <div className="rounded-2xl bg-gradient-to-br from-amber-500 to-amber-600 p-4 text-white">
           <p className="text-sm opacity-80">Contrapartida</p>
-          <p className="text-2xl font-bold">{formatCurrency(valorContrapartida)}</p>
+          <p className="text-2xl font-bold">
+            {formatCurrency(valorContrapartida)}
+          </p>
         </div>
         <div className="rounded-2xl bg-gradient-to-br from-slate-600 to-slate-700 p-4 text-white">
           <p className="text-sm opacity-80">Saldo Disponível</p>
-          <p className="text-2xl font-bold">{formatCurrency(saldoDisponivel)}</p>
+          <p className="text-2xl font-bold">
+            {formatCurrency(saldoDisponivel)}
+          </p>
         </div>
       </div>
 
@@ -268,16 +270,22 @@ export function AbaFinanceira({ convenio, valoresVigentes, onUpdate }: Props) {
             </div>
             <div className="rounded-xl bg-slate-50 p-4">
               <p className="text-xs text-slate-500 mb-1">Agência</p>
-              <p className="font-medium text-slate-900">{financeiro.agencia || "—"}</p>
+              <p className="font-medium text-slate-900">
+                {financeiro.agencia || "—"}
+              </p>
             </div>
             <div className="rounded-xl bg-slate-50 p-4">
               <p className="text-xs text-slate-500 mb-1">Conta</p>
-              <p className="font-medium text-slate-900">{financeiro.contaBancaria || "—"}</p>
+              <p className="font-medium text-slate-900">
+                {financeiro.contaBancaria || "—"}
+              </p>
             </div>
           </div>
         ) : (
           <div className="rounded-xl border-2 border-dashed border-slate-200 p-6 text-center">
-            <p className="text-sm text-slate-500">Dados bancários não informados</p>
+            <p className="text-sm text-slate-500">
+              Dados bancários não informados
+            </p>
             <button
               onClick={() => setIsEditing(true)}
               className="mt-2 text-sm font-medium text-primary-600 hover:text-primary-500"
@@ -298,8 +306,12 @@ export function AbaFinanceira({ convenio, valoresVigentes, onUpdate }: Props) {
           <table className="w-full text-sm">
             <thead className="bg-slate-50">
               <tr>
-                <th className="px-4 py-3 text-left font-medium text-slate-600">Descrição</th>
-                <th className="px-4 py-3 text-right font-medium text-slate-600">Valor</th>
+                <th className="px-4 py-3 text-left font-medium text-slate-600">
+                  Descrição
+                </th>
+                <th className="px-4 py-3 text-right font-medium text-slate-600">
+                  Valor
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">

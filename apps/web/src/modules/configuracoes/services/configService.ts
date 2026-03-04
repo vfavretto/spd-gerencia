@@ -1,7 +1,7 @@
 import { api } from "@/modules/shared/lib/api";
 import type {
   Catalogs,
-  FonteRecurso,
+  ModalidadeRepasseCatalogo,
   OrgaoConcedente,
   Programa,
   Secretaria
@@ -11,7 +11,7 @@ const endpoints = {
   secretarias: "/configuracoes/secretarias",
   orgaos: "/configuracoes/orgaos",
   programas: "/configuracoes/programas",
-  fontes: "/configuracoes/fontes"
+  modalidadesRepasse: "/configuracoes/modalidades-repasse"
 } as const;
 
 type Resource = keyof typeof endpoints;
@@ -29,19 +29,19 @@ export const configService = {
     const { data } = await api.get<Programa[]>(endpoints.programas);
     return data;
   },
-  async listFontes(): Promise<FonteRecurso[]> {
-    const { data } = await api.get<FonteRecurso[]>(endpoints.fontes);
+  async listModalidadesRepasse(): Promise<ModalidadeRepasseCatalogo[]> {
+    const { data } = await api.get<ModalidadeRepasseCatalogo[]>(endpoints.modalidadesRepasse);
     return data;
   },
   async getCatalogs(): Promise<Catalogs> {
-    const [secretarias, orgaos, programas, fontes] = await Promise.all([
+    const [secretarias, orgaos, programas, modalidadesRepasse] = await Promise.all([
       this.listSecretarias(),
       this.listOrgaos(),
       this.listProgramas(),
-      this.listFontes()
+      this.listModalidadesRepasse()
     ]);
 
-    return { secretarias, orgaos, programas, fontes };
+    return { secretarias, orgaos, programas, modalidadesRepasse };
   },
   async create(resource: Resource, payload: Record<string, unknown>) {
     const { data } = await api.post(endpoints[resource], payload);

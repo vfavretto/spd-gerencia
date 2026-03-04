@@ -25,14 +25,12 @@ type Props = {
   contrapartidaBase: number;
   repasseAtual: number;
   contrapartidaAtual: number;
-  valorCPExclusivaAtual: number;
   onSuccess: () => void;
 };
 
 type FormData = {
   repasseVigente: number;
   contrapartidaVigente: number;
-  valorCPExclusiva: number;
 };
 
 const roundCurrency = (value: number) => Math.round(value * 100) / 100;
@@ -45,8 +43,7 @@ export function MaisInformacoesEngenhariaModal({
   contrapartidaBase,
   repasseAtual,
   contrapartidaAtual,
-  valorCPExclusivaAtual,
-  onSuccess
+  onSuccess,
 }: Props) {
   const queryClient = useQueryClient();
 
@@ -54,39 +51,44 @@ export function MaisInformacoesEngenhariaModal({
     defaultValues: {
       repasseVigente: repasseAtual,
       contrapartidaVigente: contrapartidaAtual,
-      valorCPExclusiva: valorCPExclusivaAtual
-    }
+    },
   });
 
   useEffect(() => {
     reset({
       repasseVigente: repasseAtual,
       contrapartidaVigente: contrapartidaAtual,
-      valorCPExclusiva: valorCPExclusivaAtual
     });
-  }, [repasseAtual, contrapartidaAtual, valorCPExclusivaAtual, reset]);
+  }, [repasseAtual, contrapartidaAtual, reset]);
 
   const mutation = useMutation({
     mutationFn: (data: FormData) => {
-      const ajusteRepasseVigente = roundCurrency((data.repasseVigente || 0) - repasseBase);
-      const ajusteContrapartidaVigente = roundCurrency((data.contrapartidaVigente || 0) - contrapartidaBase);
+      const ajusteRepasseVigente = roundCurrency(
+        (data.repasseVigente || 0) - repasseBase,
+      );
+      const ajusteContrapartidaVigente = roundCurrency(
+        (data.contrapartidaVigente || 0) - contrapartidaBase,
+      );
 
       return financeiroService.upsert(convenioId, {
         ajusteRepasseVigente,
         ajusteContrapartidaVigente,
-        valorCPExclusiva: data.valorCPExclusiva || 0
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["convenio", String(convenioId)] });
-      queryClient.invalidateQueries({ queryKey: ["convenio-valores-vigentes", String(convenioId)] });
+      queryClient.invalidateQueries({
+        queryKey: ["convenio", String(convenioId)],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["convenio-valores-vigentes", String(convenioId)],
+      });
       toast.success("Mais informações atualizadas com sucesso!");
       onClose();
       onSuccess();
     },
     onError: () => {
       toast.error("Erro ao salvar mais informações");
-    }
+    },
   });
 
   const onSubmit = (data: FormData) => {
@@ -102,15 +104,21 @@ export function MaisInformacoesEngenhariaModal({
             Mais Informações
           </DialogTitle>
           <DialogDescription>
-            Ajuste os valores vigentes da engenharia mantendo o cálculo automático como base.
+            Ajuste os valores vigentes da engenharia mantendo o cálculo
+            automático como base.
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
             <p>Base automática do sistema:</p>
-            <p className="mt-1">Repasse: <strong>{formatCurrency(repasseBase)}</strong></p>
-            <p>Contrapartida: <strong>{formatCurrency(contrapartidaBase)}</strong></p>
+            <p className="mt-1">
+              Repasse: <strong>{formatCurrency(repasseBase)}</strong>
+            </p>
+            <p>
+              Contrapartida:{" "}
+              <strong>{formatCurrency(contrapartidaBase)}</strong>
+            </p>
           </div>
 
           <div className="space-y-2">
@@ -133,21 +141,6 @@ export function MaisInformacoesEngenhariaModal({
             <Controller
               control={control}
               name="contrapartidaVigente"
-              render={({ field }) => (
-                <CurrencyInput
-                  value={field.value ?? 0}
-                  onValueChange={(value) => field.onChange(value ?? 0)}
-                  placeholder="R$ 0,00"
-                />
-              )}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label>CP Exclusiva/Recurso Próprio</Label>
-            <Controller
-              control={control}
-              name="valorCPExclusiva"
               render={({ field }) => (
                 <CurrencyInput
                   value={field.value ?? 0}

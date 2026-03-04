@@ -42,13 +42,6 @@ enum TipoEvento {
   OUTROS
 }
 
-enum ModalidadeRepasse {
-  CONVENIO
-  CONTRATO_REPASSE
-  TERMO_FOMENTO
-  TERMO_COLABORACAO
-}
-
 enum EsferaGoverno {
   FEDERAL
   ESTADUAL
@@ -137,10 +130,9 @@ model Programa {
   convenios Convenio[]
 }
 
-model FonteRecurso {
+model ModalidadeRepasseCatalogo {
   id           String   @id @default(uuid())
   nome         String
-  tipo         String?
   criadoEm     DateTime @default(now())
   atualizadoEm DateTime @updatedAt
 
@@ -157,7 +149,7 @@ model Convenio {
   observacoes              String?
   numeroProposta           String?
   dataInicioProcesso       DateTime?
-  modalidadeRepasse        ModalidadeRepasse?
+  modalidadeRepasseId      String?
   termoFormalizacao        String?
   numeroTermo              String?
   clausulaSuspensiva       Boolean            @default(false)
@@ -177,14 +169,13 @@ model Convenio {
   secretariaId             String
   orgaoId                  String?
   programaId               String?
-  fonteId                  String?
   criadoEm                 DateTime           @default(now())
   atualizadoEm             DateTime           @updatedAt
 
   secretaria Secretaria       @relation(fields: [secretariaId], references: [id])
   orgao      OrgaoConcedente? @relation(fields: [orgaoId], references: [id])
   programa   Programa?        @relation(fields: [programaId], references: [id])
-  fonte      FonteRecurso?    @relation(fields: [fonteId], references: [id])
+  modalidadeRepasse ModalidadeRepasseCatalogo? @relation(fields: [modalidadeRepasseId], references: [id])
 
   anexos              ConvenioAnexo[]
   emendas             EmendaParlamentar[]
@@ -199,6 +190,7 @@ model Convenio {
 
   @@index([status])
   @@index([secretariaId])
+  @@index([modalidadeRepasseId])
 }
 
 model ConvenioAnexo {
@@ -244,7 +236,6 @@ model FinanceiroContas {
   observacoes         String?
   codigoReceita       String?
   dataDeposito        DateTime?
-  valorCPExclusiva    Decimal?  @db.Decimal(15, 2)
   ajusteRepasseVigente      Decimal?  @db.Decimal(15, 2)
   ajusteContrapartidaVigente Decimal? @db.Decimal(15, 2)
   convenioId          String    @unique
@@ -298,6 +289,7 @@ model ContratoExecucao {
   dataOIS                DateTime?
   valorContrato          Decimal?             @db.Decimal(15, 2)
   valorExecutado         Decimal?             @db.Decimal(15, 2)
+  valorCPExclusiva       Decimal?             @db.Decimal(15, 2)
   engenheiroResponsavel  String?
   creaEngenheiro         String?
   artRrt                 String?

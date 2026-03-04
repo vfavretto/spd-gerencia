@@ -16,7 +16,7 @@ const mockedApi = vi.mocked(api);
 const fakeSecretarias = [{ id: "sec-1", nome: "Secretaria A" }];
 const fakeOrgaos = [{ id: "org-1", nome: "Orgão A" }];
 const fakeProgramas = [{ id: "prog-1", nome: "Programa A" }];
-const fakeFontes = [{ id: "font-1", nome: "Fonte A" }];
+const fakeModalidadesRepasse = [{ id: "mod-1", nome: "Convênio" }];
 
 describe("configService", () => {
   beforeEach(() => {
@@ -56,37 +56,37 @@ describe("configService", () => {
     });
   });
 
-  describe("listFontes", () => {
-    it("should call api.get with /configuracoes/fontes", async () => {
-      mockedApi.get.mockResolvedValueOnce({ data: fakeFontes });
+  describe("listModalidadesRepasse", () => {
+    it("should call api.get with /configuracoes/modalidades-repasse", async () => {
+      mockedApi.get.mockResolvedValueOnce({ data: fakeModalidadesRepasse });
 
-      const result = await configService.listFontes();
+      const result = await configService.listModalidadesRepasse();
 
-      expect(mockedApi.get).toHaveBeenCalledWith("/configuracoes/fontes");
-      expect(result).toEqual(fakeFontes);
+      expect(mockedApi.get).toHaveBeenCalledWith("/configuracoes/modalidades-repasse");
+      expect(result).toEqual(fakeModalidadesRepasse);
     });
   });
 
   describe("getCatalogs", () => {
-    it("should call all four list endpoints and return combined catalogs", async () => {
+    it("should call all catalog endpoints and return combined catalogs", async () => {
       mockedApi.get
         .mockResolvedValueOnce({ data: fakeSecretarias })
         .mockResolvedValueOnce({ data: fakeOrgaos })
         .mockResolvedValueOnce({ data: fakeProgramas })
-        .mockResolvedValueOnce({ data: fakeFontes });
+        .mockResolvedValueOnce({ data: fakeModalidadesRepasse });
 
       const result = await configService.getCatalogs();
 
       expect(mockedApi.get).toHaveBeenCalledWith("/configuracoes/secretarias");
       expect(mockedApi.get).toHaveBeenCalledWith("/configuracoes/orgaos");
       expect(mockedApi.get).toHaveBeenCalledWith("/configuracoes/programas");
-      expect(mockedApi.get).toHaveBeenCalledWith("/configuracoes/fontes");
+      expect(mockedApi.get).toHaveBeenCalledWith("/configuracoes/modalidades-repasse");
       expect(mockedApi.get).toHaveBeenCalledTimes(4);
       expect(result).toEqual({
         secretarias: fakeSecretarias,
         orgaos: fakeOrgaos,
         programas: fakeProgramas,
-        fontes: fakeFontes,
+        modalidadesRepasse: fakeModalidadesRepasse,
       });
     });
   });
@@ -116,8 +116,8 @@ describe("configService", () => {
       await configService.create("programas", { nome: "Y" });
       expect(mockedApi.post).toHaveBeenCalledWith("/configuracoes/programas", { nome: "Y" });
 
-      await configService.create("fontes", { nome: "Z" });
-      expect(mockedApi.post).toHaveBeenCalledWith("/configuracoes/fontes", { nome: "Z" });
+      await configService.create("modalidadesRepasse", { nome: "Z" });
+      expect(mockedApi.post).toHaveBeenCalledWith("/configuracoes/modalidades-repasse", { nome: "Z" });
     });
   });
 

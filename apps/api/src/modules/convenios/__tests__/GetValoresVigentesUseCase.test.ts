@@ -61,6 +61,28 @@ describe('GetValoresVigentesUseCase', () => {
             atualizadoEm: new Date()
           }
         ],
+        contratos: [
+          {
+            id: 'ctr-1',
+            convenioId: 'conv-1',
+            valorContrato: 150,
+            valorCPExclusiva: 25,
+            medicoes: [
+              {
+                id: 'med-1',
+                contratoId: 'ctr-1',
+                numeroMedicao: 1,
+                dataMedicao: new Date(),
+                valorMedido: 40,
+                valorPago: 30,
+                criadoEm: new Date(),
+                atualizadoEm: new Date()
+              }
+            ],
+            criadoEm: new Date(),
+            atualizadoEm: new Date()
+          }
+        ] as unknown as IConvenio['contratos'],
         financeiroContas: {
           id: 'fin-1',
           convenioId: 'conv-1',
@@ -79,5 +101,20 @@ describe('GetValoresVigentesUseCase', () => {
     expect(result.valorRepasseVigente).toBe(115);
     expect(result.valorContrapartidaVigente).toBe(18);
     expect(result.valorGlobalVigente).toBe(133);
+    
+    // CP Exclusiva: soma de todos os contratos
+    expect(result.totalCPExclusiva).toBe(25);
+    
+    // Saldo do convênio: valorGlobalVigente - valorTotalPago (min 0)
+    // 133 - 30 = 103
+    expect(result.saldoConvenio).toBe(103);
+    
+    // Saldo a contratar: valorGlobalVigente - valorTotalContratado
+    // 133 - 150 = -17 (negativo, contrato excede o global)
+    expect(result.saldoAContratar).toBe(-17);
+    
+    // Saldo de execução: valorGlobalVigente + totalCPExclusiva - valorTotalContratado
+    // 133 + 25 - 150 = 8 (positivo, CP Exclusiva cobre o excedente)
+    expect(result.saldoExecucao).toBe(8);
   });
 });

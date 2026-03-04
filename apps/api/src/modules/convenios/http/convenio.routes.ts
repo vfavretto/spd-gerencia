@@ -15,6 +15,8 @@ convenioRoutes.get('/:id/valores-vigentes', asyncHandler(controller.valoresVigen
 // POST/PUT - apenas ADMIN e ANALISTA
 convenioRoutes.post('/', ensureRole('ADMIN', 'ANALISTA'), asyncHandler(controller.create.bind(controller)));
 convenioRoutes.put('/:id', ensureRole('ADMIN', 'ANALISTA'), asyncHandler(controller.update.bind(controller)));
+convenioRoutes.post('/:id/concluir', ensureRole('ADMIN', 'ANALISTA'), asyncHandler(controller.concluir.bind(controller)));
+convenioRoutes.post('/:id/cancelar', ensureRole('ADMIN', 'ANALISTA'), asyncHandler(controller.cancelar.bind(controller)));
 
 // DELETE - apenas ADMIN
 convenioRoutes.delete('/:id', ensureRole('ADMIN'), asyncHandler(controller.remove.bind(controller)));

@@ -6,7 +6,7 @@ export type ConvenioFilters = {
   status?: ConvenioStatus | "";
   secretariaId?: string | "";
   esfera?: string | "";
-  modalidadeRepasse?: string | "";
+  modalidadeRepasseId?: string | "";
   dataInicioVigencia?: string | "";
   dataFimVigencia?: string | "";
   valorMin?: string | "";
@@ -20,7 +20,7 @@ export const convenioService = {
     if (filters?.status) params.status = filters.status;
     if (filters?.secretariaId) params.secretariaId = filters.secretariaId;
     if (filters?.esfera) params.esfera = filters.esfera;
-    if (filters?.modalidadeRepasse) params.modalidadeRepasse = filters.modalidadeRepasse;
+    if (filters?.modalidadeRepasseId) params.modalidadeRepasseId = filters.modalidadeRepasseId;
     if (filters?.dataInicioVigencia) params.dataInicioVigencia = filters.dataInicioVigencia;
     if (filters?.dataFimVigencia) params.dataFimVigencia = filters.dataFimVigencia;
     if (filters?.valorMin) params.valorMin = filters.valorMin;
@@ -51,6 +51,16 @@ export const convenioService = {
 
   async getValoresVigentes(id: string): Promise<ValoresVigentes> {
     const { data } = await api.get<ValoresVigentes>(`/convenios/${id}/valores-vigentes`);
+    return data;
+  },
+
+  async concluir(id: string): Promise<Convenio> {
+    const { data } = await api.post<Convenio>(`/convenios/${id}/concluir`);
+    return data;
+  },
+
+  async cancelar(id: string): Promise<Convenio> {
+    const { data } = await api.post<Convenio>(`/convenios/${id}/cancelar`);
     return data;
   }
 };

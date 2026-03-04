@@ -25,8 +25,8 @@ configuracoesRoutes.post('/programas', ensureRole('ADMIN'), asyncHandler(control
 configuracoesRoutes.put('/programas/:id', ensureRole('ADMIN'), asyncHandler(controller.atualizarPrograma.bind(controller)));
 configuracoesRoutes.delete('/programas/:id', ensureRole('ADMIN'), asyncHandler(controller.removerPrograma.bind(controller)));
 
-// Fontes - GET para todos, demais apenas ADMIN
-configuracoesRoutes.get('/fontes', asyncHandler(controller.listarFontes.bind(controller)));
-configuracoesRoutes.post('/fontes', ensureRole('ADMIN'), asyncHandler(controller.criarFonte.bind(controller)));
-configuracoesRoutes.put('/fontes/:id', ensureRole('ADMIN'), asyncHandler(controller.atualizarFonte.bind(controller)));
-configuracoesRoutes.delete('/fontes/:id', ensureRole('ADMIN'), asyncHandler(controller.removerFonte.bind(controller)));
+// Modalidades de Repasse - GET para todos, demais apenas ADMIN
+configuracoesRoutes.get('/modalidades-repasse', asyncHandler(controller.listarModalidadesRepasse.bind(controller)));
+configuracoesRoutes.post('/modalidades-repasse', ensureRole('ADMIN'), asyncHandler(controller.criarModalidadeRepasse.bind(controller)));
+configuracoesRoutes.put('/modalidades-repasse/:id', ensureRole('ADMIN'), asyncHandler(controller.atualizarModalidadeRepasse.bind(controller)));
+configuracoesRoutes.delete('/modalidades-repasse/:id', ensureRole('ADMIN'), asyncHandler(controller.removerModalidadeRepasse.bind(controller)));

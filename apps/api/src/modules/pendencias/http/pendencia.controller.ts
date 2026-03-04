@@ -2,6 +2,8 @@ import type { Request, Response } from 'express';
 import { z } from 'zod';
 import { StatusPendencia } from '@spd/db';
 import { PrismaPendenciaRepository } from '../repositories/implementations/PrismaPendenciaRepository';
+import { PrismaConvenioRepository } from '../../convenios/repositories/implementations/PrismaConvenioRepository';
+import { ConvenioStatusService } from '../../convenios/services/ConvenioStatusService';
 import { ListPendenciasUseCase } from '../useCases/ListPendenciasUseCase';
 import { GetPendenciaUseCase } from '../useCases/GetPendenciaUseCase';
 import { CreatePendenciaUseCase } from '../useCases/CreatePendenciaUseCase';
@@ -25,6 +27,7 @@ const updateSchema = createSchema.partial();
 
 export class PendenciaController {
   private readonly repository = new PrismaPendenciaRepository();
+  private readonly statusService = new ConvenioStatusService(new PrismaConvenioRepository());
 
   async index(req: Request, res: Response) {
     const convenioId = req.params.convenioId;
@@ -54,21 +57,35 @@ export class PendenciaController {
       convenioId, 
       criadoPorId: userId 
     });
+
+    // Recalcula status do convênio (pode mudar RASCUNHO → EM_ANALISE)
+    await this.statusService.recalculate(convenioId);
+
     return res.status(201).json(pendencia);
   }
 
   async update(req: Request, res: Response) {
+    const convenioId = req.params.convenioId;
     const id = req.params.id;
     const payload = updateSchema.parse(req.body);
     const useCase = new UpdatePendenciaUseCase(this.repository);
     const pendencia = await useCase.execute(id, payload);
+
+    // Recalcula status do convênio (pode mudar EM_ANALISE → RASCUNHO)
+    await this.statusService.recalculate(convenioId);
+
     return res.json(pendencia);
   }
 
   async remove(req: Request, res: Response) {
+    const convenioId = req.params.convenioId;
     const id = req.params.id;
     const useCase = new DeletePendenciaUseCase(this.repository);
     await useCase.execute(id);
+
+    // Recalcula status do convênio (pode mudar EM_ANALISE → RASCUNHO)
+    await this.statusService.recalculate(convenioId);
+
     return res.status(204).send();
   }
 

@@ -13,6 +13,7 @@ export class PrismaContratoRepository implements ContratoRepository {
       ...contrato,
       valorContrato: contrato.valorContrato ? contrato.valorContrato.toNumber() : contrato.valorContrato,
       valorExecutado: contrato.valorExecutado ? contrato.valorExecutado.toNumber() : contrato.valorExecutado,
+      valorCPExclusiva: contrato.valorCPExclusiva ? contrato.valorCPExclusiva.toNumber() : contrato.valorCPExclusiva,
       medicoes: contrato.medicoes.map((medicao) => ({
         ...medicao,
         percentualFisico: medicao.percentualFisico ? medicao.percentualFisico.toNumber() : medicao.percentualFisico,

@@ -373,7 +373,7 @@ export const DashboardPage = () => {
                           {conv.codigo}
                         </Link>
                       </td>
-                      <td className="py-3 text-slate-700 line-clamp-1 max-w-xs">{conv.titulo}</td>
+                      <td className="py-4 text-slate-700 line-clamp-1 max-w-xs">{conv.titulo}</td>
                       <td className="py-3 text-right font-medium text-slate-900">
                         {formatCurrency(conv.valorGlobal)}
                       </td>

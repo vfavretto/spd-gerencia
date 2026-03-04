@@ -9,7 +9,7 @@ export type ConvenioFilters = {
   status?: string;
   secretariaId?: string;
   esfera?: string;
-  modalidadeRepasse?: string;
+  modalidadeRepasseId?: string;
   dataInicioVigencia?: string;
   dataFimVigencia?: string;
   valorMin?: number;
@@ -24,6 +24,7 @@ export type ConvenioLite = {
   objeto: string;
   status: string;
   valorGlobal: number | string;
+  dataInicioVigencia: Date | null | undefined;
   dataFimVigencia: Date | null | undefined;
   atualizadoEm: Date;
   secretaria: { nome: string; sigla: string | null } | null;

@@ -1,6 +1,8 @@
 import type { Request, Response } from 'express';
 import { z } from 'zod';
 import { PrismaContratoRepository } from '../repositories/implementations/PrismaContratoRepository';
+import { PrismaConvenioRepository } from '../../convenios/repositories/implementations/PrismaConvenioRepository';
+import { ConvenioStatusService } from '../../convenios/services/ConvenioStatusService';
 import { ListContratosUseCase } from '../useCases/ListContratosUseCase';
 import { GetContratoUseCase } from '../useCases/GetContratoUseCase';
 import { CreateContratoUseCase } from '../useCases/CreateContratoUseCase';
@@ -27,6 +29,7 @@ const createSchema = z.object({
   dataOIS: z.coerce.date().nullable().optional(),
   valorContrato: z.number().min(0).optional().nullable(),
   valorExecutado: z.number().min(0).optional().nullable(),
+  valorCPExclusiva: z.number().min(0).optional().nullable(),
   engenheiroResponsavel: z.string().optional().nullable(),
   creaEngenheiro: z.string().optional().nullable(),
   artRrt: z.string().optional().nullable(),
@@ -43,6 +46,7 @@ const updateSchema = createSchema.omit({ convenioId: true }).partial();
 
 export class ContratoController {
   private readonly repository = new PrismaContratoRepository();
+  private readonly statusService = new ConvenioStatusService(new PrismaConvenioRepository());
 
   async index(req: Request, res: Response) {
     const convenioId = req.params.convenioId;
@@ -63,6 +67,10 @@ export class ContratoController {
     const payload = createSchema.parse({ ...req.body, convenioId });
     const useCase = new CreateContratoUseCase(this.repository);
     const contrato = await useCase.execute(payload);
+
+    // Recalcula status do convênio (pode mudar APROVADO → EM_EXECUCAO)
+    await this.statusService.recalculate(convenioId);
+
     return res.status(201).json(contrato);
   }
 
@@ -75,9 +83,14 @@ export class ContratoController {
   }
 
   async remove(req: Request, res: Response) {
+    const convenioId = req.params.convenioId;
     const id = req.params.id;
     const useCase = new DeleteContratoUseCase(this.repository);
     await useCase.execute(id);
+
+    // Recalcula status do convênio (pode mudar EM_EXECUCAO → APROVADO)
+    await this.statusService.recalculate(convenioId);
+
     return res.status(204).send();
   }
 }

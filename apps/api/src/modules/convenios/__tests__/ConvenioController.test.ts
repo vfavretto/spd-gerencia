@@ -27,7 +27,7 @@ const commonSchema = {
   secretariaId: z.string(),
   orgaoId: z.string().nullable().optional(),
   programaId: z.string().nullable().optional(),
-  fonteId: z.string().nullable().optional()
+  modalidadeRepasseId: z.string().nullable().optional()
 };
 
 const createSchema = z.object(commonSchema);
@@ -67,7 +67,7 @@ describe('ConvenioController — Zod Schemas', () => {
         status: 'EM_EXECUCAO' as const,
         orgaoId: 'org-456',
         programaId: 'prog-789',
-        fonteId: 'fonte-101'
+        modalidadeRepasseId: 'modalidade-convenio'
       };
 
       const result = createSchema.parse(fullPayload);

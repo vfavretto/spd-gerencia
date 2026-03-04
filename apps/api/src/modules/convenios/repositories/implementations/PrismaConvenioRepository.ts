@@ -14,7 +14,7 @@ const includeRelations = {
   secretaria: true,
   orgao: true,
   programa: true,
-  fonte: true,
+  modalidadeRepasse: true,
   emendas: true,
   financeiroContas: true,
   contratos: {
@@ -46,7 +46,7 @@ export class PrismaConvenioRepository implements ConvenioRepository {
     if (filters?.status) where.status = filters.status;
     if (filters?.secretariaId) where.secretariaId = filters.secretariaId;
     if (filters?.esfera) where.esfera = filters.esfera;
-    if (filters?.modalidadeRepasse) where.modalidadeRepasse = filters.modalidadeRepasse;
+    if (filters?.modalidadeRepasseId) where.modalidadeRepasseId = filters.modalidadeRepasseId;
 
     if (filters?.search) {
       where.OR = [
@@ -81,6 +81,7 @@ export class PrismaConvenioRepository implements ConvenioRepository {
         objeto: true,
         status: true,
         valorGlobal: true,
+        dataInicioVigencia: true,
         dataFimVigencia: true,
         atualizadoEm: true,
         secretaria: {
@@ -103,6 +104,7 @@ export class PrismaConvenioRepository implements ConvenioRepository {
       objeto: conv.objeto,
       status: conv.status,
       valorGlobal: conv.valorGlobal.toNumber(),
+      dataInicioVigencia: conv.dataInicioVigencia,
       dataFimVigencia: conv.dataFimVigencia,
       atualizadoEm: conv.atualizadoEm,
       secretaria: conv.secretaria,
@@ -132,7 +134,6 @@ export class PrismaConvenioRepository implements ConvenioRepository {
             ...conv.financeiroContas,
             valorLiberadoTotal: conv.financeiroContas.valorLiberadoTotal ? conv.financeiroContas.valorLiberadoTotal.toNumber() : conv.financeiroContas.valorLiberadoTotal,
             saldoRendimentos: conv.financeiroContas.saldoRendimentos ? conv.financeiroContas.saldoRendimentos.toNumber() : conv.financeiroContas.saldoRendimentos,
-            valorCPExclusiva: conv.financeiroContas.valorCPExclusiva ? conv.financeiroContas.valorCPExclusiva.toNumber() : conv.financeiroContas.valorCPExclusiva,
             ajusteRepasseVigente: conv.financeiroContas.ajusteRepasseVigente ? conv.financeiroContas.ajusteRepasseVigente.toNumber() : conv.financeiroContas.ajusteRepasseVigente,
             ajusteContrapartidaVigente: conv.financeiroContas.ajusteContrapartidaVigente ? conv.financeiroContas.ajusteContrapartidaVigente.toNumber() : conv.financeiroContas.ajusteContrapartidaVigente,
           }
@@ -142,6 +143,7 @@ export class PrismaConvenioRepository implements ConvenioRepository {
         ...c,
         valorContrato: c.valorContrato ? c.valorContrato.toNumber() : c.valorContrato,
         valorExecutado: c.valorExecutado ? c.valorExecutado.toNumber() : c.valorExecutado,
+        valorCPExclusiva: c.valorCPExclusiva ? c.valorCPExclusiva.toNumber() : c.valorCPExclusiva,
         medicoes: (c.medicoes ?? []).map((m) => ({
           ...m,
           percentualFisico: m.percentualFisico ? m.percentualFisico.toNumber() : m.percentualFisico,

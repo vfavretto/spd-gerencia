@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Pencil, Plus, RefreshCcw, Trash2, UserPlus, Users, Shield,
-  Building2, Landmark, BookOpen, Wallet, ScrollText, History
+  Building2, Landmark, BookOpen, ArrowRightLeft, ScrollText, History
 } from "lucide-react";
 import { toast } from "sonner";
 import { useEffect, useMemo, useState } from "react";
@@ -18,7 +18,7 @@ import { convenioService } from "@/modules/convenios/services/convenioService";
 import { formatDate } from "@/modules/shared/utils/format";
 import type { UsuarioRole } from "@/modules/shared/types";
 
-type ResourceKey = "secretarias" | "orgaos" | "programas" | "fontes";
+type ResourceKey = "secretarias" | "orgaos" | "programas" | "modalidadesRepasse";
 
 type FieldConfig = {
   name: string;
@@ -91,16 +91,14 @@ const sections: SectionConfig[] = [
     ]
   },
   {
-    key: 'fontes',
-    title: 'Fontes de recurso',
-    description: 'Origem dos recursos utilizados nos convênios.',
+    key: 'modalidadesRepasse',
+    title: 'Modalidades de repasse',
+    description: 'Modalidades utilizadas nos convênios.',
     fields: [
-      { name: 'nome', label: 'Nome', required: true },
-      { name: 'tipo', label: 'Tipo', placeholder: 'Própria, Transferência...' }
+      { name: 'nome', label: 'Nome', required: true }
     ],
     columns: [
-      { key: 'nome', label: 'Fonte' },
-      { key: 'tipo', label: 'Tipo' }
+      { key: 'nome', label: 'Modalidade' }
     ]
   }
 ];
@@ -821,7 +819,7 @@ const SnapshotsSection = () => {
 
 // ==================== PÁGINA PRINCIPAL COM ABAS ====================
 
-type TabKey = "usuarios" | "secretarias" | "orgaos" | "programas" | "fontes" | "auditoria" | "snapshots";
+type TabKey = "usuarios" | "secretarias" | "orgaos" | "programas" | "modalidadesRepasse" | "auditoria" | "snapshots";
 
 type TabConfig = {
   key: TabKey;
@@ -838,7 +836,7 @@ export const ConfiguracoesPage = () => {
     { key: "secretarias", label: "Secretarias", icon: <Building2 className="h-4 w-4" /> },
     { key: "orgaos", label: "Órgãos", icon: <Landmark className="h-4 w-4" /> },
     { key: "programas", label: "Programas", icon: <BookOpen className="h-4 w-4" /> },
-    { key: "fontes", label: "Fontes", icon: <Wallet className="h-4 w-4" /> },
+    { key: "modalidadesRepasse", label: "Modalidades de Repasse", icon: <ArrowRightLeft className="h-4 w-4" /> },
     { key: "auditoria", label: "Auditoria", icon: <ScrollText className="h-4 w-4" />, adminOnly: true },
     { key: "snapshots", label: "Snapshots", icon: <History className="h-4 w-4" />, adminOnly: true }
   ];
@@ -915,10 +913,10 @@ export const ConfiguracoesPage = () => {
           />
         )}
 
-        {activeTab === "fontes" && (
+        {activeTab === "modalidadesRepasse" && (
           <ConfigSection
-            section={sectionByKey("fontes")}
-            data={catalogs ? (catalogs as Catalogs).fontes : []}
+            section={sectionByKey("modalidadesRepasse")}
+            data={catalogs ? (catalogs as Catalogs).modalidadesRepasse : []}
           />
         )}
 

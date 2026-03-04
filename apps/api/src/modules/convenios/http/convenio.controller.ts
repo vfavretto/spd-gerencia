@@ -43,14 +43,13 @@ const commonSchema = {
   numeroProposta: z.string().nullable().optional(),
   numeroTermo: z.string().nullable().optional(),
   esfera: z.enum(['FEDERAL', 'ESTADUAL']).nullable().optional(),
-  modalidadeRepasse: z.enum(['CONVENIO', 'CONTRATO_REPASSE', 'TERMO_FOMENTO', 'TERMO_COLABORACAO']).nullable().optional(),
+  modalidadeRepasseId: z.string().nullable().optional(),
   processoSPD: z.string().nullable().optional(),
   processoCreditoAdicional: z.string().nullable().optional(),
   area: z.string().nullable().optional(),
   secretariaId: z.string(),
   orgaoId: z.string().nullable().optional(),
-  programaId: z.string().nullable().optional(),
-  fonteId: z.string().nullable().optional()
+  programaId: z.string().nullable().optional()
 };
 
 const createSchema = z.object(commonSchema);
@@ -64,7 +63,7 @@ export class ConvenioController {
     const status = req.query.status?.toString();
     const secretariaId = req.query.secretariaId?.toString();
     const esfera = req.query.esfera?.toString();
-    const modalidadeRepasse = req.query.modalidadeRepasse?.toString();
+    const modalidadeRepasseId = req.query.modalidadeRepasseId?.toString();
     const dataInicioVigencia = req.query.dataInicioVigencia?.toString();
     const dataFimVigencia = req.query.dataFimVigencia?.toString();
     const valorMin = req.query.valorMin ? Number(req.query.valorMin) : undefined;
@@ -73,7 +72,7 @@ export class ConvenioController {
     // Usa listLite para performance na listagem
     const useCase = new ListConveniosLiteUseCase(this.repository);
     const convenios = await useCase.execute({
-      search, status, secretariaId, esfera, modalidadeRepasse,
+      search, status, secretariaId, esfera, modalidadeRepasseId,
       dataInicioVigencia, dataFimVigencia, valorMin, valorMax
     });
     return res.json(convenios);

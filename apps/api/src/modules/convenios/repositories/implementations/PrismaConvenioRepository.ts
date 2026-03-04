@@ -14,7 +14,7 @@ const includeRelations = {
   secretaria: true,
   orgao: true,
   programa: true,
-  fonte: true,
+  modalidadeRepasse: true,
   emendas: true,
   financeiroContas: true,
   contratos: {
@@ -46,7 +46,7 @@ export class PrismaConvenioRepository implements ConvenioRepository {
     if (filters?.status) where.status = filters.status;
     if (filters?.secretariaId) where.secretariaId = filters.secretariaId;
     if (filters?.esfera) where.esfera = filters.esfera;
-    if (filters?.modalidadeRepasse) where.modalidadeRepasse = filters.modalidadeRepasse;
+    if (filters?.modalidadeRepasseId) where.modalidadeRepasseId = filters.modalidadeRepasseId;
 
     if (filters?.search) {
       where.OR = [

@@ -77,7 +77,7 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
     dataInicioVigencia: string;
     dataFimVigencia: string;
     esfera: string;
-    modalidadeRepasse: string;
+    modalidadeRepasseId: string;
     secretariaId: string | undefined;
     orgaoId: string | undefined;
     programaId: string | undefined;
@@ -104,7 +104,7 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
       ? new Date(convenio.dataFimVigencia).toISOString().split('T')[0]
       : '',
     esfera: convenio.esfera || '',
-    modalidadeRepasse: convenio.modalidadeRepasse || '',
+    modalidadeRepasseId: convenio.modalidadeRepasse?.id || '',
     secretariaId: convenio.secretaria?.id,
     orgaoId: convenio.orgao?.id,
     programaId: convenio.programa?.id,
@@ -133,7 +133,7 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
       orgaoId: data.orgaoId || null,
       programaId: data.programaId || null,
       esfera: data.esfera || null,
-      modalidadeRepasse: data.modalidadeRepasse || null,
+      modalidadeRepasseId: data.modalidadeRepasseId || null,
       processoSPD: data.processoSPD || null,
       processoCreditoAdicional: data.processoCreditoAdicional || null,
       area: data.area || null,
@@ -163,13 +163,6 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
   const esferaLabel = {
     FEDERAL: "Federal",
     ESTADUAL: "Estadual"
-  };
-
-  const modalidadeLabel = {
-    CONVENIO: "Convênio",
-    CONTRATO_REPASSE: "Contrato de Repasse",
-    TERMO_FOMENTO: "Termo de Fomento",
-    TERMO_COLABORACAO: "Termo de Colaboração"
   };
 
   if (isEditing) {
@@ -236,12 +229,11 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
           </div>
           <div className="space-y-2">
             <Label>Modalidade</Label>
-            <select className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm" {...register("modalidadeRepasse")}>
+            <select className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm" {...register("modalidadeRepasseId")}>
               <option value="">Selecione</option>
-              <option value="CONVENIO">Convênio</option>
-              <option value="CONTRATO_REPASSE">Contrato de Repasse</option>
-              <option value="TERMO_FOMENTO">Termo de Fomento</option>
-              <option value="TERMO_COLABORACAO">Termo de Colaboração</option>
+              {catalogs?.modalidadesRepasse.map((modalidade) => (
+                <option key={modalidade.id} value={modalidade.id}>{modalidade.nome}</option>
+              ))}
             </select>
           </div>
           <div className="space-y-2">
@@ -342,7 +334,7 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
               <div className="flex justify-between">
                 <dt className="text-slate-500">Modalidade:</dt>
                 <dd className="font-medium text-slate-900">
-                  {modalidadeLabel[convenio.modalidadeRepasse as keyof typeof modalidadeLabel]}
+                  {convenio.modalidadeRepasse.nome}
                 </dd>
               </div>
             )}

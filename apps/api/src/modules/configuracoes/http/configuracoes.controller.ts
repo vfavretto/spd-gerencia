@@ -12,7 +12,6 @@ const baseSchema = z.object({
   responsavel: z.string().optional().transform(transformEmptyToUndefined),
   descricao: z.string().optional().transform(transformEmptyToUndefined),
   codigo: z.string().optional().transform(transformEmptyToUndefined),
-  tipo: z.string().optional().transform(transformEmptyToUndefined),
   contato: z.string().optional().transform(transformEmptyToUndefined),
   esfera: z.string().optional().transform(transformEmptyToUndefined)
 });
@@ -109,34 +108,34 @@ export class ConfiguracoesController {
     return res.status(204).send();
   }
 
-  async listarFontes(_req: Request, res: Response) {
-    const dados = await prisma.fonteRecurso.findMany({
+  async listarModalidadesRepasse(_req: Request, res: Response) {
+    const dados = await prisma.modalidadeRepasseCatalogo.findMany({
       orderBy: { nome: 'asc' }
     });
     return res.json(dados);
   }
 
-  async criarFonte(req: Request, res: Response) {
-    const schema = baseSchema.pick({ nome: true, tipo: true });
+  async criarModalidadeRepasse(req: Request, res: Response) {
+    const schema = baseSchema.pick({ nome: true });
     const payload = schema.parse(req.body);
-    const fonte = await prisma.fonteRecurso.create({ data: payload });
-    return res.status(201).json(fonte);
+    const modalidade = await prisma.modalidadeRepasseCatalogo.create({ data: payload });
+    return res.status(201).json(modalidade);
   }
 
-  async atualizarFonte(req: Request, res: Response) {
+  async atualizarModalidadeRepasse(req: Request, res: Response) {
     const id = req.params.id;
-    const schema = baseSchema.pick({ nome: true, tipo: true }).partial();
+    const schema = baseSchema.pick({ nome: true }).partial();
     const payload = schema.parse(req.body);
-    const fonte = await prisma.fonteRecurso.update({
+    const modalidade = await prisma.modalidadeRepasseCatalogo.update({
       where: { id },
       data: payload
     });
-    return res.json(fonte);
+    return res.json(modalidade);
   }
 
-  async removerFonte(req: Request, res: Response) {
+  async removerModalidadeRepasse(req: Request, res: Response) {
     const id = req.params.id;
-    await prisma.fonteRecurso.delete({ where: { id } });
+    await prisma.modalidadeRepasseCatalogo.delete({ where: { id } });
     return res.status(204).send();
   }
 }

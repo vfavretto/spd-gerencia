@@ -90,12 +90,6 @@ export type ConvenioStatus =
   | 'CONCLUIDO'
   | 'CANCELADO';
 
-export type ModalidadeRepasse =
-  | 'CONVENIO'
-  | 'CONTRATO_REPASSE'
-  | 'TERMO_FOMENTO'
-  | 'TERMO_COLABORACAO';
-
 export type EsferaGoverno = 'FEDERAL' | 'ESTADUAL';
 
 export type ModalidadeLicitacao =
@@ -136,11 +130,10 @@ export interface Programa {
   descricao?: string | null;
 }
 
-export interface FonteRecurso {
+export interface ModalidadeRepasseCatalogo {
   id: string;
   _id?: string;
   nome: string;
-  tipo?: string | null;
 }
 
 export interface Convenio {
@@ -155,7 +148,7 @@ export interface Convenio {
   // Novos campos de identificação
   numeroProposta?: string | null;
   dataInicioProcesso?: string | null;
-  modalidadeRepasse?: ModalidadeRepasse | null;
+  modalidadeRepasseId?: string | null;
   termoFormalizacao?: string | null;
   numeroTermo?: string | null;
   clausulaSuspensiva?: boolean;
@@ -182,8 +175,7 @@ export interface Convenio {
   orgaoId?: string | null;
   programa?: Programa | null;
   programaId?: string | null;
-  fonte?: FonteRecurso | null;
-  fonteId?: string | null;
+  modalidadeRepasse?: ModalidadeRepasseCatalogo | null;
   emendas?: EmendaParlamentar[];
   financeiroContas?: FinanceiroContas | null;
   contratos?: ContratoExecucao[];
@@ -305,7 +297,7 @@ export interface Catalogs {
   secretarias: Secretaria[];
   orgaos: OrgaoConcedente[];
   programas: Programa[];
-  fontes: FonteRecurso[];
+  modalidadesRepasse: ModalidadeRepasseCatalogo[];
 }
 
 // ==================== NOVAS INTERFACES ====================

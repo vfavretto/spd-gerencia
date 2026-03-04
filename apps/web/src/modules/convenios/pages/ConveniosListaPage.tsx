@@ -19,7 +19,6 @@ import { CanCreateConvenio } from "@/modules/shared/components/PermissionGate";
 import {
   convenioStatusOptions,
   esferaGovernoOptions,
-  modalidadeRepasseOptions,
 } from "@/modules/shared/constants";
 import {
   convenioService,
@@ -126,11 +125,10 @@ export const ConveniosListaPage = () => {
         secretaria: convenio.secretaria?.nome ?? "",
         orgao: convenio.orgao?.nome ?? "",
         programa: convenio.programa?.nome ?? "",
-        fonte: convenio.fonte?.nome ?? "",
         numeroTermo: convenio.numeroTermo ?? "",
         numeroProposta: convenio.numeroProposta ?? "",
         esfera: convenio.esfera ?? "",
-        modalidadeRepasse: convenio.modalidadeRepasse ?? "",
+        modalidadeRepasse: convenio.modalidadeRepasse?.nome ?? "",
         dataAssinatura: convenio.dataAssinatura
           ? formatDate(convenio.dataAssinatura)
           : "",
@@ -204,7 +202,6 @@ export const ConveniosListaPage = () => {
         "Secretaria",
         "Órgão Concedente",
         "Programa",
-        "Fonte de Recurso",
         "Nº do Termo",
         "Nº da Proposta",
         "Data Assinatura",
@@ -242,7 +239,6 @@ export const ConveniosListaPage = () => {
             row.secretaria,
             row.orgao,
             row.programa,
-            row.fonte,
             row.numeroTermo,
             row.numeroProposta,
             row.dataAssinatura,
@@ -314,7 +310,6 @@ export const ConveniosListaPage = () => {
         "Secretaria",
         "Órgão Concedente",
         "Programa",
-        "Fonte de Recurso",
         "Nº do Termo",
         "Nº da Proposta",
         "Data Assinatura",
@@ -353,7 +348,6 @@ export const ConveniosListaPage = () => {
             row.secretaria,
             row.orgao,
             row.programa,
-            row.fonte,
             row.numeroTermo,
             row.numeroProposta,
             row.dataAssinatura,
@@ -551,15 +545,15 @@ export const ConveniosListaPage = () => {
             <label className="form-label">Modalidade de repasse</label>
             <select
               className="form-input"
-              value={filters.modalidadeRepasse || ""}
+              value={filters.modalidadeRepasseId || ""}
               onChange={(event) =>
-                handleFilterChange({ modalidadeRepasse: event.target.value })
+                handleFilterChange({ modalidadeRepasseId: event.target.value })
               }
             >
               <option value="">Todas</option>
-              {modalidadeRepasseOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
+              {catalogs?.modalidadesRepasse.map((modalidade) => (
+                <option key={modalidade.id} value={modalidade.id}>
+                  {modalidade.nome}
                 </option>
               ))}
             </select>

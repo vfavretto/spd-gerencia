@@ -3,7 +3,6 @@ import type {
   ConvenioStatus,
   TipoComunicado,
   TipoEvento,
-  ModalidadeRepasse,
   EsferaGoverno,
   ModalidadeLicitacao,
   StatusPendencia,
@@ -56,11 +55,10 @@ export interface IPrograma extends BaseDocument {
   descricao?: string | null;
 }
 
-// ==================== FONTE RECURSO ====================
+// ==================== MODALIDADE DE REPASSE ====================
 
-export interface IFonteRecurso extends BaseDocument {
+export interface IModalidadeRepasseCatalogo extends BaseDocument {
   nome: string;
-  tipo?: string | null;
 }
 
 // ==================== CONVENIO ANEXO ====================
@@ -265,7 +263,7 @@ export interface IConvenio extends BaseDocument {
   // Campos de identificação
   numeroProposta?: string | null;
   dataInicioProcesso?: Date | null;
-  modalidadeRepasse?: ModalidadeRepasse | null;
+  modalidadeRepasseId?: string | null;
   termoFormalizacao?: string | null;
   numeroTermo?: string | null;
   clausulaSuspensiva: boolean;
@@ -293,7 +291,6 @@ export interface IConvenio extends BaseDocument {
   secretariaId: string;
   orgaoId?: string | null;
   programaId?: string | null;
-  fonteId?: string | null;
   
   // Subdocumentos embedded
   anexos: IConvenioAnexo[];
@@ -303,7 +300,7 @@ export interface IConvenio extends BaseDocument {
   secretaria?: ISecretaria;
   orgao?: IOrgaoConcedente | null;
   programa?: IPrograma | null;
-  fonte?: IFonteRecurso | null;
+  modalidadeRepasse?: IModalidadeRepasseCatalogo | null;
   emendas?: IEmendaParlamentar[];
   financeiroContas?: IFinanceiroContas | null;
   contratos?: IContratoExecucao[];

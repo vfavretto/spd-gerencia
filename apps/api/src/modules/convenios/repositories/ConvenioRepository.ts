@@ -9,7 +9,7 @@ export type ConvenioFilters = {
   status?: string;
   secretariaId?: string;
   esfera?: string;
-  modalidadeRepasse?: string;
+  modalidadeRepasseId?: string;
   dataInicioVigencia?: string;
   dataFimVigencia?: string;
   valorMin?: number;

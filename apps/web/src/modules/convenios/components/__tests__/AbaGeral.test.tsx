@@ -9,7 +9,7 @@ vi.mock("@/modules/configuracoes/services/configService", () => ({
       secretarias: [],
       orgaos: [],
       programas: [],
-      fontes: []
+      modalidadesRepasse: []
     })
   }
 }));

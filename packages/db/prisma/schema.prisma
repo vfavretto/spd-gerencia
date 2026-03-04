@@ -139,6 +139,15 @@ model ModalidadeRepasseCatalogo {
   convenios Convenio[]
 }
 
+model TipoTermoFormalizacaoCatalogo {
+  id           String   @id @default(uuid())
+  nome         String
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  convenios Convenio[]
+}
+
 model Convenio {
   id                       String             @id @default(uuid())
   codigo                   String             @unique
@@ -150,6 +159,7 @@ model Convenio {
   numeroProposta           String?
   dataInicioProcesso       DateTime?
   modalidadeRepasseId      String?
+  tipoTermoFormalizacaoId  String?
   termoFormalizacao        String?
   numeroTermo              String?
   clausulaSuspensiva       Boolean            @default(false)
@@ -176,6 +186,7 @@ model Convenio {
   orgao      OrgaoConcedente? @relation(fields: [orgaoId], references: [id])
   programa   Programa?        @relation(fields: [programaId], references: [id])
   modalidadeRepasse ModalidadeRepasseCatalogo? @relation(fields: [modalidadeRepasseId], references: [id])
+  tipoTermoFormalizacao TipoTermoFormalizacaoCatalogo? @relation(fields: [tipoTermoFormalizacaoId], references: [id])
 
   anexos              ConvenioAnexo[]
   emendas             EmendaParlamentar[]
@@ -191,6 +202,7 @@ model Convenio {
   @@index([status])
   @@index([secretariaId])
   @@index([modalidadeRepasseId])
+  @@index([tipoTermoFormalizacaoId])
 }
 
 model ConvenioAnexo {

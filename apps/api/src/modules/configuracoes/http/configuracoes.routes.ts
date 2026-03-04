@@ -30,3 +30,9 @@ configuracoesRoutes.get('/modalidades-repasse', asyncHandler(controller.listarMo
 configuracoesRoutes.post('/modalidades-repasse', ensureRole('ADMIN'), asyncHandler(controller.criarModalidadeRepasse.bind(controller)));
 configuracoesRoutes.put('/modalidades-repasse/:id', ensureRole('ADMIN'), asyncHandler(controller.atualizarModalidadeRepasse.bind(controller)));
 configuracoesRoutes.delete('/modalidades-repasse/:id', ensureRole('ADMIN'), asyncHandler(controller.removerModalidadeRepasse.bind(controller)));
+
+// Tipos de Termo de Formalização - GET para todos, demais apenas ADMIN
+configuracoesRoutes.get('/tipos-termo-formalizacao', asyncHandler(controller.listarTiposTermoFormalizacao.bind(controller)));
+configuracoesRoutes.post('/tipos-termo-formalizacao', ensureRole('ADMIN'), asyncHandler(controller.criarTipoTermoFormalizacao.bind(controller)));
+configuracoesRoutes.put('/tipos-termo-formalizacao/:id', ensureRole('ADMIN'), asyncHandler(controller.atualizarTipoTermoFormalizacao.bind(controller)));
+configuracoesRoutes.delete('/tipos-termo-formalizacao/:id', ensureRole('ADMIN'), asyncHandler(controller.removerTipoTermoFormalizacao.bind(controller)));

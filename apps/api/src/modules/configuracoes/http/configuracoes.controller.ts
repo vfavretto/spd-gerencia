@@ -138,4 +138,36 @@ export class ConfiguracoesController {
     await prisma.modalidadeRepasseCatalogo.delete({ where: { id } });
     return res.status(204).send();
   }
+
+  // Tipos de Termo de Formalização
+  async listarTiposTermoFormalizacao(_req: Request, res: Response) {
+    const dados = await prisma.tipoTermoFormalizacaoCatalogo.findMany({
+      orderBy: { nome: 'asc' }
+    });
+    return res.json(dados);
+  }
+
+  async criarTipoTermoFormalizacao(req: Request, res: Response) {
+    const schema = baseSchema.pick({ nome: true });
+    const payload = schema.parse(req.body);
+    const tipo = await prisma.tipoTermoFormalizacaoCatalogo.create({ data: payload });
+    return res.status(201).json(tipo);
+  }
+
+  async atualizarTipoTermoFormalizacao(req: Request, res: Response) {
+    const id = req.params.id;
+    const schema = baseSchema.pick({ nome: true }).partial();
+    const payload = schema.parse(req.body);
+    const tipo = await prisma.tipoTermoFormalizacaoCatalogo.update({
+      where: { id },
+      data: payload
+    });
+    return res.json(tipo);
+  }
+
+  async removerTipoTermoFormalizacao(req: Request, res: Response) {
+    const id = req.params.id;
+    await prisma.tipoTermoFormalizacaoCatalogo.delete({ where: { id } });
+    return res.status(204).send();
+  }
 }

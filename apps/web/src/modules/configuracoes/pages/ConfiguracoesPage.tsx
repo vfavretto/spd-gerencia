@@ -1,7 +1,19 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  Pencil, Plus, RefreshCcw, Trash2, UserPlus, Users, Shield,
-  Building2, Landmark, BookOpen, ArrowRightLeft, ScrollText, History
+  Pencil,
+  Plus,
+  RefreshCcw,
+  Trash2,
+  UserPlus,
+  Users,
+  Shield,
+  Building2,
+  Landmark,
+  BookOpen,
+  ArrowRightLeft,
+  ScrollText,
+  History,
+  FileSignature,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useEffect, useMemo, useState } from "react";
@@ -18,7 +30,12 @@ import { convenioService } from "@/modules/convenios/services/convenioService";
 import { formatDate } from "@/modules/shared/utils/format";
 import type { UsuarioRole } from "@/modules/shared/types";
 
-type ResourceKey = "secretarias" | "orgaos" | "programas" | "modalidadesRepasse";
+type ResourceKey =
+  | "secretarias"
+  | "orgaos"
+  | "programas"
+  | "modalidadesRepasse"
+  | "tiposTermoFormalizacao";
 
 type FieldConfig = {
   name: string;
@@ -50,57 +67,69 @@ const sections: SectionConfig[] = [
     title: "Secretarias",
     description: "Cadastro das secretarias vinculadas aos convênios.",
     fields: [
-      { name: "nome", label: "Nome", placeholder: "Secretaria de Planejamento", required: true },
+      {
+        name: "nome",
+        label: "Nome",
+        placeholder: "Secretaria de Planejamento",
+        required: true,
+      },
       { name: "sigla", label: "Sigla", placeholder: "SPD" },
-      { name: "responsavel", label: "Responsável", placeholder: "Nome do gestor" }
+      {
+        name: "responsavel",
+        label: "Responsável",
+        placeholder: "Nome do gestor",
+      },
     ],
     columns: [
       { key: "nome", label: "Nome" },
       { key: "sigla", label: "Sigla" },
-      { key: "responsavel", label: "Responsável" }
-    ]
+      { key: "responsavel", label: "Responsável" },
+    ],
   },
   {
     key: "orgaos",
     title: "Órgãos concedentes",
     description: "Manutenção dos órgãos estaduais ou federais parceiros.",
     fields: [
-      { name: "nome", label: 'Nome', required: true },
-      { name: 'esfera', label: 'Esfera', placeholder: 'Federal / Estadual' },
-      { name: 'contato', label: 'Contato', placeholder: 'email@orgao.gov.br' }
+      { name: "nome", label: "Nome", required: true },
+      { name: "esfera", label: "Esfera", placeholder: "Federal / Estadual" },
+      { name: "contato", label: "Contato", placeholder: "email@orgao.gov.br" },
     ],
     columns: [
-      { key: 'nome', label: 'Órgão' },
-      { key: 'esfera', label: 'Esfera' },
-      { key: 'contato', label: 'Contato' }
-    ]
+      { key: "nome", label: "Órgão" },
+      { key: "esfera", label: "Esfera" },
+      { key: "contato", label: "Contato" },
+    ],
   },
   {
-    key: 'programas',
-    title: 'Programas',
-    description: 'Programas ou linhas de financiamento utilizadas.',
+    key: "programas",
+    title: "Programas",
+    description: "Programas ou linhas de financiamento utilizadas.",
     fields: [
-      { name: 'nome', label: 'Nome', required: true },
-      { name: 'codigo', label: 'Código', placeholder: 'PCS-001' },
-      { name: 'descricao', label: 'Descrição', textarea: true }
+      { name: "nome", label: "Nome", required: true },
+      { name: "codigo", label: "Código", placeholder: "PCS-001" },
+      { name: "descricao", label: "Descrição", textarea: true },
     ],
     columns: [
-      { key: 'nome', label: 'Programa' },
-      { key: 'codigo', label: 'Código' },
-      { key: 'descricao', label: 'Descrição' }
-    ]
+      { key: "nome", label: "Programa" },
+      { key: "codigo", label: "Código" },
+      { key: "descricao", label: "Descrição" },
+    ],
   },
   {
-    key: 'modalidadesRepasse',
-    title: 'Modalidades de repasse',
-    description: 'Modalidades utilizadas nos convênios.',
-    fields: [
-      { name: 'nome', label: 'Nome', required: true }
-    ],
-    columns: [
-      { key: 'nome', label: 'Modalidade' }
-    ]
-  }
+    key: "modalidadesRepasse",
+    title: "Modalidades de repasse",
+    description: "Modalidades utilizadas nos convênios.",
+    fields: [{ name: "nome", label: "Nome", required: true }],
+    columns: [{ key: "nome", label: "Modalidade" }],
+  },
+  {
+    key: "tiposTermoFormalizacao",
+    title: "Tipos de termo de formalização",
+    description: "Tipos de termo utilizados na formalização dos convênios.",
+    fields: [{ name: "nome", label: "Nome", required: true }],
+    columns: [{ key: "nome", label: "Tipo de termo" }],
+  },
 ];
 
 type FormValues = Record<string, string>;
@@ -110,7 +139,10 @@ type ConfigSectionProps = {
   data: CatalogItem[];
 };
 
-const ConfigSection: React.FC<ConfigSectionProps> = ({ section, data = [] }) => {
+const ConfigSection: React.FC<ConfigSectionProps> = ({
+  section,
+  data = [],
+}) => {
   const queryClient = useQueryClient();
   const [editing, setEditing] = useState<CatalogItem | null>(null);
   const { isAdmin } = usePermissions();
@@ -118,19 +150,19 @@ const ConfigSection: React.FC<ConfigSectionProps> = ({ section, data = [] }) => 
   const defaultValues = useMemo(
     () =>
       section.fields.reduce<FormValues>((acc, field) => {
-        acc[field.name] = '';
+        acc[field.name] = "";
         return acc;
       }, {}),
-    [section.fields]
+    [section.fields],
   );
 
   const {
     register,
     handleSubmit,
     reset,
-    formState: { isSubmitting }
+    formState: { isSubmitting },
   } = useForm<FormValues>({
-    defaultValues
+    defaultValues,
   });
 
   useEffect(() => {
@@ -159,8 +191,10 @@ const ConfigSection: React.FC<ConfigSectionProps> = ({ section, data = [] }) => 
       reset(defaultValues);
     },
     onError: () => {
-      toast.error("Erro ao salvar configuração. Verifique os dados e tente novamente.");
-    }
+      toast.error(
+        "Erro ao salvar configuração. Verifique os dados e tente novamente.",
+      );
+    },
   });
 
   const deleteMutation = useMutation({
@@ -169,8 +203,10 @@ const ConfigSection: React.FC<ConfigSectionProps> = ({ section, data = [] }) => 
       queryClient.invalidateQueries({ queryKey: ["catalogs"] });
     },
     onError: () => {
-      toast.error("Erro ao remover registro. Este item pode estar sendo usado em outro lugar.");
-    }
+      toast.error(
+        "Erro ao remover registro. Este item pode estar sendo usado em outro lugar.",
+      );
+    },
   });
 
   const onSubmit = (formValues: FormValues) => {
@@ -180,7 +216,9 @@ const ConfigSection: React.FC<ConfigSectionProps> = ({ section, data = [] }) => 
   return (
     <section className="glass-panel flex flex-col gap-4 p-6">
       <div className="flex flex-col gap-2 border-b border-slate-100 pb-4">
-        <h3 className="text-lg font-semibold text-slate-900">{section.title}</h3>
+        <h3 className="text-lg font-semibold text-slate-900">
+          {section.title}
+        </h3>
         <p className="text-sm text-slate-500">{section.description}</p>
       </div>
 
@@ -188,7 +226,10 @@ const ConfigSection: React.FC<ConfigSectionProps> = ({ section, data = [] }) => 
         <form className="grid gap-4" onSubmit={handleSubmit(onSubmit)}>
           <div className="grid gap-4 md:grid-cols-2">
             {section.fields.map((field) => (
-              <div key={field.name} className={field.textarea ? "md:col-span-2" : ""}>
+              <div
+                key={field.name}
+                className={field.textarea ? "md:col-span-2" : ""}
+              >
                 <label className="form-label">
                   {field.label}
                   {editing && field.required && (
@@ -303,7 +344,7 @@ const registerSchema = z.object({
   email: z.string().email("E-mail inválido"),
   matricula: z.string().min(1, "Matrícula é obrigatória"),
   senha: z.string().min(6, "Senha deve ter ao menos 6 caracteres"),
-  role: z.enum(["ADMIN", "ANALISTA", "ESTAGIARIO", "OBSERVADOR"])
+  role: z.enum(["ADMIN", "ANALISTA", "ESTAGIARIO", "OBSERVADOR"]),
 });
 
 type RegisterForm = z.infer<typeof registerSchema>;
@@ -312,14 +353,14 @@ const roleLabels: Record<UsuarioRole, string> = {
   ADMIN: "Administrador",
   ANALISTA: "Analista",
   ESTAGIARIO: "Estagiário",
-  OBSERVADOR: "Observador"
+  OBSERVADOR: "Observador",
 };
 
 const roleBadgeColors: Record<UsuarioRole, string> = {
   ADMIN: "bg-indigo-100 text-indigo-700",
   ANALISTA: "bg-blue-100 text-blue-700",
   ESTAGIARIO: "bg-amber-100 text-amber-700",
-  OBSERVADOR: "bg-slate-100 text-slate-600"
+  OBSERVADOR: "bg-slate-100 text-slate-600",
 };
 
 const UsersSection = () => {
@@ -327,17 +368,17 @@ const UsersSection = () => {
 
   const usersQuery = useQuery({
     queryKey: ["users"],
-    queryFn: () => authService.listUsers()
+    queryFn: () => authService.listUsers(),
   });
 
   const {
     register: registerField,
     handleSubmit,
     reset,
-    formState: { errors }
+    formState: { errors },
   } = useForm<RegisterForm>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { role: "ANALISTA" }
+    defaultValues: { role: "ANALISTA" },
   });
 
   const createMutation = useMutation({
@@ -345,7 +386,7 @@ const UsersSection = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
       reset({ role: "ANALISTA" } as RegisterForm);
-    }
+    },
   });
 
   const users = usersQuery.data ?? [];
@@ -357,13 +398,20 @@ const UsersSection = () => {
           <Users className="h-5 w-5 text-indigo-600" />
         </div>
         <div>
-          <h3 className="text-lg font-semibold text-slate-900">Usuários do sistema</h3>
-          <p className="text-sm text-slate-500">Cadastre e gerencie os servidores com acesso ao sistema.</p>
+          <h3 className="text-lg font-semibold text-slate-900">
+            Usuários do sistema
+          </h3>
+          <p className="text-sm text-slate-500">
+            Cadastre e gerencie os servidores com acesso ao sistema.
+          </p>
         </div>
       </div>
 
       {/* Formulário de cadastro */}
-      <form className="grid gap-4" onSubmit={handleSubmit((data) => createMutation.mutate(data))}>
+      <form
+        className="grid gap-4"
+        onSubmit={handleSubmit((data) => createMutation.mutate(data))}
+      >
         <div className="grid gap-4 md:grid-cols-2">
           <div>
             <label className="form-label">Nome completo</label>
@@ -372,7 +420,11 @@ const UsersSection = () => {
               {...registerField("nome")}
               placeholder="Nome do servidor"
             />
-            {errors.nome && <p className="mt-1 text-xs text-rose-500">{errors.nome.message}</p>}
+            {errors.nome && (
+              <p className="mt-1 text-xs text-rose-500">
+                {errors.nome.message}
+              </p>
+            )}
           </div>
           <div>
             <label className="form-label">E-mail</label>
@@ -382,7 +434,11 @@ const UsersSection = () => {
               {...registerField("email")}
               placeholder="email@votorantim.sp.gov.br"
             />
-            {errors.email && <p className="mt-1 text-xs text-rose-500">{errors.email.message}</p>}
+            {errors.email && (
+              <p className="mt-1 text-xs text-rose-500">
+                {errors.email.message}
+              </p>
+            )}
           </div>
           <div>
             <label className="form-label">Matrícula</label>
@@ -391,7 +447,11 @@ const UsersSection = () => {
               {...registerField("matricula")}
               placeholder="Ex: 12345"
             />
-            {errors.matricula && <p className="mt-1 text-xs text-rose-500">{errors.matricula.message}</p>}
+            {errors.matricula && (
+              <p className="mt-1 text-xs text-rose-500">
+                {errors.matricula.message}
+              </p>
+            )}
           </div>
           <div>
             <label className="form-label">Senha inicial</label>
@@ -401,7 +461,11 @@ const UsersSection = () => {
               {...registerField("senha")}
               placeholder="Mínimo 6 caracteres"
             />
-            {errors.senha && <p className="mt-1 text-xs text-rose-500">{errors.senha.message}</p>}
+            {errors.senha && (
+              <p className="mt-1 text-xs text-rose-500">
+                {errors.senha.message}
+              </p>
+            )}
           </div>
           <div>
             <label className="form-label">Permissão</label>
@@ -424,11 +488,18 @@ const UsersSection = () => {
           </button>
         </div>
         {createMutation.isSuccess && (
-          <p className="text-sm text-emerald-600">Usuário cadastrado com sucesso.</p>
+          <p className="text-sm text-emerald-600">
+            Usuário cadastrado com sucesso.
+          </p>
         )}
         {createMutation.isError && (
           <p className="text-sm text-rose-600">
-            Erro ao cadastrar: {(createMutation.error as { response?: { data?: { message?: string } } })?.response?.data?.message ?? "Verifique os dados."}
+            Erro ao cadastrar:{" "}
+            {(
+              createMutation.error as {
+                response?: { data?: { message?: string } };
+              }
+            )?.response?.data?.message ?? "Verifique os dados."}
           </p>
         )}
       </form>
@@ -448,17 +519,25 @@ const UsersSection = () => {
           <tbody className="divide-y divide-slate-50 bg-white/80">
             {users.map((user) => (
               <tr key={user.id}>
-                <td className="px-4 py-3 font-medium text-slate-900">{user.nome}</td>
-                <td className="px-4 py-3 font-mono text-slate-600">{user.matricula}</td>
+                <td className="px-4 py-3 font-medium text-slate-900">
+                  {user.nome}
+                </td>
+                <td className="px-4 py-3 font-mono text-slate-600">
+                  {user.matricula}
+                </td>
                 <td className="px-4 py-3 text-slate-600">{user.email}</td>
                 <td className="px-4 py-3">
-                  <span className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold ${roleBadgeColors[user.role]}`}>
+                  <span
+                    className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold ${roleBadgeColors[user.role]}`}
+                  >
                     <Shield className="h-3 w-3" />
                     {roleLabels[user.role]}
                   </span>
                 </td>
                 <td className="px-4 py-3 text-center">
-                  <span className={`inline-block h-2.5 w-2.5 rounded-full ${user.ativo ? "bg-emerald-400" : "bg-slate-300"}`} />
+                  <span
+                    className={`inline-block h-2.5 w-2.5 rounded-full ${user.ativo ? "bg-emerald-400" : "bg-slate-300"}`}
+                  />
                 </td>
               </tr>
             ))}
@@ -494,8 +573,8 @@ const AuditoriaSection = () => {
         dataInicio: filters.dataInicio || undefined,
         dataFim: filters.dataFim || undefined,
         page,
-        limit: 15
-      })
+        limit: 15,
+      }),
   });
 
   const result = logsQuery.data;
@@ -504,13 +583,13 @@ const AuditoriaSection = () => {
   const acaoBadge: Record<string, string> = {
     CREATE: "bg-emerald-100 text-emerald-700",
     UPDATE: "bg-blue-100 text-blue-700",
-    DELETE: "bg-rose-100 text-rose-700"
+    DELETE: "bg-rose-100 text-rose-700",
   };
 
   const acaoLabel: Record<string, string> = {
     CREATE: "Criação",
     UPDATE: "Atualização",
-    DELETE: "Exclusão"
+    DELETE: "Exclusão",
   };
 
   return (
@@ -520,8 +599,12 @@ const AuditoriaSection = () => {
           <ScrollText className="h-5 w-5 text-amber-600" />
         </div>
         <div>
-          <h3 className="text-lg font-semibold text-slate-900">Logs de auditoria</h3>
-          <p className="text-sm text-slate-500">Acompanhe todas as ações realizadas no sistema.</p>
+          <h3 className="text-lg font-semibold text-slate-900">
+            Logs de auditoria
+          </h3>
+          <p className="text-sm text-slate-500">
+            Acompanhe todas as ações realizadas no sistema.
+          </p>
         </div>
       </div>
 
@@ -532,7 +615,10 @@ const AuditoriaSection = () => {
           <select
             className="form-input"
             value={filters.acao}
-            onChange={(e) => { setFilters((p) => ({ ...p, acao: e.target.value })); setPage(1); }}
+            onChange={(e) => {
+              setFilters((p) => ({ ...p, acao: e.target.value }));
+              setPage(1);
+            }}
           >
             <option value="">Todas</option>
             <option value="CREATE">Criação</option>
@@ -545,7 +631,10 @@ const AuditoriaSection = () => {
           <select
             className="form-input"
             value={filters.entidade}
-            onChange={(e) => { setFilters((p) => ({ ...p, entidade: e.target.value })); setPage(1); }}
+            onChange={(e) => {
+              setFilters((p) => ({ ...p, entidade: e.target.value }));
+              setPage(1);
+            }}
           >
             <option value="">Todas</option>
             <option value="Convenio">Convênio</option>
@@ -561,7 +650,10 @@ const AuditoriaSection = () => {
             type="date"
             className="form-input"
             value={filters.dataInicio}
-            onChange={(e) => { setFilters((p) => ({ ...p, dataInicio: e.target.value })); setPage(1); }}
+            onChange={(e) => {
+              setFilters((p) => ({ ...p, dataInicio: e.target.value }));
+              setPage(1);
+            }}
           />
         </div>
         <div>
@@ -570,7 +662,10 @@ const AuditoriaSection = () => {
             type="date"
             className="form-input"
             value={filters.dataFim}
-            onChange={(e) => { setFilters((p) => ({ ...p, dataFim: e.target.value })); setPage(1); }}
+            onChange={(e) => {
+              setFilters((p) => ({ ...p, dataFim: e.target.value }));
+              setPage(1);
+            }}
           />
         </div>
       </div>
@@ -595,7 +690,9 @@ const AuditoriaSection = () => {
                 </td>
                 <td className="px-4 py-3 text-slate-700">{log.usuarioNome}</td>
                 <td className="px-4 py-3">
-                  <span className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${acaoBadge[log.acao] ?? "bg-slate-100 text-slate-600"}`}>
+                  <span
+                    className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${acaoBadge[log.acao] ?? "bg-slate-100 text-slate-600"}`}
+                  >
                     {acaoLabel[log.acao] ?? log.acao}
                   </span>
                 </td>
@@ -618,7 +715,8 @@ const AuditoriaSection = () => {
       {result && result.totalPages > 1 && (
         <div className="flex items-center justify-between text-sm text-slate-600">
           <span>
-            Página {result.page} de {result.totalPages} ({result.total} registros)
+            Página {result.page} de {result.totalPages} ({result.total}{" "}
+            registros)
           </span>
           <div className="flex gap-2">
             <button
@@ -646,24 +744,31 @@ const AuditoriaSection = () => {
 
 const SnapshotsSection = () => {
   const [selectedConvenioId, setSelectedConvenioId] = useState<string>("");
-  const [compareVersions, setCompareVersions] = useState<{ v1: number; v2: number } | null>(null);
+  const [compareVersions, setCompareVersions] = useState<{
+    v1: number;
+    v2: number;
+  } | null>(null);
 
   const conveniosQuery = useQuery({
     queryKey: ["convenios-lite-snapshots"],
-    queryFn: () => convenioService.list()
+    queryFn: () => convenioService.list(),
   });
 
   const snapshotsQuery = useQuery({
     queryKey: ["snapshots", selectedConvenioId],
     queryFn: () => snapshotService.listByConvenio(selectedConvenioId),
-    enabled: Boolean(selectedConvenioId)
+    enabled: Boolean(selectedConvenioId),
   });
 
   const compareQuery = useQuery({
     queryKey: ["snapshot-compare", selectedConvenioId, compareVersions],
     queryFn: () =>
-      snapshotService.compare(selectedConvenioId, compareVersions!.v1, compareVersions!.v2),
-    enabled: Boolean(selectedConvenioId && compareVersions)
+      snapshotService.compare(
+        selectedConvenioId,
+        compareVersions!.v1,
+        compareVersions!.v2,
+      ),
+    enabled: Boolean(selectedConvenioId && compareVersions),
   });
 
   const convenios = conveniosQuery.data ?? [];
@@ -677,8 +782,12 @@ const SnapshotsSection = () => {
           <History className="h-5 w-5 text-violet-600" />
         </div>
         <div>
-          <h3 className="text-lg font-semibold text-slate-900">Snapshots de convênios</h3>
-          <p className="text-sm text-slate-500">Visualize versões históricas e compare alterações.</p>
+          <h3 className="text-lg font-semibold text-slate-900">
+            Snapshots de convênios
+          </h3>
+          <p className="text-sm text-slate-500">
+            Visualize versões históricas e compare alterações.
+          </p>
         </div>
       </div>
 
@@ -706,11 +815,13 @@ const SnapshotsSection = () => {
         <p className="text-sm text-slate-400">Carregando snapshots...</p>
       )}
 
-      {selectedConvenioId && snapshots.length === 0 && !snapshotsQuery.isLoading && (
-        <div className="rounded-3xl border border-dashed border-slate-200 p-8 text-center text-sm text-slate-400">
-          Nenhum snapshot encontrado para este convênio.
-        </div>
-      )}
+      {selectedConvenioId &&
+        snapshots.length === 0 &&
+        !snapshotsQuery.isLoading && (
+          <div className="rounded-3xl border border-dashed border-slate-200 p-8 text-center text-sm text-slate-400">
+            Nenhum snapshot encontrado para este convênio.
+          </div>
+        )}
 
       {snapshots.length > 0 && (
         <>
@@ -729,16 +840,26 @@ const SnapshotsSection = () => {
               <tbody className="divide-y divide-slate-50 bg-white/80">
                 {snapshots.map((snap) => (
                   <tr key={snap.id}>
-                    <td className="px-4 py-3 font-mono font-bold text-slate-800">v{snap.versao}</td>
-                    <td className="px-4 py-3 text-slate-600">{formatDate(snap.criadoEm)}</td>
-                    <td className="px-4 py-3 text-slate-700">{snap.criadoPorNome ?? "Sistema"}</td>
-                    <td className="px-4 py-3 text-slate-500">{snap.motivoSnapshot ?? "—"}</td>
+                    <td className="px-4 py-3 font-mono font-bold text-slate-800">
+                      v{snap.versao}
+                    </td>
+                    <td className="px-4 py-3 text-slate-600">
+                      {formatDate(snap.criadoEm)}
+                    </td>
+                    <td className="px-4 py-3 text-slate-700">
+                      {snap.criadoPorNome ?? "Sistema"}
+                    </td>
+                    <td className="px-4 py-3 text-slate-500">
+                      {snap.motivoSnapshot ?? "—"}
+                    </td>
                     <td className="px-4 py-3 text-center">
                       <div className="flex justify-center gap-2">
                         <button
                           onClick={() =>
                             setCompareVersions((prev) =>
-                              prev ? { ...prev, v1: snap.versao } : { v1: snap.versao, v2: snap.versao }
+                              prev
+                                ? { ...prev, v1: snap.versao }
+                                : { v1: snap.versao, v2: snap.versao },
                             )
                           }
                           className={`rounded-lg px-2 py-1 text-xs font-semibold transition ${
@@ -752,7 +873,9 @@ const SnapshotsSection = () => {
                         <button
                           onClick={() =>
                             setCompareVersions((prev) =>
-                              prev ? { ...prev, v2: snap.versao } : { v1: snap.versao, v2: snap.versao }
+                              prev
+                                ? { ...prev, v2: snap.versao }
+                                : { v1: snap.versao, v2: snap.versao },
                             )
                           }
                           className={`rounded-lg px-2 py-1 text-xs font-semibold transition ${
@@ -778,10 +901,14 @@ const SnapshotsSection = () => {
                 Comparando v{compareVersions.v1} → v{compareVersions.v2}
               </h4>
               {compareQuery.isLoading && (
-                <p className="text-sm text-slate-400">Carregando comparação...</p>
+                <p className="text-sm text-slate-400">
+                  Carregando comparação...
+                </p>
               )}
               {diff && diff.diferencas.length === 0 && (
-                <p className="text-sm text-slate-400">Nenhuma diferença encontrada entre as versões.</p>
+                <p className="text-sm text-slate-400">
+                  Nenhuma diferença encontrada entre as versões.
+                </p>
               )}
               {diff && diff.diferencas.length > 0 && (
                 <div className="overflow-x-auto rounded-3xl border border-slate-100">
@@ -796,9 +923,13 @@ const SnapshotsSection = () => {
                     <tbody className="divide-y divide-slate-50 bg-white/80">
                       {diff.diferencas.map((d, idx) => (
                         <tr key={idx}>
-                          <td className="px-4 py-3 font-medium text-slate-800">{d.campo}</td>
+                          <td className="px-4 py-3 font-medium text-slate-800">
+                            {d.campo}
+                          </td>
                           <td className="px-4 py-3 text-rose-600">
-                            {d.valorAnterior != null ? String(d.valorAnterior) : "—"}
+                            {d.valorAnterior != null
+                              ? String(d.valorAnterior)
+                              : "—"}
                           </td>
                           <td className="px-4 py-3 text-emerald-600">
                             {d.valorNovo != null ? String(d.valorNovo) : "—"}
@@ -819,7 +950,15 @@ const SnapshotsSection = () => {
 
 // ==================== PÁGINA PRINCIPAL COM ABAS ====================
 
-type TabKey = "usuarios" | "secretarias" | "orgaos" | "programas" | "modalidadesRepasse" | "auditoria" | "snapshots";
+type TabKey =
+  | "usuarios"
+  | "secretarias"
+  | "orgaos"
+  | "programas"
+  | "modalidadesRepasse"
+  | "tiposTermoFormalizacao"
+  | "auditoria"
+  | "snapshots";
 
 type TabConfig = {
   key: TabKey;
@@ -832,21 +971,55 @@ export const ConfiguracoesPage = () => {
   const { isAdmin } = usePermissions();
 
   const allTabs: TabConfig[] = [
-    { key: "usuarios", label: "Usuários", icon: <Users className="h-4 w-4" />, adminOnly: true },
-    { key: "secretarias", label: "Secretarias", icon: <Building2 className="h-4 w-4" /> },
+    {
+      key: "usuarios",
+      label: "Usuários",
+      icon: <Users className="h-4 w-4" />,
+      adminOnly: true,
+    },
+    {
+      key: "secretarias",
+      label: "Secretarias",
+      icon: <Building2 className="h-4 w-4" />,
+    },
     { key: "orgaos", label: "Órgãos", icon: <Landmark className="h-4 w-4" /> },
-    { key: "programas", label: "Programas", icon: <BookOpen className="h-4 w-4" /> },
-    { key: "modalidadesRepasse", label: "Modalidades de Repasse", icon: <ArrowRightLeft className="h-4 w-4" /> },
-    { key: "auditoria", label: "Auditoria", icon: <ScrollText className="h-4 w-4" />, adminOnly: true },
-    { key: "snapshots", label: "Snapshots", icon: <History className="h-4 w-4" />, adminOnly: true }
+    {
+      key: "programas",
+      label: "Programas",
+      icon: <BookOpen className="h-4 w-4" />,
+    },
+    {
+      key: "modalidadesRepasse",
+      label: "Modalidades de Repasse",
+      icon: <ArrowRightLeft className="h-4 w-4" />,
+    },
+    {
+      key: "tiposTermoFormalizacao",
+      label: "Tipos de Termo",
+      icon: <FileSignature className="h-4 w-4" />,
+    },
+    {
+      key: "auditoria",
+      label: "Auditoria",
+      icon: <ScrollText className="h-4 w-4" />,
+      adminOnly: true,
+    },
+    {
+      key: "snapshots",
+      label: "Snapshots",
+      icon: <History className="h-4 w-4" />,
+      adminOnly: true,
+    },
   ];
 
   const visibleTabs = allTabs.filter((tab) => !tab.adminOnly || isAdmin);
-  const [activeTab, setActiveTab] = useState<TabKey>(visibleTabs[0]?.key ?? "secretarias");
+  const [activeTab, setActiveTab] = useState<TabKey>(
+    visibleTabs[0]?.key ?? "secretarias",
+  );
 
   const catalogsQuery = useQuery({
     queryKey: ["catalogs"],
-    queryFn: () => configService.getCatalogs()
+    queryFn: () => configService.getCatalogs(),
   });
 
   const catalogs = catalogsQuery.data;
@@ -917,6 +1090,13 @@ export const ConfiguracoesPage = () => {
           <ConfigSection
             section={sectionByKey("modalidadesRepasse")}
             data={catalogs ? (catalogs as Catalogs).modalidadesRepasse : []}
+          />
+        )}
+
+        {activeTab === "tiposTermoFormalizacao" && (
+          <ConfigSection
+            section={sectionByKey("tiposTermoFormalizacao")}
+            data={catalogs ? (catalogs as Catalogs).tiposTermoFormalizacao : []}
           />
         )}
 

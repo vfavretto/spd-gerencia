@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Plus,
   Building,
@@ -9,10 +10,14 @@ import {
   Pencil,
   FileSignature,
   Info,
+  Trash2,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import type {
   Convenio,
   ContratoExecucao,
+  Medicao,
   ValoresVigentes,
 } from "@/modules/shared/types";
 import { formatDateBR } from "@/modules/shared/lib/date";
@@ -21,8 +26,11 @@ import { Progress } from "@/modules/shared/ui/progress";
 import { Badge } from "@/modules/shared/ui/badge";
 import { Button } from "@/modules/shared/ui/button";
 import { usePermissions } from "@/modules/shared/hooks";
+import { medicaoService } from "@/modules/convenios/services/medicaoService";
+import { toast } from "@/modules/shared/ui/toaster";
 import { VincularContratoModal } from "./modals/VincularContratoModal";
 import { NovaMedicaoModal } from "./modals/NovaMedicaoModal";
+import { EditarMedicaoModal } from "./modals/EditarMedicaoModal";
 import { AditivarModal } from "./modals/AditivarModal";
 import { MaisInformacoesEngenhariaModal } from "./modals/MaisInformacoesEngenhariaModal";
 
@@ -48,7 +56,18 @@ export function AbaEngenharia({ convenio, valoresVigentes, onUpdate }: Props) {
     useState<ContratoExecucao | null>(null);
   const [contratoParaAditivo, setContratoParaAditivo] =
     useState<ContratoExecucao | null>(null);
+  const [expandedMedicoes, setExpandedMedicoes] = useState<Set<string>>(
+    new Set(),
+  );
+  const [medicaoParaEditar, setMedicaoParaEditar] = useState<Medicao | null>(
+    null,
+  );
+  const [contratoIdDaMedicao, setContratoIdDaMedicao] = useState<string | null>(
+    null,
+  );
+  const [showEditarMedicao, setShowEditarMedicao] = useState(false);
   const contratos = convenio.contratos || [];
+  const queryClient = useQueryClient();
 
   const ajusteRepasse =
     Number(convenio.financeiroContas?.ajusteRepasseVigente) || 0;
@@ -92,6 +111,54 @@ export function AbaEngenharia({ convenio, valoresVigentes, onUpdate }: Props) {
   const handleAditivarContrato = (contrato: ContratoExecucao) => {
     setContratoParaAditivo(contrato);
     setShowAditivoContrato(true);
+  };
+
+  const toggleMedicaoExpanded = (medicaoId: string) => {
+    setExpandedMedicoes((prev) => {
+      const next = new Set(prev);
+      if (next.has(medicaoId)) {
+        next.delete(medicaoId);
+      } else {
+        next.add(medicaoId);
+      }
+      return next;
+    });
+  };
+
+  const handleEditarMedicao = (medicao: Medicao, contratoId: string) => {
+    setMedicaoParaEditar(medicao);
+    setContratoIdDaMedicao(contratoId);
+    setShowEditarMedicao(true);
+  };
+
+  const deleteMedicaoMutation = useMutation({
+    mutationFn: ({
+      contratoId,
+      medicaoId,
+    }: {
+      contratoId: string;
+      medicaoId: string;
+    }) => medicaoService.delete(contratoId, medicaoId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["convenio", String(convenio.id)],
+      });
+      toast.success("Medição excluída com sucesso!");
+      onUpdate();
+    },
+    onError: () => {
+      toast.error("Erro ao excluir medição");
+    },
+  });
+
+  const handleExcluirMedicao = (contratoId: string, medicaoId: string) => {
+    if (
+      window.confirm(
+        "Tem certeza que deseja excluir esta medição? Esta ação não pode ser desfeita.",
+      )
+    ) {
+      deleteMedicaoMutation.mutate({ contratoId, medicaoId });
+    }
   };
 
   const modalidadeLabel: Record<string, string> = {
@@ -368,6 +435,7 @@ export function AbaEngenharia({ convenio, valoresVigentes, onUpdate }: Props) {
                         <table className="w-full text-sm">
                           <thead className="bg-slate-50">
                             <tr>
+                              <th className="px-3 py-2 text-left font-medium text-slate-600 w-8"></th>
                               <th className="px-3 py-2 text-left font-medium text-slate-600">
                                 Nº
                               </th>
@@ -383,32 +451,160 @@ export function AbaEngenharia({ convenio, valoresVigentes, onUpdate }: Props) {
                               <th className="px-3 py-2 text-center font-medium text-slate-600">
                                 %
                               </th>
+                              {canWrite("medicao") && (
+                                <th className="px-3 py-2 text-right font-medium text-slate-600">
+                                  Ações
+                                </th>
+                              )}
                             </tr>
                           </thead>
                           <tbody className="divide-y divide-slate-100">
-                            {contrato.medicoes.map((medicao) => (
-                              <tr key={medicao.id}>
-                                <td className="px-3 py-2 font-medium text-slate-900">
-                                  {medicao.numeroMedicao}
-                                </td>
-                                <td className="px-3 py-2 text-muted-foreground">
-                                  {formatDateBR(medicao.dataMedicao)}
-                                </td>
-                                <td className="px-3 py-2 text-right text-slate-900">
-                                  {formatCurrency(Number(medicao.valorMedido))}
-                                </td>
-                                <td className="px-3 py-2 text-right text-emerald-600">
-                                  {medicao.valorPago
-                                    ? formatCurrency(Number(medicao.valorPago))
-                                    : "—"}
-                                </td>
-                                <td className="px-3 py-2 text-center">
-                                  {medicao.percentualFisico
-                                    ? `${Number(medicao.percentualFisico).toFixed(1)}%`
-                                    : "—"}
-                                </td>
-                              </tr>
-                            ))}
+                            {contrato.medicoes.map((medicao) => {
+                              const isExpanded = expandedMedicoes.has(
+                                medicao.id,
+                              );
+                              return (
+                                <>
+                                  <tr
+                                    key={medicao.id}
+                                    className="cursor-pointer hover:bg-slate-50 transition-colors"
+                                    onClick={() =>
+                                      toggleMedicaoExpanded(medicao.id)
+                                    }
+                                  >
+                                    <td className="px-3 py-2 text-slate-400">
+                                      {isExpanded ? (
+                                        <ChevronUp className="h-4 w-4" />
+                                      ) : (
+                                        <ChevronDown className="h-4 w-4" />
+                                      )}
+                                    </td>
+                                    <td className="px-3 py-2 font-medium text-slate-900">
+                                      {medicao.numeroMedicao}
+                                    </td>
+                                    <td className="px-3 py-2 text-muted-foreground">
+                                      {formatDateBR(medicao.dataMedicao)}
+                                    </td>
+                                    <td className="px-3 py-2 text-right text-slate-900">
+                                      {formatCurrency(
+                                        Number(medicao.valorMedido),
+                                      )}
+                                    </td>
+                                    <td className="px-3 py-2 text-right text-emerald-600">
+                                      {medicao.valorPago
+                                        ? formatCurrency(
+                                            Number(medicao.valorPago),
+                                          )
+                                        : "—"}
+                                    </td>
+                                    <td className="px-3 py-2 text-center">
+                                      {medicao.percentualFisico
+                                        ? `${Number(medicao.percentualFisico).toFixed(1)}%`
+                                        : "—"}
+                                    </td>
+                                    {canWrite("medicao") && (
+                                      <td className="px-3 py-2 text-right">
+                                        <div
+                                          className="flex justify-end gap-1"
+                                          onClick={(e) => e.stopPropagation()}
+                                        >
+                                          <Button
+                                            size="sm"
+                                            variant="ghost"
+                                            className="h-7 w-7 p-0"
+                                            onClick={() =>
+                                              handleEditarMedicao(
+                                                medicao,
+                                                contrato.id,
+                                              )
+                                            }
+                                            title="Editar medição"
+                                          >
+                                            <Pencil className="h-3.5 w-3.5" />
+                                          </Button>
+                                          <Button
+                                            size="sm"
+                                            variant="ghost"
+                                            className="h-7 w-7 p-0 text-destructive hover:text-destructive"
+                                            onClick={() =>
+                                              handleExcluirMedicao(
+                                                contrato.id,
+                                                medicao.id,
+                                              )
+                                            }
+                                            title="Excluir medição"
+                                          >
+                                            <Trash2 className="h-3.5 w-3.5" />
+                                          </Button>
+                                        </div>
+                                      </td>
+                                    )}
+                                  </tr>
+                                  {isExpanded && (
+                                    <tr key={`${medicao.id}-details`}>
+                                      <td
+                                        colSpan={canWrite("medicao") ? 7 : 6}
+                                        className="px-6 py-3 bg-slate-50/50"
+                                      >
+                                        <div className="grid gap-3 md:grid-cols-3 text-sm">
+                                          {medicao.situacao && (
+                                            <div>
+                                              <p className="text-xs text-slate-500">
+                                                Situação
+                                              </p>
+                                              <p className="font-medium text-slate-800 capitalize">
+                                                {medicao.situacao}
+                                              </p>
+                                            </div>
+                                          )}
+                                          {medicao.processoMedicao && (
+                                            <div>
+                                              <p className="text-xs text-slate-500">
+                                                Nº do Processo
+                                              </p>
+                                              <p className="font-medium text-slate-800">
+                                                {medicao.processoMedicao}
+                                              </p>
+                                            </div>
+                                          )}
+                                          {medicao.dataPagamento && (
+                                            <div>
+                                              <p className="text-xs text-slate-500">
+                                                Data do Pagamento
+                                              </p>
+                                              <p className="font-medium text-slate-800">
+                                                {formatDateBR(
+                                                  medicao.dataPagamento,
+                                                )}
+                                              </p>
+                                            </div>
+                                          )}
+                                          {medicao.observacoes && (
+                                            <div className="md:col-span-3">
+                                              <p className="text-xs text-slate-500">
+                                                Observações
+                                              </p>
+                                              <p className="text-slate-700">
+                                                {medicao.observacoes}
+                                              </p>
+                                            </div>
+                                          )}
+                                          {!medicao.situacao &&
+                                            !medicao.processoMedicao &&
+                                            !medicao.dataPagamento &&
+                                            !medicao.observacoes && (
+                                              <p className="text-xs text-slate-400 md:col-span-3">
+                                                Nenhuma informação adicional
+                                                registrada.
+                                              </p>
+                                            )}
+                                        </div>
+                                      </td>
+                                    </tr>
+                                  )}
+                                </>
+                              );
+                            })}
                           </tbody>
                         </table>
                       </div>
@@ -528,6 +724,21 @@ export function AbaEngenharia({ convenio, valoresVigentes, onUpdate }: Props) {
         contrapartidaAtual={contrapartidaVigenteAtual}
         onSuccess={onUpdate}
       />
+
+      {medicaoParaEditar && contratoIdDaMedicao && (
+        <EditarMedicaoModal
+          isOpen={showEditarMedicao}
+          onClose={() => {
+            setShowEditarMedicao(false);
+            setMedicaoParaEditar(null);
+            setContratoIdDaMedicao(null);
+          }}
+          contratoId={contratoIdDaMedicao}
+          convenioId={convenio.id}
+          medicao={medicaoParaEditar}
+          onSuccess={onUpdate}
+        />
+      )}
     </div>
   );
 }

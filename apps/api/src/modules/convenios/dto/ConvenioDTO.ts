@@ -16,6 +16,7 @@ export type CreateConvenioDTO = {
   numeroTermo?: string | null;
   esfera?: 'FEDERAL' | 'ESTADUAL' | null;
   modalidadeRepasseId?: string | null;
+  tipoTermoFormalizacaoId?: string | null;
   processoSPD?: string | null;
   processoCreditoAdicional?: string | null;
   area?: string | null;

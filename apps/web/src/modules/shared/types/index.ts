@@ -136,6 +136,12 @@ export interface ModalidadeRepasseCatalogo {
   nome: string;
 }
 
+export interface TipoTermoFormalizacaoCatalogo {
+  id: string;
+  _id?: string;
+  nome: string;
+}
+
 export interface Convenio {
   id: string;
   _id?: string;
@@ -176,6 +182,8 @@ export interface Convenio {
   programa?: Programa | null;
   programaId?: string | null;
   modalidadeRepasse?: ModalidadeRepasseCatalogo | null;
+  tipoTermoFormalizacaoId?: string | null;
+  tipoTermoFormalizacao?: TipoTermoFormalizacaoCatalogo | null;
   emendas?: EmendaParlamentar[];
   financeiroContas?: FinanceiroContas | null;
   contratos?: ContratoExecucao[];
@@ -298,6 +306,7 @@ export interface Catalogs {
   orgaos: OrgaoConcedente[];
   programas: Programa[];
   modalidadesRepasse: ModalidadeRepasseCatalogo[];
+  tiposTermoFormalizacao: TipoTermoFormalizacaoCatalogo[];
 }
 
 // ==================== NOVAS INTERFACES ====================

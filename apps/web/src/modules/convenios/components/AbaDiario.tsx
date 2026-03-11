@@ -7,11 +7,12 @@ import {
   Clock,
   User,
   Calendar,
-  Send
+  Send,
+  Pencil
 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import type { Convenio, StatusPendencia } from "@/modules/shared/types";
+import type { Convenio, Pendencia, StatusPendencia } from "@/modules/shared/types";
 import { pendenciaService } from "@/modules/convenios/services/pendenciaService";
 import { formatDateBR } from "@/modules/shared/lib/date";
 import { Badge } from "@/modules/shared/ui/badge";
@@ -27,6 +28,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/modules/shared/ui/dialog";
+import { EditarPendenciaModal } from "./modals/EditarPendenciaModal";
 
 type Props = {
   convenio: Convenio;
@@ -49,6 +51,7 @@ const prioridadeLabel: Record<number, { label: string; color: string }> = {
 export function AbaDiario({ convenio, onUpdate }: Props) {
   const queryClient = useQueryClient();
   const [showNovaPendencia, setShowNovaPendencia] = useState(false);
+  const [pendenciaParaEditar, setPendenciaParaEditar] = useState<Pendencia | null>(null);
   const [filtroStatus, setFiltroStatus] = useState<string>("");
   const pendencias = convenio.pendencias || [];
 
@@ -269,6 +272,13 @@ export function AbaDiario({ convenio, onUpdate }: Props) {
                     {/* Ações de Status */}
                     {pendencia.status !== "RESOLVIDA" && pendencia.status !== "CANCELADA" && (
                       <div className="mt-3 flex gap-2">
+                        <button
+                          onClick={() => setPendenciaParaEditar(pendencia)}
+                          className="rounded-lg bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-200"
+                        >
+                          <Pencil className="h-3 w-3 inline mr-1" />
+                          Editar
+                        </button>
                         {pendencia.status === "ABERTA" && (
                           <button
                             onClick={() =>
@@ -370,6 +380,17 @@ export function AbaDiario({ convenio, onUpdate }: Props) {
           </form>
         </DialogContent>
       </Dialog>
+
+      {/* Modal Editar Pendência */}
+      {pendenciaParaEditar && (
+        <EditarPendenciaModal
+          isOpen={Boolean(pendenciaParaEditar)}
+          onClose={() => setPendenciaParaEditar(null)}
+          convenioId={convenio.id}
+          pendencia={pendenciaParaEditar}
+          onSuccess={onUpdate}
+        />
+      )}
     </div>
   );
 }

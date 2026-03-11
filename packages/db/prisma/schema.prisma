@@ -152,7 +152,7 @@ model Convenio {
   id                       String             @id @default(uuid())
   codigo                   String             @unique
   titulo                   String
-  objeto                   String
+  objeto                   String             @db.Text
   status                   ConvenioStatus     @default(RASCUNHO)
   descricao                String?
   observacoes              String?

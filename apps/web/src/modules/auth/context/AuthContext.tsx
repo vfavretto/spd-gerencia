@@ -6,6 +6,12 @@ import {
   useState
 } from "react";
 import { authService } from "@/modules/auth/services/authService";
+import {
+  clearAuthSession,
+  defaultAuthSession,
+  readAuthSession,
+  writeAuthSession
+} from "@/modules/auth/lib/authStorage";
 import type { User } from "@/modules/shared/types";
 import { setAuthToken } from "@/modules/shared/lib/api";
 
@@ -18,8 +24,6 @@ type AuthContextValue = {
   logout: () => void;
 };
 
-const STORAGE_KEY = "@spd/auth";
-
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 type AuthState = {
@@ -27,25 +31,14 @@ type AuthState = {
   token: string | null;
 };
 
-const defaultState: AuthState = {
-  user: null,
-  token: null
-};
+const defaultState: AuthState = defaultAuthSession;
 
 // Função de inicialização síncrona para evitar setState em useEffect
 const getInitialState = (): AuthState => {
   if (typeof window === "undefined") return defaultState;
-  const stored = localStorage.getItem(STORAGE_KEY);
-  if (stored) {
-    try {
-      const parsed: AuthState = JSON.parse(stored);
-      setAuthToken(parsed.token);
-      return parsed;
-    } catch {
-      return defaultState;
-    }
-  }
-  return defaultState;
+  const parsed = readAuthSession();
+  setAuthToken(parsed.token);
+  return parsed;
 };
 
 export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
@@ -60,13 +53,13 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
       token: response.token
     };
     setState(nextState);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(nextState));
+    writeAuthSession(nextState);
     setAuthToken(response.token);
   }, []);
 
   const logout = useCallback(() => {
     setState(defaultState);
-    localStorage.removeItem(STORAGE_KEY);
+    clearAuthSession();
     setAuthToken(null);
   }, []);
 

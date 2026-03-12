@@ -54,14 +54,6 @@ npx prisma generate
 npx prisma migrate dev
 ```
 
-6. (Opcional) Execute a seed inicial:
-
-```bash
-# Popula dados base (usuários, secretarias, convênios exemplo, etc.)
-npm --workspace packages/db run seed
-```
-
-> Usuário inicial (seed): `admin@spd.gov.br` / `admin123`
 
 ## Scripts principais
 

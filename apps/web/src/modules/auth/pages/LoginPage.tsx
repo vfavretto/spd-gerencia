@@ -1,10 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Lock, User } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import { z } from "zod";
+import { consumeSessionNotice } from "@/modules/auth/lib/authStorage";
 import { useAuth } from "@/modules/auth/context/AuthContext";
+import { toast } from "@/modules/shared/ui/toaster";
 
 const loginSchema = z.object({
   matricula: z.string().min(1, "Informe sua matrícula"),
@@ -19,6 +21,13 @@ export const LoginPage = () => {
   const { login } = useAuth();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    const message = consumeSessionNotice();
+    if (message) {
+      toast.error(message);
+    }
+  }, []);
 
   const {
     register,

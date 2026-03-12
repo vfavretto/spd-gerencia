@@ -45,7 +45,7 @@ export class AuthenticateUserUseCase {
       env.jwtSecret,
       {
         subject: user.id,
-        expiresIn: '8h'
+        expiresIn: '2h'
       }
     );
 

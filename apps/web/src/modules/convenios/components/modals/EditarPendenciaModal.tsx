@@ -92,6 +92,9 @@ export function EditarPendenciaModal({
       queryClient.invalidateQueries({
         queryKey: ["convenio", String(convenioId)],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["agenda"],
+      });
       toast.success("Pendência atualizada com sucesso!");
       reset();
       onClose();

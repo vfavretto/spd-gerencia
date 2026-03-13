@@ -87,6 +87,7 @@ export function AbaDiario({ convenio, onUpdate }: Props) {
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["convenio", String(convenio.id)] });
+      queryClient.invalidateQueries({ queryKey: ["agenda"] });
       toast.success("Pendência registrada!");
       setShowNovaPendencia(false);
       reset();
@@ -102,6 +103,7 @@ export function AbaDiario({ convenio, onUpdate }: Props) {
       pendenciaService.update(convenio.id, id, { status }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["convenio", String(convenio.id)] });
+      queryClient.invalidateQueries({ queryKey: ["agenda"] });
       toast.success("Status atualizado!");
       onUpdate();
     }
@@ -394,4 +396,3 @@ export function AbaDiario({ convenio, onUpdate }: Props) {
     </div>
   );
 }
-

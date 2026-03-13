@@ -220,17 +220,25 @@ export type TipoEvento =
   | 'VENCIMENTO_ETAPA'
   | 'OUTROS';
 
+export type EventoOrigem = 'MANUAL' | 'PENDENCIA';
+
 export interface EventoAgenda {
   id: string;
   _id?: string;
   titulo: string;
   descricao?: string | null;
+  descricaoComplementar?: string | null;
   dataInicio: string;
   dataFim?: string | null;
   tipo: TipoEvento;
+  origem: EventoOrigem;
   local?: string | null;
   responsavel?: string | null;
+  concluidoEm?: string | null;
+  convenioId?: string | null;
+  pendenciaId?: string | null;
   convenio?: Convenio | null;
+  pendencia?: Pendencia | null;
 }
 
 export interface DashboardOverview {
@@ -420,6 +428,7 @@ export interface Pendencia {
   convenioId: string;
   criadoPorId?: string | null;
   criadoPor?: { id: string; nome: string } | null;
+  eventoAgenda?: EventoAgenda | null;
   criadoEm?: string;
 }
 

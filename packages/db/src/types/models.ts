@@ -3,6 +3,7 @@ import type {
   ConvenioStatus,
   TipoComunicado,
   TipoEvento,
+  EventoOrigem,
   EsferaGoverno,
   ModalidadeLicitacao,
   StatusPendencia,
@@ -197,6 +198,7 @@ export interface IPendencia extends BaseDocument {
   criadoPorId?: string | null;
   // Virtual populate
   criadoPor?: Partial<IUsuario> | null;
+  eventoAgenda?: IEventoAgenda | null;
 }
 
 // ==================== ADITIVO ====================
@@ -240,14 +242,19 @@ export interface IComunicado extends BaseDocument {
 export interface IEventoAgenda extends BaseDocument {
   titulo: string;
   descricao?: string | null;
+  descricaoComplementar?: string | null;
   tipo: TipoEvento;
+  origem: EventoOrigem;
   dataInicio: Date;
   dataFim?: Date | null;
   local?: string | null;
   responsavel?: string | null;
+  concluidoEm?: Date | null;
   convenioId?: string | null;
+  pendenciaId?: string | null;
   // Virtual populate
   convenio?: IConvenio | null;
+  pendencia?: IPendencia | null;
 }
 
 // ==================== CONVENIO ====================

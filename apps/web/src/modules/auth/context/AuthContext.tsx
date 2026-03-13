@@ -3,14 +3,14 @@ import {
   useCallback,
   useContext,
   useMemo,
-  useState
+  useState,
 } from "react";
 import { authService } from "@/modules/auth/services/authService";
 import {
   clearAuthSession,
   defaultAuthSession,
   readAuthSession,
-  writeAuthSession
+  writeAuthSession,
 } from "@/modules/auth/lib/authStorage";
 import type { User } from "@/modules/shared/types";
 import { setAuthToken } from "@/modules/shared/lib/api";
@@ -33,7 +33,6 @@ type AuthState = {
 
 const defaultState: AuthState = defaultAuthSession;
 
-// Função de inicialização síncrona para evitar setState em useEffect
 const getInitialState = (): AuthState => {
   if (typeof window === "undefined") return defaultState;
   const parsed = readAuthSession();
@@ -41,21 +40,25 @@ const getInitialState = (): AuthState => {
   return parsed;
 };
 
-export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
+export const AuthProvider: React.FC<React.PropsWithChildren> = ({
+  children,
+}) => {
   const [state, setState] = useState<AuthState>(getInitialState);
-  // Inicialização é síncrona agora, então começa como false
   const [initializing] = useState(false);
 
-  const login = useCallback(async ({ matricula, senha }: { matricula: string; senha: string }) => {
-    const response = await authService.login(matricula, senha);
-    const nextState: AuthState = {
-      user: response.usuario,
-      token: response.token
-    };
-    setState(nextState);
-    writeAuthSession(nextState);
-    setAuthToken(response.token);
-  }, []);
+  const login = useCallback(
+    async ({ matricula, senha }: { matricula: string; senha: string }) => {
+      const response = await authService.login(matricula, senha);
+      const nextState: AuthState = {
+        user: response.usuario,
+        token: response.token,
+      };
+      setState(nextState);
+      writeAuthSession(nextState);
+      setAuthToken(response.token);
+    },
+    [],
+  );
 
   const logout = useCallback(() => {
     setState(defaultState);
@@ -70,9 +73,9 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
       isAuthenticated: Boolean(state.token && state.user),
       initializing,
       login,
-      logout
+      logout,
     }),
-    [state, initializing, login, logout]
+    [state, initializing, login, logout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

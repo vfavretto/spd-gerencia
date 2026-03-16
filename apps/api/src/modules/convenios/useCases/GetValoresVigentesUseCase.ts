@@ -3,26 +3,26 @@ import { AppError } from '@shared/errors/AppError';
 import type { ConvenioRepository } from '../repositories/ConvenioRepository';
 
 export interface ValoresVigentes {
-  // Valores originais
+
   valorGlobal: number;
   valorRepasseOriginal: number;
   valorContrapartidaOriginal: number;
   
-  // Valores após aditivos
+
   valorRepasseVigente: number;
   valorContrapartidaVigente: number;
   valorGlobalVigente: number;
   
-  // Valores de aditivos
+
   totalAcrescimos: number;
   totalSupressoes: number;
   
-  // Valores executados
+
   valorTotalContratado: number;
   valorTotalMedido: number;
   valorTotalPago: number;
   
-  // Saldos
+
   saldoRepasse: number;
   saldoContrapartida: number;
   saldoAContratar: number;
@@ -30,11 +30,11 @@ export interface ValoresVigentes {
   saldoExecucao: number;
   totalCPExclusiva: number;
   
-  // Percentuais
+
   percentualExecutado: number;
   percentualPago: number;
   
-  // Última medição
+
   dataUltimaMedicao: Date | null;
   diasSemMedicao: number | null;
 }
@@ -59,25 +59,25 @@ export class GetValoresVigentesUseCase {
     const ajusteRepasseVigente = Number(convenio.financeiroContas?.ajusteRepasseVigente) || 0;
     const ajusteContrapartidaVigente = Number(convenio.financeiroContas?.ajusteContrapartidaVigente) || 0;
     
-    // Calcular totais de aditivos
+
     const aditivos = (convenio.aditivos || []).filter((aditivo) => !aditivo.contratoId);
     const { totalAcrescimos, totalSupressoes } = this.calcularTotaisAditivos(aditivos);
     
-    // Valores vigentes base (após aditivos de convênio)
+
     const valorRepasseVigenteBase = valorRepasseOriginal + totalAcrescimos - totalSupressoes;
     const valorContrapartidaVigenteBase = valorContrapartidaOriginal; // Contrapartida geralmente não muda por aditivo
 
-    // Valores vigentes finais (com ajuste manual)
+
     const valorRepasseVigente = valorRepasseVigenteBase + ajusteRepasseVigente;
     const valorContrapartidaVigente = valorContrapartidaVigenteBase + ajusteContrapartidaVigente;
     const valorGlobalVigente = valorRepasseVigente + valorContrapartidaVigente;
     
-    // Calcular valores executados
+
     const contratos = convenio.contratos || [];
     const { valorTotalContratado, valorTotalMedido, valorTotalPago, totalCPExclusiva, dataUltimaMedicao } = 
       this.calcularValoresExecutados(contratos);
     
-    // Saldos
+
     const saldoRepasse = valorRepasseVigente - valorTotalPago;
     const saldoContrapartida = valorContrapartidaVigente;
     const saldoAContratar = valorGlobalVigente - valorTotalContratado;
@@ -86,7 +86,7 @@ export class GetValoresVigentesUseCase {
     // Saldo de execução: inclui CP Exclusiva para cobrir excedentes
     const saldoExecucao = valorGlobalVigente + totalCPExclusiva - valorTotalContratado;
     
-    // Percentuais
+
     const percentualExecutado = valorGlobalVigente > 0 
       ? (valorTotalMedido / valorGlobalVigente) * 100 
       : 0;
@@ -94,7 +94,7 @@ export class GetValoresVigentesUseCase {
       ? (valorTotalPago / valorGlobalVigente) * 100 
       : 0;
     
-    // Dias sem medição
+
     const diasSemMedicao = dataUltimaMedicao 
       ? Math.floor((Date.now() - dataUltimaMedicao.getTime()) / (1000 * 60 * 60 * 24))
       : null;
@@ -129,7 +129,7 @@ export class GetValoresVigentesUseCase {
     let totalSupressoes = 0;
     
     for (const aditivo of aditivos) {
-      // Tipos que envolvem valor: VALOR, PRAZO_E_VALOR, ACRESCIMO, SUPRESSAO
+
       if (['VALOR', 'PRAZO_E_VALOR', 'ACRESCIMO'].includes(aditivo.tipoAditivo)) {
         totalAcrescimos += Number(aditivo.valorAcrescimo) || 0;
       }

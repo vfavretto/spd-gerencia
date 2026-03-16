@@ -7,19 +7,16 @@ const controller = new ConfiguracoesController();
 
 export const configuracoesRoutes = Router();
 
-// Secretarias - GET para todos, demais apenas ADMIN
 configuracoesRoutes.get('/secretarias', asyncHandler(controller.listarSecretarias.bind(controller)));
 configuracoesRoutes.post('/secretarias', ensureRole('ADMIN'), asyncHandler(controller.criarSecretaria.bind(controller)));
 configuracoesRoutes.put('/secretarias/:id', ensureRole('ADMIN'), asyncHandler(controller.atualizarSecretaria.bind(controller)));
 configuracoesRoutes.delete('/secretarias/:id', ensureRole('ADMIN'), asyncHandler(controller.removerSecretaria.bind(controller)));
 
-// Órgãos - GET para todos, demais apenas ADMIN
 configuracoesRoutes.get('/orgaos', asyncHandler(controller.listarOrgaos.bind(controller)));
 configuracoesRoutes.post('/orgaos', ensureRole('ADMIN'), asyncHandler(controller.criarOrgao.bind(controller)));
 configuracoesRoutes.put('/orgaos/:id', ensureRole('ADMIN'), asyncHandler(controller.atualizarOrgao.bind(controller)));
 configuracoesRoutes.delete('/orgaos/:id', ensureRole('ADMIN'), asyncHandler(controller.removerOrgao.bind(controller)));
 
-// Programas - GET para todos, demais apenas ADMIN
 configuracoesRoutes.get('/programas', asyncHandler(controller.listarProgramas.bind(controller)));
 configuracoesRoutes.post('/programas', ensureRole('ADMIN'), asyncHandler(controller.criarPrograma.bind(controller)));
 configuracoesRoutes.put('/programas/:id', ensureRole('ADMIN'), asyncHandler(controller.atualizarPrograma.bind(controller)));
@@ -31,7 +28,6 @@ configuracoesRoutes.post('/modalidades-repasse', ensureRole('ADMIN'), asyncHandl
 configuracoesRoutes.put('/modalidades-repasse/:id', ensureRole('ADMIN'), asyncHandler(controller.atualizarModalidadeRepasse.bind(controller)));
 configuracoesRoutes.delete('/modalidades-repasse/:id', ensureRole('ADMIN'), asyncHandler(controller.removerModalidadeRepasse.bind(controller)));
 
-// Tipos de Termo de Formalização - GET para todos, demais apenas ADMIN
 configuracoesRoutes.get('/tipos-termo-formalizacao', asyncHandler(controller.listarTiposTermoFormalizacao.bind(controller)));
 configuracoesRoutes.post('/tipos-termo-formalizacao', ensureRole('ADMIN'), asyncHandler(controller.criarTipoTermoFormalizacao.bind(controller)));
 configuracoesRoutes.put('/tipos-termo-formalizacao/:id', ensureRole('ADMIN'), asyncHandler(controller.atualizarTipoTermoFormalizacao.bind(controller)));

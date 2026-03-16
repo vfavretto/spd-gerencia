@@ -9,10 +9,8 @@ const controller = new AuthController();
 
 export const authRoutes = Router();
 
-// Rota pública
 authRoutes.post('/login', loginRateLimit, asyncHandler(controller.login.bind(controller)));
 
-// Rotas protegidas - apenas ADMIN
 authRoutes.post(
   '/register',
   ensureAuthenticated,

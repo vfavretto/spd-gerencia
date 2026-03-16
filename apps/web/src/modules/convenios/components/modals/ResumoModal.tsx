@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { convenioService } from "@/modules/convenios/services/convenioService";
 import { StatusBadge } from "@/modules/shared/components/StatusBadge";
-import { formatCurrency, formatDate } from "@/modules/shared/utils/format";
+import { formatCurrency, formatDate } from "@/modules/shared/lib/format";
 
 function calcDiasRestantes(dataFim: string | null | undefined): number | null {
   if (!dataFim) return null;

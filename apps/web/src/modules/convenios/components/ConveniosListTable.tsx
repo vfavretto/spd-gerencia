@@ -1,7 +1,7 @@
 import { Edit, FileBarChart2 } from "lucide-react";
 import { StatusBadge } from "@/modules/shared/components/StatusBadge";
 import type { Convenio } from "@/modules/shared/types";
-import { formatCurrency, formatDate } from "@/modules/shared/utils/format";
+import { formatCurrency, formatDate } from "@/modules/shared/lib/format";
 
 type ConveniosListTableProps = {
   convenios: Convenio[];

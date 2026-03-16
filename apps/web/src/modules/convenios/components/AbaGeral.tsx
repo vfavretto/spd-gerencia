@@ -252,7 +252,6 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
           </div>
         </div>
 
-        {/* Campos de Processo */}
         <div className="grid gap-4 md:grid-cols-3">
           <div className="space-y-2">
             <Label>Processo SPD</Label>
@@ -300,7 +299,6 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        {/* Identificação */}
         <div className="space-y-4">
           <h4 className="font-medium text-slate-700 border-b border-slate-100 pb-2">
             Identificação
@@ -341,7 +339,6 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
           </dl>
         </div>
 
-        {/* Vigência */}
         <div className="space-y-4">
           <h4 className="font-medium text-muted-foreground border-b pb-2">
             Vigência
@@ -369,7 +366,6 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
         </div>
       </div>
 
-      {/* Objeto */}
       <div className="space-y-2">
         <h4 className="font-medium text-slate-700">Objeto</h4>
         <p className="text-sm text-slate-600 bg-slate-50 rounded-xl p-4">
@@ -377,7 +373,6 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
         </p>
       </div>
 
-      {/* Classificação */}
       <div className="grid gap-4 md:grid-cols-3">
         <div className="rounded-xl bg-slate-50 p-4">
           <p className="text-xs text-slate-500 mb-1">Secretaria</p>
@@ -399,7 +394,6 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
         </div>
       </div>
 
-      {/* Processos */}
       {(convenio.processoSPD || convenio.processoCreditoAdicional || convenio.area) && (
         <div className="grid gap-4 md:grid-cols-3">
           <div className="rounded-xl bg-slate-50 p-4">
@@ -423,7 +417,6 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
         </div>
       )}
 
-      {/* Emendas Parlamentares */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <h4 className="font-medium text-slate-700 flex items-center gap-2">
@@ -560,7 +553,6 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
         )}
       </div>
 
-      {/* Aditivos */}
       {aditivosConvenio.length > 0 && (
         <div className="space-y-3">
           <h4 className="font-medium text-slate-700">Histórico de Aditivos</h4>
@@ -615,7 +607,6 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
         </div>
       )}
 
-      {/* Modais */}
       <RegistrarAssinaturaModal
         isOpen={showAssinaturaModal}
         onClose={() => setShowAssinaturaModal(false)}

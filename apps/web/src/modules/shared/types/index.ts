@@ -31,8 +31,6 @@ export interface UserListItem {
   criadoEm: string;
 }
 
-// ==================== AUDITORIA ====================
-
 export type AcaoAuditoria = 'CREATE' | 'UPDATE' | 'DELETE';
 
 export interface AuditLog {
@@ -56,8 +54,6 @@ export interface AuditLogListResponse {
   page: number;
   totalPages: number;
 }
-
-// ==================== SNAPSHOTS ====================
 
 export interface ConvenioSnapshot {
   id: string;
@@ -151,7 +147,6 @@ export interface Convenio {
   status: ConvenioStatus;
   descricao?: string | null;
   observacoes?: string | null;
-  // Novos campos de identificação
   numeroProposta?: string | null;
   dataInicioProcesso?: string | null;
   modalidadeRepasseId?: string | null;
@@ -161,20 +156,16 @@ export interface Convenio {
   esfera?: EsferaGoverno | null;
   ministerioOrgao?: string | null;
   objetoDescricao?: string | null;
-  // Valores financeiros
   valorGlobal: string | number;
   valorRepasse?: string | number | null;
   valorContrapartida?: string | number | null;
-  // Datas
   dataAssinatura?: string | null;
   dataInicioVigencia?: string | null;
   dataFimVigencia?: string | null;
   dataPrestacaoContas?: string | null;
-  // Campos de processo
   processoSPD?: string | null;
   processoCreditoAdicional?: string | null;
   area?: string | null;
-  // Relacionamentos
   secretaria?: Secretaria;
   secretariaId?: string;
   orgao?: OrgaoConcedente | null;
@@ -193,10 +184,7 @@ export interface Convenio {
   notasEmpenho?: NotaEmpenho[];
   criadoEm?: string;
   atualizadoEm?: string;
-
 }
-
-
 
 export type TipoComunicado = 'ENTRADA' | 'SAIDA';
 
@@ -259,14 +247,12 @@ export interface DashboardOverview {
 }
 
 export interface DashboardResumo {
-  // Visão financeira
   totalPorEsfera: { esfera: string | null; total: number; quantidade: number }[];
   conveniosPorStatus: { status: ConvenioStatus; total: number }[];
   somaRepasses: number;
   somaContrapartidas: number;
   valorGlobalTotal: number;
-  
-  // Execução
+
   execucao: {
     valorTotalContratado: number;
     valorTotalMedido: number;
@@ -274,32 +260,28 @@ export interface DashboardResumo {
     percentualMedido: number;
     percentualPago: number;
   };
-  
-  // Pendências
+
   pendencias: {
     abertas: number;
     emAndamento: number;
     vencidasHoje: number;
     total: number;
   };
-  
-  // Contratos
+
   contratos: {
     total: number;
     emExecucao: number;
     concluidos: number;
     valorTotal: number;
   };
-  
-  // Alertas
+
   alertas: {
     conveniosVencendo30Dias: number;
     conveniosSemMedicao60Dias: number;
     pendenciasAtrasadas: number;
     contratosSemMedicaoRecente: number;
   };
-  
-  // Top convênios por valor
+
   topConvenios: {
     id: string;
     codigo: string;
@@ -317,8 +299,6 @@ export interface Catalogs {
   modalidadesRepasse: ModalidadeRepasseCatalogo[];
   tiposTermoFormalizacao: TipoTermoFormalizacaoCatalogo[];
 }
-
-// ==================== NOVAS INTERFACES ====================
 
 export interface EmendaParlamentar {
   id: string;
@@ -347,7 +327,6 @@ export interface FinanceiroContas {
   saldoRendimentos?: string | number | null;
   fichasOrcamentarias?: string | null;
   observacoes?: string | null;
-  // Novos campos
   codigoReceita?: string | null;
   dataDeposito?: string | null;
   ajusteRepasseVigente?: string | number | null;
@@ -376,7 +355,6 @@ export interface ContratoExecucao {
   artRrt?: string | null;
   situacao?: string | null;
   observacoes?: string | null;
-  // Novos campos
   cno?: string | null;
   prazoExecucaoDias?: number | null;
   dataTerminoExecucao?: string | null;
@@ -461,8 +439,6 @@ export interface VigenciaInfo {
   diasRestantes: number | null;
 }
 
-// ==================== NOVAS INTERFACES (PLANILHA) ====================
-
 export interface FichaOrcamentaria {
   id: string;
   _id?: string;
@@ -493,38 +469,25 @@ export type CreateNotaEmpenhoDTO = Omit<NotaEmpenho, 'id' | '_id' | 'convenioId'
 export type UpdateNotaEmpenhoDTO = Partial<CreateNotaEmpenhoDTO>;
 
 export interface ValoresVigentes {
-  // Valores originais
   valorGlobal: number;
   valorRepasseOriginal: number;
   valorContrapartidaOriginal: number;
-  
-  // Valores após aditivos
   valorRepasseVigente: number;
   valorContrapartidaVigente: number;
   valorGlobalVigente: number;
-  
-  // Valores de aditivos
   totalAcrescimos: number;
   totalSupressoes: number;
-  
-  // Valores executados
   valorTotalContratado: number;
   valorTotalMedido: number;
   valorTotalPago: number;
-  
-  // Saldos
   saldoRepasse: number;
   saldoContrapartida: number;
   saldoAContratar: number;
   saldoConvenio: number;
   saldoExecucao: number;
   totalCPExclusiva: number;
-  
-  // Percentuais
   percentualExecutado: number;
   percentualPago: number;
-  
-  // Última medição
   dataUltimaMedicao: string | null;
   diasSemMedicao: number | null;
 }

@@ -3,7 +3,7 @@ import { History } from "lucide-react";
 import { useState } from "react";
 import { convenioService } from "@/modules/convenios/services/convenioService";
 import { snapshotService } from "@/modules/configuracoes/services/snapshotService";
-import { formatDate } from "@/modules/shared/utils/format";
+import { formatDate } from "@/modules/shared/lib/format";
 
 export function SnapshotsSection() {
   const [selectedConvenioId, setSelectedConvenioId] = useState("");

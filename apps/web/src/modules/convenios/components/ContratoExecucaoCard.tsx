@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import type { ContratoExecucao, Convenio, Medicao } from "@/modules/shared/types";
 import { formatDateBR } from "@/modules/shared/lib/date";
-import { formatCurrency } from "@/modules/shared/utils/format";
+import { formatCurrency } from "@/modules/shared/lib/format";
 import { Progress } from "@/modules/shared/ui/progress";
 import { Badge } from "@/modules/shared/ui/badge";
 import { Button } from "@/modules/shared/ui/button";

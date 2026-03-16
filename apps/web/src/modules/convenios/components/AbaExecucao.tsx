@@ -10,7 +10,7 @@ import {
 import { useState } from "react";
 import type { Convenio, ValoresVigentes } from "@/modules/shared/types";
 import { formatDateBR } from "@/modules/shared/lib/date";
-import { formatCurrency } from "@/modules/shared/utils/format";
+import { formatCurrency } from "@/modules/shared/lib/format";
 import { Progress, ProgressCircle } from "@/modules/shared/ui/progress";
 import { Button } from "@/modules/shared/ui/button";
 import { ConfirmDialog } from "@/modules/shared/components/ConfirmDialog";

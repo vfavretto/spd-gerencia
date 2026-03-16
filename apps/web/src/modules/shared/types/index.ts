@@ -136,6 +136,12 @@ export interface ModalidadeRepasseCatalogo {
   nome: string;
 }
 
+export interface TipoTermoFormalizacaoCatalogo {
+  id: string;
+  _id?: string;
+  nome: string;
+}
+
 export interface Convenio {
   id: string;
   _id?: string;
@@ -176,6 +182,8 @@ export interface Convenio {
   programa?: Programa | null;
   programaId?: string | null;
   modalidadeRepasse?: ModalidadeRepasseCatalogo | null;
+  tipoTermoFormalizacaoId?: string | null;
+  tipoTermoFormalizacao?: TipoTermoFormalizacaoCatalogo | null;
   emendas?: EmendaParlamentar[];
   financeiroContas?: FinanceiroContas | null;
   contratos?: ContratoExecucao[];
@@ -203,6 +211,7 @@ export interface Comunicado {
   origem?: string | null;
   destino?: string | null;
   responsavel?: string | null;
+  arquivoUrl?: string | null;
 }
 
 export type TipoEvento =
@@ -212,17 +221,25 @@ export type TipoEvento =
   | 'VENCIMENTO_ETAPA'
   | 'OUTROS';
 
+export type EventoOrigem = 'MANUAL' | 'PENDENCIA';
+
 export interface EventoAgenda {
   id: string;
   _id?: string;
   titulo: string;
   descricao?: string | null;
+  descricaoComplementar?: string | null;
   dataInicio: string;
   dataFim?: string | null;
   tipo: TipoEvento;
+  origem: EventoOrigem;
   local?: string | null;
   responsavel?: string | null;
+  concluidoEm?: string | null;
+  convenioId?: string | null;
+  pendenciaId?: string | null;
   convenio?: Convenio | null;
+  pendencia?: Pendencia | null;
 }
 
 export interface DashboardOverview {
@@ -298,6 +315,7 @@ export interface Catalogs {
   orgaos: OrgaoConcedente[];
   programas: Programa[];
   modalidadesRepasse: ModalidadeRepasseCatalogo[];
+  tiposTermoFormalizacao: TipoTermoFormalizacaoCatalogo[];
 }
 
 // ==================== NOVAS INTERFACES ====================
@@ -411,6 +429,7 @@ export interface Pendencia {
   convenioId: string;
   criadoPorId?: string | null;
   criadoPor?: { id: string; nome: string } | null;
+  eventoAgenda?: EventoAgenda | null;
   criadoEm?: string;
 }
 

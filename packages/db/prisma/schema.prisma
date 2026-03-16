@@ -42,6 +42,11 @@ enum TipoEvento {
   OUTROS
 }
 
+enum EventoOrigem {
+  MANUAL
+  PENDENCIA
+}
+
 enum EsferaGoverno {
   FEDERAL
   ESTADUAL
@@ -139,17 +144,27 @@ model ModalidadeRepasseCatalogo {
   convenios Convenio[]
 }
 
+model TipoTermoFormalizacaoCatalogo {
+  id           String   @id @default(uuid())
+  nome         String
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  convenios Convenio[]
+}
+
 model Convenio {
   id                       String             @id @default(uuid())
   codigo                   String             @unique
   titulo                   String
-  objeto                   String
+  objeto                   String             @db.Text
   status                   ConvenioStatus     @default(RASCUNHO)
   descricao                String?
   observacoes              String?
   numeroProposta           String?
   dataInicioProcesso       DateTime?
   modalidadeRepasseId      String?
+  tipoTermoFormalizacaoId  String?
   termoFormalizacao        String?
   numeroTermo              String?
   clausulaSuspensiva       Boolean            @default(false)
@@ -176,6 +191,7 @@ model Convenio {
   orgao      OrgaoConcedente? @relation(fields: [orgaoId], references: [id])
   programa   Programa?        @relation(fields: [programaId], references: [id])
   modalidadeRepasse ModalidadeRepasseCatalogo? @relation(fields: [modalidadeRepasseId], references: [id])
+  tipoTermoFormalizacao TipoTermoFormalizacaoCatalogo? @relation(fields: [tipoTermoFormalizacaoId], references: [id])
 
   anexos              ConvenioAnexo[]
   emendas             EmendaParlamentar[]
@@ -191,6 +207,7 @@ model Convenio {
   @@index([status])
   @@index([secretariaId])
   @@index([modalidadeRepasseId])
+  @@index([tipoTermoFormalizacaoId])
 }
 
 model ConvenioAnexo {
@@ -369,6 +386,7 @@ model Pendencia {
 
   convenio  Convenio @relation(fields: [convenioId], references: [id])
   criadoPor Usuario? @relation(fields: [criadoPorId], references: [id])
+  eventoAgenda EventoAgenda?
 
   @@index([convenioId])
   @@index([criadoPorId])
@@ -395,21 +413,28 @@ model Comunicado {
 }
 
 model EventoAgenda {
-  id           String     @id @default(uuid())
-  titulo       String
-  descricao    String?
-  tipo         TipoEvento
-  dataInicio   DateTime
-  dataFim      DateTime?
-  local        String?
-  responsavel  String?
-  convenioId   String?
-  criadoEm     DateTime   @default(now())
-  atualizadoEm DateTime   @updatedAt
+  id                   String       @id @default(uuid())
+  titulo               String
+  descricao            String?
+  descricaoComplementar String?
+  tipo                 TipoEvento
+  origem               EventoOrigem @default(MANUAL)
+  dataInicio           DateTime
+  dataFim              DateTime?
+  local                String?
+  responsavel          String?
+  concluidoEm          DateTime?
+  convenioId           String?
+  pendenciaId          String?      @unique
+  criadoEm             DateTime     @default(now())
+  atualizadoEm         DateTime     @updatedAt
 
-  convenio Convenio? @relation(fields: [convenioId], references: [id])
+  convenio  Convenio?  @relation(fields: [convenioId], references: [id])
+  pendencia Pendencia? @relation(fields: [pendenciaId], references: [id])
 
   @@index([convenioId])
+  @@index([origem])
+  @@index([concluidoEm])
 }
 
 model AuditLog {

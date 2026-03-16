@@ -4,14 +4,16 @@ import type {
   ModalidadeRepasseCatalogo,
   OrgaoConcedente,
   Programa,
-  Secretaria
+  Secretaria,
+  TipoTermoFormalizacaoCatalogo
 } from "@/modules/shared/types";
 
 const endpoints = {
   secretarias: "/configuracoes/secretarias",
   orgaos: "/configuracoes/orgaos",
   programas: "/configuracoes/programas",
-  modalidadesRepasse: "/configuracoes/modalidades-repasse"
+  modalidadesRepasse: "/configuracoes/modalidades-repasse",
+  tiposTermoFormalizacao: "/configuracoes/tipos-termo-formalizacao"
 } as const;
 
 type Resource = keyof typeof endpoints;
@@ -33,15 +35,20 @@ export const configService = {
     const { data } = await api.get<ModalidadeRepasseCatalogo[]>(endpoints.modalidadesRepasse);
     return data;
   },
+  async listTiposTermoFormalizacao(): Promise<TipoTermoFormalizacaoCatalogo[]> {
+    const { data } = await api.get<TipoTermoFormalizacaoCatalogo[]>(endpoints.tiposTermoFormalizacao);
+    return data;
+  },
   async getCatalogs(): Promise<Catalogs> {
-    const [secretarias, orgaos, programas, modalidadesRepasse] = await Promise.all([
+    const [secretarias, orgaos, programas, modalidadesRepasse, tiposTermoFormalizacao] = await Promise.all([
       this.listSecretarias(),
       this.listOrgaos(),
       this.listProgramas(),
-      this.listModalidadesRepasse()
+      this.listModalidadesRepasse(),
+      this.listTiposTermoFormalizacao()
     ]);
 
-    return { secretarias, orgaos, programas, modalidadesRepasse };
+    return { secretarias, orgaos, programas, modalidadesRepasse, tiposTermoFormalizacao };
   },
   async create(resource: Resource, payload: Record<string, unknown>) {
     const { data } = await api.post(endpoints[resource], payload);

@@ -6,6 +6,7 @@ export {
   ConvenioStatus,
   TipoComunicado,
   TipoEvento,
+  EventoOrigem,
   EsferaGoverno,
   ModalidadeLicitacao,
   StatusPendencia,

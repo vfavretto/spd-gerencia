@@ -9,6 +9,8 @@ import { GetPendenciaUseCase } from '../useCases/GetPendenciaUseCase';
 import { CreatePendenciaUseCase } from '../useCases/CreatePendenciaUseCase';
 import { UpdatePendenciaUseCase } from '../useCases/UpdatePendenciaUseCase';
 import { DeletePendenciaUseCase } from '../useCases/DeletePendenciaUseCase';
+import { PendenciaAgendaSyncService } from '../services/PendenciaAgendaSyncService';
+import { AppError } from '@shared/errors/AppError';
 
 const statusEnum = z.nativeEnum(StatusPendencia);
 
@@ -28,6 +30,7 @@ const updateSchema = createSchema.partial();
 export class PendenciaController {
   private readonly repository = new PrismaPendenciaRepository();
   private readonly statusService = new ConvenioStatusService(new PrismaConvenioRepository());
+  private readonly agendaSyncService = new PendenciaAgendaSyncService();
 
   async index(req: Request, res: Response) {
     const convenioId = req.params.convenioId;
@@ -58,6 +61,8 @@ export class PendenciaController {
       criadoPorId: userId 
     });
 
+    await this.agendaSyncService.syncOnCreate(pendencia);
+
     // Recalcula status do convênio (pode mudar RASCUNHO → EM_ANALISE)
     await this.statusService.recalculate(convenioId);
 
@@ -68,8 +73,14 @@ export class PendenciaController {
     const convenioId = req.params.convenioId;
     const id = req.params.id;
     const payload = updateSchema.parse(req.body);
+    const previous = await this.repository.findById(id);
+    if (!previous) {
+      throw new AppError('Pendência não encontrada', 404);
+    }
     const useCase = new UpdatePendenciaUseCase(this.repository);
     const pendencia = await useCase.execute(id, payload);
+
+    await this.agendaSyncService.syncOnUpdate(previous, pendencia);
 
     // Recalcula status do convênio (pode mudar EM_ANALISE → RASCUNHO)
     await this.statusService.recalculate(convenioId);
@@ -80,8 +91,14 @@ export class PendenciaController {
   async remove(req: Request, res: Response) {
     const convenioId = req.params.convenioId;
     const id = req.params.id;
+    const previous = await this.repository.findById(id);
+    if (!previous) {
+      throw new AppError('Pendência não encontrada', 404);
+    }
     const useCase = new DeletePendenciaUseCase(this.repository);
     await useCase.execute(id);
+
+    await this.agendaSyncService.syncOnDelete(previous);
 
     // Recalcula status do convênio (pode mudar EM_ANALISE → RASCUNHO)
     await this.statusService.recalculate(convenioId);

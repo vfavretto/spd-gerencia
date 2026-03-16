@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { clearAuthSession, writeSessionNotice } from '@/modules/auth/lib/authStorage';
 
 const normalizeBaseUrl = (value?: string) => {
   if (!value) return 'http://localhost:4000';
@@ -12,15 +13,17 @@ export const api = axios.create({
   timeout: 15000
 });
 
+const isLoginRequest = (url?: string) => url?.includes('/auth/login');
+
 // Interceptor para tratar erros de autenticação (401)
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      // Limpa o token e redireciona para login
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      
+    if (error.response?.status === 401 && !isLoginRequest(error.config?.url)) {
+      clearAuthSession();
+      writeSessionNotice('Sua sessão expirou. Faça login novamente.');
+      delete api.defaults.headers.common.Authorization;
+
       // Só redireciona se não estiver já na página de login
       if (!window.location.pathname.includes('/login')) {
         window.location.href = '/login';

@@ -1,14 +1,16 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Lock, User } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import { z } from "zod";
+import { consumeSessionNotice } from "@/modules/auth/lib/authStorage";
 import { useAuth } from "@/modules/auth/context/AuthContext";
+import { toast } from "@/modules/shared/ui/toaster";
 
 const loginSchema = z.object({
   matricula: z.string().min(1, "Informe sua matrícula"),
-  senha: z.string().min(6, "Mínimo de 6 caracteres")
+  senha: z.string().min(6, "Mínimo de 6 caracteres"),
 });
 
 type LoginForm = z.infer<typeof loginSchema>;
@@ -20,12 +22,19 @@ export const LoginPage = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
 
+  useEffect(() => {
+    const message = consumeSessionNotice();
+    if (message) {
+      toast.error(message);
+    }
+  }, []);
+
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting }
+    formState: { errors, isSubmitting },
   } = useForm<LoginForm>({
-    resolver: zodResolver(loginSchema)
+    resolver: zodResolver(loginSchema),
   });
 
   const onSubmit = async (data: LoginForm) => {
@@ -36,17 +45,16 @@ export const LoginPage = () => {
       navigate(redirect ?? "/dashboard", { replace: true });
     } catch (error) {
       const message =
-        (error as { response?: { data?: { message?: string } } })?.response?.data
-          ?.message ?? "Não foi possível autenticar. Verifique sua matrícula e senha.";
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message ??
+        "Não foi possível autenticar. Verifique sua matrícula e senha.";
       setErrorMessage(message);
     }
   };
 
   return (
     <div className="flex min-h-screen">
-      {/* Lado esquerdo - Branding */}
       <div className="relative hidden w-1/2 flex-col items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-sky-100 p-12 lg:flex">
-        {/* Decoração de fundo */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute -left-20 -top-20 h-72 w-72 rounded-full bg-blue-200/30 blur-3xl" />
           <div className="absolute -bottom-32 -right-20 h-96 w-96 rounded-full bg-indigo-200/30 blur-3xl" />
@@ -70,8 +78,8 @@ export const LoginPage = () => {
               Sistema de Gestão de Convênios
             </h2>
             <p className="mt-2 text-sm leading-relaxed text-slate-500">
-              Plataforma interna para controle de convênios, comunicados,
-              agenda institucional e acompanhamento financeiro.
+              Plataforma interna para controle de convênios, comunicados, agenda
+              institucional e acompanhamento financeiro.
             </p>
           </div>
           <p className="mt-8 text-xs text-slate-400">
@@ -79,18 +87,17 @@ export const LoginPage = () => {
           </p>
         </div>
       </div>
-
-      {/* Lado direito - Formulário */}
       <div className="flex w-full flex-col items-center justify-center bg-white px-6 py-12 lg:w-1/2">
         <div className="w-full max-w-sm">
-          {/* Logo mobile */}
           <div className="mb-8 flex flex-col items-center lg:hidden">
             <img
               src="/assets/brasao.png"
               alt="Brasão de Votorantim"
               className="mb-4 h-20 w-auto"
             />
-            <p className="text-sm font-medium text-slate-400">Prefeitura de Votorantim</p>
+            <p className="text-sm font-medium text-slate-400">
+              Prefeitura de Votorantim
+            </p>
           </div>
 
           <div className="mb-8">
@@ -103,7 +110,6 @@ export const LoginPage = () => {
           </div>
 
           <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
-            {/* Matrícula */}
             <div>
               <label className="mb-1.5 block text-sm font-medium text-slate-600">
                 Matrícula
@@ -126,8 +132,6 @@ export const LoginPage = () => {
                 </p>
               )}
             </div>
-
-            {/* Senha */}
             <div>
               <label className="mb-1.5 block text-sm font-medium text-slate-600">
                 Senha
@@ -162,15 +166,11 @@ export const LoginPage = () => {
                 </p>
               )}
             </div>
-
-            {/* Erro */}
             {errorMessage && (
               <div className="rounded-2xl border border-rose-100 bg-rose-50 px-4 py-3 text-sm text-rose-600">
                 {errorMessage}
               </div>
             )}
-
-            {/* Botão */}
             <button
               type="submit"
               disabled={isSubmitting}

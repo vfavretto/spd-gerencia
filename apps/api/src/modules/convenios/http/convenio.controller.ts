@@ -44,6 +44,7 @@ const commonSchema = {
   numeroTermo: z.string().nullable().optional(),
   esfera: z.enum(['FEDERAL', 'ESTADUAL']).nullable().optional(),
   modalidadeRepasseId: z.string().nullable().optional(),
+  tipoTermoFormalizacaoId: z.string().nullable().optional(),
   processoSPD: z.string().nullable().optional(),
   processoCreditoAdicional: z.string().nullable().optional(),
   area: z.string().nullable().optional(),

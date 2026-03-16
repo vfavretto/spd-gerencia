@@ -60,7 +60,7 @@ describe('AuthenticateUserUseCase', () => {
     expect(jwt.sign).toHaveBeenCalledWith(
       { email: user.email, role: user.role, matricula: user.matricula, nome: user.nome },
       'test-secret',
-      { subject: user.id, expiresIn: '8h' }
+      { subject: user.id, expiresIn: '2h' }
     );
     expect(result).toEqual({
       token: 'fake-jwt-token',

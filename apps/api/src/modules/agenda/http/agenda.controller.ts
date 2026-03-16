@@ -6,10 +6,12 @@ import { GetEventoUseCase } from '../useCases/GetEventoUseCase';
 import { CreateEventoUseCase } from '../useCases/CreateEventoUseCase';
 import { UpdateEventoUseCase } from '../useCases/UpdateEventoUseCase';
 import { DeleteEventoUseCase } from '../useCases/DeleteEventoUseCase';
+import { AppError } from '@shared/errors/AppError';
 
 const createSchema = z.object({
   titulo: z.string().min(3),
   descricao: z.string().nullable().optional(),
+  descricaoComplementar: z.string().nullable().optional(),
   tipo: z
     .enum([
       'REUNIAO',
@@ -27,7 +29,11 @@ const createSchema = z.object({
   convenioId: z.string().nullable().optional()
 });
 
-const updateSchema = createSchema.partial();
+const updateSchema = createSchema
+  .partial()
+  .extend({
+    concluidoEm: z.coerce.date().nullable().optional()
+  });
 
 export class AgendaController {
   private readonly repository = new PrismaEventoRepository();
@@ -58,6 +64,23 @@ export class AgendaController {
   async update(req: Request, res: Response) {
     const id = req.params.id;
     const payload = updateSchema.parse(req.body);
+    const getUseCase = new GetEventoUseCase(this.repository);
+    const existing = await getUseCase.execute(id);
+
+    if (existing.origem === 'PENDENCIA') {
+      const allowedKeys = ['descricaoComplementar', 'local', 'responsavel'] as const;
+      const invalidFields = Object.keys(payload).filter(
+        (key) => !allowedKeys.includes(key as (typeof allowedKeys)[number])
+      );
+
+      if (invalidFields.length > 0) {
+        throw new AppError(
+          'Eventos gerados por pendência só permitem editar observações, local e responsável',
+          400
+        );
+      }
+    }
+
     const useCase = new UpdateEventoUseCase(this.repository);
     const evento = await useCase.execute(id, payload);
     return res.json(evento);
@@ -65,6 +88,16 @@ export class AgendaController {
 
   async remove(req: Request, res: Response) {
     const id = req.params.id;
+    const getUseCase = new GetEventoUseCase(this.repository);
+    const existing = await getUseCase.execute(id);
+
+    if (existing.origem === 'PENDENCIA') {
+      throw new AppError(
+        'Eventos automáticos de pendência devem ser removidos a partir da pendência de origem',
+        400
+      );
+    }
+
     const useCase = new DeleteEventoUseCase(this.repository);
     await useCase.execute(id);
     return res.status(204).send();

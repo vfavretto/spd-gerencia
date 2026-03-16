@@ -24,10 +24,17 @@ const commonSchema = {
       'CANCELADO'
     ] as const
   ).optional(),
+  numeroProposta: z.string().nullable().optional(),
+  numeroTermo: z.string().nullable().optional(),
+  esfera: z.enum(['FEDERAL', 'ESTADUAL']).nullable().optional(),
+  modalidadeRepasseId: z.string().nullable().optional(),
+  tipoTermoFormalizacaoId: z.string().nullable().optional(),
+  processoSPD: z.string().nullable().optional(),
+  processoCreditoAdicional: z.string().nullable().optional(),
+  area: z.string().nullable().optional(),
   secretariaId: z.string(),
   orgaoId: z.string().nullable().optional(),
-  programaId: z.string().nullable().optional(),
-  modalidadeRepasseId: z.string().nullable().optional()
+  programaId: z.string().nullable().optional()
 };
 
 const createSchema = z.object(commonSchema);
@@ -67,7 +74,10 @@ describe('ConvenioController — Zod Schemas', () => {
         status: 'EM_EXECUCAO' as const,
         orgaoId: 'org-456',
         programaId: 'prog-789',
-        modalidadeRepasseId: 'modalidade-convenio'
+        modalidadeRepasseId: 'modalidade-convenio',
+        tipoTermoFormalizacaoId: 'tipo-termo-123',
+        numeroProposta: 'PROP-001',
+        numeroTermo: 'TC 001/2025'
       };
 
       const result = createSchema.parse(fullPayload);
@@ -76,6 +86,9 @@ describe('ConvenioController — Zod Schemas', () => {
       expect(result.valorRepasse).toBe(80000);
       expect(result.dataAssinatura).toBeInstanceOf(Date);
       expect(result.status).toBe('EM_EXECUCAO');
+      expect(result.tipoTermoFormalizacaoId).toBe('tipo-termo-123');
+      expect(result.numeroProposta).toBe('PROP-001');
+      expect(result.numeroTermo).toBe('TC 001/2025');
     });
 
     it('deve aceitar campos nullable como null', () => {

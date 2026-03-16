@@ -18,8 +18,8 @@ export const createServer = () => {
   // CORS com restrição de origens
   app.use(cors({
     origin: (origin, callback) => {
-      // Permite requisições sem origem (ex: Postman, curl) apenas em desenvolvimento
-      if (!origin && process.env.NODE_ENV === 'development') {
+      // Permite requisições sem origem (ex: healthchecks, Postman, curl)
+      if (!origin) {
         return callback(null, true);
       }
       if (origin && allowedOrigins.includes(origin)) {

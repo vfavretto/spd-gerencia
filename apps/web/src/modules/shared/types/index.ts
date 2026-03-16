@@ -211,6 +211,7 @@ export interface Comunicado {
   origem?: string | null;
   destino?: string | null;
   responsavel?: string | null;
+  arquivoUrl?: string | null;
 }
 
 export type TipoEvento =

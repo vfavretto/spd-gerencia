@@ -8,9 +8,11 @@ import {
   FolderOpen,
   Link2,
   MailPlus,
+  Pencil,
   RefreshCcw,
   Search,
   Send,
+  Trash2,
   UserRound,
   X,
 } from "lucide-react";
@@ -23,8 +25,10 @@ import {
   type ComunicadoFilters,
 } from "@/modules/comunicados/services/comunicadoService";
 import { PageHeader } from "@/modules/shared/components/PageHeader";
+import { ConfirmDialog } from "@/modules/shared/components/ConfirmDialog";
 import { CanCreateComunicado } from "@/modules/shared/components/PermissionGate";
 import { tipoComunicadoOptions } from "@/modules/shared/constants";
+import { usePermissions } from "@/modules/shared/hooks/usePermissions";
 import type { Comunicado } from "@/modules/shared/types";
 import { formatDate } from "@/modules/shared/utils/format";
 import {
@@ -60,14 +64,14 @@ const comunicadoSchema = z.object({
 });
 
 type ComunicadoForm = z.infer<typeof comunicadoSchema>;
+type FormMode = "create" | "edit";
 
 type SummaryCardProps = {
   label: string;
   value: string | number;
   helper: string;
   icon: LucideIcon;
-  accent: string;
-  iconTone: string;
+  tone: string;
 };
 
 const summaryCards = (
@@ -81,36 +85,62 @@ const summaryCards = (
   {
     label: "Registros visíveis",
     value: metrics.total,
-    helper: "Total retornado pelos filtros atuais",
+    helper: "contexto atual",
     icon: FolderOpen,
-    accent: "from-primary-500/10 via-primary-100/60 to-white",
-    iconTone: "bg-primary-50 text-primary-600",
+    tone: "bg-primary-50 text-primary-600",
   },
   {
     label: "Entradas",
     value: metrics.entradas,
-    helper: "Protocolos recebidos",
+    helper: "protocolos recebidos",
     icon: MailPlus,
-    accent: "from-emerald-500/10 via-emerald-100/60 to-white",
-    iconTone: "bg-emerald-50 text-emerald-600",
+    tone: "bg-emerald-50 text-emerald-600",
   },
   {
     label: "Saídas",
     value: metrics.saidas,
-    helper: "Protocolos expedidos",
+    helper: "protocolos expedidos",
     icon: Send,
-    accent: "from-amber-500/10 via-amber-100/60 to-white",
-    iconTone: "bg-amber-50 text-amber-600",
+    tone: "bg-amber-50 text-amber-600",
   },
   {
     label: "Responsáveis",
     value: metrics.responsaveis,
-    helper: "Servidores identificados",
+    helper: "servidores citados",
     icon: UserRound,
-    accent: "from-sky-500/10 via-sky-100/60 to-white",
-    iconTone: "bg-sky-50 text-sky-600",
+    tone: "bg-sky-50 text-sky-600",
   },
 ];
+
+const getTipoClasses = (tipo: Comunicado["tipo"]) =>
+  tipo === "ENTRADA"
+    ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+    : "border-amber-200 bg-amber-50 text-amber-700";
+
+const toDateInputValue = (value?: string | null) => {
+  if (!value) return "";
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+
+  const year = date.getFullYear();
+  const month = `${date.getMonth() + 1}`.padStart(2, "0");
+  const day = `${date.getDate()}`.padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+};
+
+const getFormValues = (comunicado?: Comunicado | null): ComunicadoForm => ({
+  protocolo: comunicado?.protocolo ?? "",
+  assunto: comunicado?.assunto ?? "",
+  conteudo: comunicado?.conteudo ?? "",
+  tipo: comunicado?.tipo ?? "ENTRADA",
+  dataRegistro: toDateInputValue(comunicado?.dataRegistro),
+  origem: comunicado?.origem ?? "",
+  destino: comunicado?.destino ?? "",
+  responsavel: comunicado?.responsavel ?? "",
+  arquivoUrl: comunicado?.arquivoUrl ?? "",
+});
 
 const DetailItem = ({
   label,
@@ -134,37 +164,37 @@ const SummaryCard = ({
   value,
   helper,
   icon: Icon,
-  accent,
-  iconTone,
+  tone,
 }: SummaryCardProps) => (
-  <Card className={`overflow-hidden border-white/60 bg-gradient-to-br ${accent} shadow-card`}>
-    <CardContent className="p-5">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <p className="text-sm font-medium text-slate-500">{label}</p>
-          <strong className="mt-3 block text-3xl font-semibold tracking-tight text-slate-900">
+  <Card className="border-slate-200 bg-white shadow-sm hover:shadow-md">
+    <CardContent className="flex items-center justify-between gap-4 p-4">
+      <div className="min-w-0">
+        <p className="text-sm font-medium text-slate-500">{label}</p>
+        <div className="mt-1 flex items-baseline gap-2">
+          <strong className="text-2xl font-semibold tracking-tight text-slate-900">
             {value}
           </strong>
-          <p className="mt-2 text-sm text-slate-500">{helper}</p>
+          <span className="truncate text-xs font-medium uppercase tracking-[0.14em] text-slate-400">
+            {helper}
+          </span>
         </div>
-        <span className={`rounded-2xl p-3 ${iconTone}`}>
-          <Icon className="h-5 w-5" />
-        </span>
       </div>
+      <span className={`rounded-2xl p-3 ${tone}`}>
+        <Icon className="h-5 w-5" />
+      </span>
     </CardContent>
   </Card>
 );
 
-const getTipoClasses = (tipo: Comunicado["tipo"]) =>
-  tipo === "ENTRADA"
-    ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-    : "border-amber-200 bg-amber-50 text-amber-700";
-
 export const ComunicadosPage = () => {
   const queryClient = useQueryClient();
+  const { canUpdate, canDelete } = usePermissions();
   const [filters, setFilters] = useState<ComunicadoFilters>({});
-  const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [selectedComunicado, setSelectedComunicado] = useState<Comunicado | null>(null);
+  const [editingComunicado, setEditingComunicado] = useState<Comunicado | null>(null);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [formMode, setFormMode] = useState<FormMode>("create");
+  const [comunicadoToDelete, setComunicadoToDelete] = useState<Comunicado | null>(null);
 
   const comunicadosQuery = useQuery({
     queryKey: ["comunicados", filters],
@@ -180,9 +210,7 @@ export const ComunicadosPage = () => {
     formState: { errors },
   } = useForm<ComunicadoForm>({
     resolver: zodResolver(comunicadoSchema),
-    defaultValues: {
-      tipo: "ENTRADA",
-    },
+    defaultValues: getFormValues(),
   });
 
   const tipoSelecionado = watch("tipo");
@@ -200,13 +228,24 @@ export const ComunicadosPage = () => {
   };
 
   useEffect(() => {
-    if (tipoSelecionado === "ENTRADA") {
-      resetField("origem");
+    if (!isFormOpen) {
+      reset(getFormValues());
       return;
     }
 
-    resetField("destino");
-  }, [resetField, tipoSelecionado]);
+    reset(getFormValues(editingComunicado));
+  }, [editingComunicado, isFormOpen, reset]);
+
+  useEffect(() => {
+    if (!isFormOpen) return;
+
+    if (tipoSelecionado === "ENTRADA") {
+      resetField("destino");
+      return;
+    }
+
+    resetField("origem");
+  }, [isFormOpen, resetField, tipoSelecionado]);
 
   const handleFilterChange = (newFilters: Partial<ComunicadoFilters>) => {
     setFilters((prev) => ({ ...prev, ...newFilters }));
@@ -224,12 +263,19 @@ export const ComunicadosPage = () => {
       filters.dataFim,
   );
 
+  const closeFormDialog = () => {
+    setIsFormOpen(false);
+    setEditingComunicado(null);
+    setFormMode("create");
+    reset(getFormValues());
+  };
+
   const createMutation = useMutation({
     mutationFn: (payload: ComunicadoForm) => comunicadoService.create(payload),
-    onSuccess: () => {
+    onSuccess: (created) => {
       queryClient.invalidateQueries({ queryKey: ["comunicados"] });
-      reset({ tipo: "ENTRADA" } as ComunicadoForm);
-      setIsCreateOpen(false);
+      closeFormDialog();
+      setSelectedComunicado(created);
       toast.success("Comunicado registrado com sucesso.");
     },
     onError: () => {
@@ -237,9 +283,64 @@ export const ComunicadosPage = () => {
     },
   });
 
-  const onSubmit = (data: ComunicadoForm) => {
+  const updateMutation = useMutation({
+    mutationFn: ({
+      id,
+      payload,
+    }: {
+      id: string;
+      payload: ComunicadoForm;
+    }) => comunicadoService.update(id, payload),
+    onSuccess: (updated) => {
+      queryClient.invalidateQueries({ queryKey: ["comunicados"] });
+      closeFormDialog();
+      setSelectedComunicado(updated);
+      toast.success("Comunicado atualizado com sucesso.");
+    },
+    onError: () => {
+      toast.error("Erro ao atualizar comunicado. Verifique os dados e tente novamente.");
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => comunicadoService.remove(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["comunicados"] });
+      setSelectedComunicado(null);
+      setComunicadoToDelete(null);
+      toast.success("Comunicado excluido com sucesso.");
+    },
+    onError: () => {
+      toast.error("Erro ao excluir comunicado. Tente novamente.");
+    },
+  });
+
+  const openCreateDialog = () => {
+    setFormMode("create");
+    setEditingComunicado(null);
+    setIsFormOpen(true);
+  };
+
+  const openEditDialog = (comunicado: Comunicado) => {
+    setFormMode("edit");
+    setEditingComunicado(comunicado);
+    setIsFormOpen(true);
+  };
+
+  const handleDeleteRequest = (comunicado: Comunicado) => {
+    setComunicadoToDelete(comunicado);
+  };
+
+  const handleFormSubmit = (data: ComunicadoForm) => {
+    if (formMode === "edit" && editingComunicado) {
+      updateMutation.mutate({ id: editingComunicado.id, payload: data });
+      return;
+    }
+
     createMutation.mutate(data);
   };
+
+  const isSubmitting = createMutation.isPending || updateMutation.isPending;
 
   return (
     <div className="space-y-6">
@@ -260,7 +361,7 @@ export const ComunicadosPage = () => {
               Atualizar
             </Button>
             <CanCreateComunicado>
-              <Button type="button" onClick={() => setIsCreateOpen(true)}>
+              <Button type="button" onClick={openCreateDialog}>
                 <MailPlus className="h-4 w-4" />
                 Registrar comunicado
               </Button>
@@ -269,44 +370,37 @@ export const ComunicadosPage = () => {
         }
       />
 
-      <section className="relative overflow-hidden rounded-[28px] border border-slate-200 bg-white px-6 py-6 shadow-card">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(79,70,229,0.14),_transparent_30%),radial-gradient(circle_at_left,_rgba(16,185,129,0.12),_transparent_24%)]" />
-        <div className="relative flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-2xl space-y-3">
+      <section className="relative overflow-hidden rounded-[28px] border border-slate-200 bg-white px-6 py-5 shadow-card">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(79,70,229,0.12),_transparent_28%),radial-gradient(circle_at_left,_rgba(16,185,129,0.1),_transparent_24%)]" />
+        <div className="relative flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+          <div className="max-w-2xl">
             <Badge className="border-primary-100 bg-primary-50 px-3 py-1 text-primary-700 hover:bg-primary-50">
               Central de comunicados
             </Badge>
-            <div>
-              <h3 className="text-2xl font-semibold tracking-tight text-slate-900">
-                Historico organizado para consulta rapida
-              </h3>
-              <p className="mt-2 text-sm leading-6 text-slate-600">
-                O cadastro deixa de competir com a listagem. Agora o foco principal
-                fica na leitura dos registros, com filtros mais visiveis, indicadores
-                resumidos e detalhes acessiveis em painel lateral.
-              </p>
-            </div>
+            <h3 className="mt-3 text-2xl font-semibold tracking-tight text-slate-900">
+              Historico com consulta e manutencao no mesmo fluxo
+            </h3>
+            <p className="mt-2 text-sm leading-6 text-slate-600">
+              Localize comunicados mais rapido, revise os dados em painel lateral e
+              execute cadastro, edicao e exclusao sem sair da pagina.
+            </p>
           </div>
-          <div className="grid gap-3 text-sm text-slate-600 sm:grid-cols-3">
-            <div className="rounded-2xl border border-slate-200 bg-white/90 px-4 py-3 shadow-sm">
-              <p className="font-semibold text-slate-900">{metrics.total}</p>
-              <p>itens no contexto atual</p>
-            </div>
-            <div className="rounded-2xl border border-slate-200 bg-white/90 px-4 py-3 shadow-sm">
-              <p className="font-semibold text-slate-900">{hasActiveFilters ? "Sim" : "Nao"}</p>
-              <p>filtros aplicados</p>
-            </div>
-            <div className="rounded-2xl border border-slate-200 bg-white/90 px-4 py-3 shadow-sm">
-              <p className="font-semibold text-slate-900">
-                {comunicados[0] ? formatDate(comunicados[0].dataRegistro) : "--"}
-              </p>
-              <p>registro mais recente</p>
-            </div>
+
+          <div className="flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
+            <span className="rounded-full border border-slate-200 bg-white/90 px-4 py-2">
+              {metrics.total} itens no contexto
+            </span>
+            <span className="rounded-full border border-slate-200 bg-white/90 px-4 py-2">
+              filtros {hasActiveFilters ? "ativos" : "livres"}
+            </span>
+            <span className="rounded-full border border-slate-200 bg-white/90 px-4 py-2">
+              ultimo registro {comunicados[0] ? formatDate(comunicados[0].dataRegistro) : "--"}
+            </span>
           </div>
         </div>
       </section>
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
         {summaryCards(metrics).map((card) => (
           <SummaryCard key={card.label} {...card} />
         ))}
@@ -465,84 +559,111 @@ export const ComunicadosPage = () => {
                 const isEntrada = item.tipo === "ENTRADA";
 
                 return (
-                  <button
+                  <Card
                     key={item.id}
-                    type="button"
-                    onClick={() => setSelectedComunicado(item)}
-                    className="group text-left"
+                    className="overflow-hidden border-slate-200 bg-white transition duration-300 hover:border-primary-200 hover:shadow-lg"
                   >
-                    <Card className="h-full overflow-hidden border-slate-200 bg-white transition duration-300 hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-lg">
-                      <div
-                        className={`h-1.5 w-full ${
-                          isEntrada ? "bg-emerald-400" : "bg-amber-400"
-                        }`}
-                      />
-                      <CardContent className="p-5">
-                        <div className="flex flex-wrap items-start justify-between gap-3">
-                          <div className="space-y-2">
-                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
-                              {item.protocolo}
-                            </p>
-                            <h4 className="text-lg font-semibold leading-tight text-slate-900">
-                              {item.assunto}
-                            </h4>
-                          </div>
-                          <Badge className={`border ${getTipoClasses(item.tipo)}`}>
-                            {item.tipo === "ENTRADA" ? "Entrada" : "Saida"}
-                          </Badge>
+                    <div
+                      className={`h-1.5 w-full ${
+                        isEntrada ? "bg-emerald-400" : "bg-amber-400"
+                      }`}
+                    />
+                    <CardContent className="p-5">
+                      <div className="flex flex-wrap items-start justify-between gap-3">
+                        <div className="space-y-2">
+                          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
+                            {item.protocolo}
+                          </p>
+                          <h4 className="text-lg font-semibold leading-tight text-slate-900">
+                            {item.assunto}
+                          </h4>
                         </div>
+                        <Badge className={`border ${getTipoClasses(item.tipo)}`}>
+                          {item.tipo === "ENTRADA" ? "Entrada" : "Saida"}
+                        </Badge>
+                      </div>
 
-                        <div className="mt-4 flex flex-wrap gap-2 text-xs font-medium text-slate-500">
-                          <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1">
-                            <CalendarDays className="h-3.5 w-3.5" />
-                            {formatDate(item.dataRegistro)}
+                      <div className="mt-4 flex flex-wrap gap-2 text-xs font-medium text-slate-500">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1">
+                          <CalendarDays className="h-3.5 w-3.5" />
+                          {formatDate(item.dataRegistro)}
+                        </span>
+                        <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1">
+                          <UserRound className="h-3.5 w-3.5" />
+                          {item.responsavel?.trim() || "Sem responsavel"}
+                        </span>
+                        {item.arquivoUrl && (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-primary-50 px-3 py-1 text-primary-700">
+                            <Link2 className="h-3.5 w-3.5" />
+                            Com anexo
                           </span>
-                          <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1">
-                            <UserRound className="h-3.5 w-3.5" />
-                            {item.responsavel?.trim() || "Sem responsavel"}
-                          </span>
-                          {item.arquivoUrl && (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-primary-50 px-3 py-1 text-primary-700">
-                              <Link2 className="h-3.5 w-3.5" />
-                              Com anexo
-                            </span>
+                        )}
+                      </div>
+
+                      <p className="mt-4 text-sm leading-6 text-slate-600">
+                        {item.conteudo?.trim() || "Sem conteudo complementar informado."}
+                      </p>
+
+                      <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                        <div className="rounded-2xl border border-slate-200 bg-slate-50/70 px-4 py-3">
+                          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
+                            Origem
+                          </p>
+                          <p className="mt-2 text-sm font-medium text-slate-700">
+                            {item.origem?.trim() || "Nao informada"}
+                          </p>
+                        </div>
+                        <div className="rounded-2xl border border-slate-200 bg-slate-50/70 px-4 py-3">
+                          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
+                            Destinatario
+                          </p>
+                          <p className="mt-2 text-sm font-medium text-slate-700">
+                            {item.destino?.trim() || "Nao informado"}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4">
+                        <span className="text-sm font-medium text-slate-500">
+                          Revise o registro ou abra os detalhes completos
+                        </span>
+                        <div className="flex flex-wrap gap-2">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            aria-label={`Abrir detalhes de ${item.assunto}`}
+                            onClick={() => setSelectedComunicado(item)}
+                          >
+                            Abrir painel
+                          </Button>
+                          {canUpdate("comunicado") && (
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              aria-label={`Editar comunicado ${item.assunto}`}
+                              onClick={() => openEditDialog(item)}
+                            >
+                              <Pencil className="h-4 w-4" />
+                              Editar
+                            </Button>
+                          )}
+                          {canDelete("comunicado") && (
+                            <button
+                              type="button"
+                              aria-label={`Excluir comunicado ${item.assunto}`}
+                              onClick={() => handleDeleteRequest(item)}
+                              className="inline-flex h-9 items-center justify-center gap-2 rounded-xl px-4 text-xs font-semibold text-rose-600 transition hover:bg-rose-50"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                              Excluir
+                            </button>
                           )}
                         </div>
-
-                        <p className="mt-4 text-sm leading-6 text-slate-600">
-                          {item.conteudo?.trim() || "Sem conteudo complementar informado."}
-                        </p>
-
-                        <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                          <div className="rounded-2xl border border-slate-200 bg-slate-50/70 px-4 py-3">
-                            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
-                              Origem
-                            </p>
-                            <p className="mt-2 text-sm font-medium text-slate-700">
-                              {item.origem?.trim() || "Nao informada"}
-                            </p>
-                          </div>
-                          <div className="rounded-2xl border border-slate-200 bg-slate-50/70 px-4 py-3">
-                            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
-                              Destino
-                            </p>
-                            <p className="mt-2 text-sm font-medium text-slate-700">
-                              {item.destino?.trim() || "Nao informado"}
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-4">
-                          <span className="text-sm font-medium text-slate-500">
-                            Toque para ver os detalhes completos
-                          </span>
-                          <span className="text-sm font-semibold text-primary-600 transition group-hover:text-primary-700">
-                            Abrir painel
-                          </span>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </button>
+                      </div>
+                    </CardContent>
+                  </Card>
                 );
               })}
             </div>
@@ -550,22 +671,37 @@ export const ComunicadosPage = () => {
         </div>
       </section>
 
-      <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
+      <Dialog
+        open={isFormOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            closeFormDialog();
+            return;
+          }
+
+          setIsFormOpen(true);
+        }}
+      >
         <DialogContent className="max-h-[92vh] overflow-y-auto rounded-[32px] border border-slate-200 bg-white p-0 shadow-2xl sm:max-w-4xl">
           <DialogHeader className="border-b border-slate-100 px-6 py-5">
             <DialogTitle className="flex items-center gap-3 text-xl text-slate-900">
               <span className="rounded-2xl bg-primary-50 p-2.5 text-primary-600">
-                <MailPlus className="h-5 w-5" />
+                {formMode === "create" ? (
+                  <MailPlus className="h-5 w-5" />
+                ) : (
+                  <Pencil className="h-5 w-5" />
+                )}
               </span>
-              Registrar comunicado
+              {formMode === "create" ? "Registrar comunicado" : "Editar comunicado"}
             </DialogTitle>
             <DialogDescription className="text-sm text-slate-500">
-              Cadastre o protocolo com os campos ja usados pelo sistema, agora em
-              um fluxo mais objetivo e sem competir com a consulta do historico.
+              {formMode === "create"
+                ? "Cadastre o protocolo com os campos ja usados pelo sistema."
+                : "Atualize os dados do comunicado selecionado sem perder o contexto do historico."}
             </DialogDescription>
           </DialogHeader>
 
-          <form className="space-y-6 px-6 py-6" onSubmit={handleSubmit(onSubmit)}>
+          <form className="space-y-6 px-6 py-6" onSubmit={handleSubmit(handleFormSubmit)}>
             <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
               <div className="space-y-4">
                 <div className="grid gap-4 md:grid-cols-2">
@@ -582,6 +718,7 @@ export const ComunicadosPage = () => {
                       </p>
                     )}
                   </div>
+
                   <div>
                     <Label>Tipo</Label>
                     <div className="mt-1 grid grid-cols-2 gap-2">
@@ -653,20 +790,20 @@ export const ComunicadosPage = () => {
 
                 {tipoSelecionado === "ENTRADA" ? (
                   <div>
-                    <Label htmlFor="destino">Destinatario</Label>
-                    <Input
-                      id="destino"
-                      {...register("destino")}
-                      placeholder="Setor ou responsavel"
-                    />
-                  </div>
-                ) : (
-                  <div>
                     <Label htmlFor="origem">Origem</Label>
                     <Input
                       id="origem"
                       {...register("origem")}
-                      placeholder="Secretaria ou orgao"
+                      placeholder="Secretaria ou orgao remetente"
+                    />
+                  </div>
+                ) : (
+                  <div>
+                    <Label htmlFor="destino">Destinatario</Label>
+                    <Input
+                      id="destino"
+                      {...register("destino")}
+                      placeholder="Setor ou responsavel destinatario"
                     />
                   </div>
                 )}
@@ -691,9 +828,9 @@ export const ComunicadosPage = () => {
               </div>
             </div>
 
-            {createMutation.isError && (
+            {(createMutation.isError || updateMutation.isError) && (
               <p className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-600">
-                Erro ao registrar comunicado. Verifique os dados e tente novamente.
+                Não foi possível salvar o comunicado. Verifique os dados e tente novamente.
               </p>
             )}
 
@@ -701,13 +838,19 @@ export const ComunicadosPage = () => {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => setIsCreateOpen(false)}
-                disabled={createMutation.isPending}
+                onClick={closeFormDialog}
+                disabled={isSubmitting}
               >
                 Cancelar
               </Button>
-              <Button type="submit" disabled={createMutation.isPending}>
-                {createMutation.isPending ? "Registrando..." : "Registrar comunicado"}
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting
+                  ? formMode === "create"
+                    ? "Registrando..."
+                    : "Salvando..."
+                  : formMode === "create"
+                    ? "Registrar comunicado"
+                    : "Salvar alteracoes"}
               </Button>
             </DialogFooter>
           </form>
@@ -725,20 +868,48 @@ export const ComunicadosPage = () => {
           {selectedComunicado && (
             <>
               <SheetHeader className="border-b border-slate-100 px-6 py-5 text-left">
-                <div className="flex flex-wrap items-center gap-3">
-                  <Badge className={`border ${getTipoClasses(selectedComunicado.tipo)}`}>
-                    {selectedComunicado.tipo === "ENTRADA" ? "Entrada" : "Saida"}
-                  </Badge>
-                  <span className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
-                    {selectedComunicado.protocolo}
-                  </span>
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <Badge className={`border ${getTipoClasses(selectedComunicado.tipo)}`}>
+                      {selectedComunicado.tipo === "ENTRADA" ? "Entrada" : "Saida"}
+                    </Badge>
+                    <span className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
+                      {selectedComunicado.protocolo}
+                    </span>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    {canUpdate("comunicado") && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        aria-label={`Editar comunicado ${selectedComunicado.assunto}`}
+                        onClick={() => openEditDialog(selectedComunicado)}
+                      >
+                        <Pencil className="h-4 w-4" />
+                        Editar
+                      </Button>
+                    )}
+                    {canDelete("comunicado") && (
+                      <button
+                        type="button"
+                        aria-label={`Excluir comunicado ${selectedComunicado.assunto}`}
+                        onClick={() => handleDeleteRequest(selectedComunicado)}
+                        className="inline-flex h-9 items-center justify-center gap-2 rounded-xl px-4 text-xs font-semibold text-rose-600 transition hover:bg-rose-50"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        Excluir
+                      </button>
+                    )}
+                  </div>
                 </div>
+
                 <SheetTitle className="mt-3 text-2xl leading-tight text-slate-900">
                   {selectedComunicado.assunto}
                 </SheetTitle>
                 <SheetDescription className="text-sm leading-6 text-slate-500">
-                  Detalhamento completo do comunicado selecionado para consulta rapida
-                  sem sair da lista.
+                  Detalhamento completo do comunicado selecionado para consulta e manutencao.
                 </SheetDescription>
               </SheetHeader>
 
@@ -753,7 +924,7 @@ export const ComunicadosPage = () => {
                     value={selectedComunicado.responsavel}
                   />
                   <DetailItem label="Origem" value={selectedComunicado.origem} />
-                  <DetailItem label="Destino" value={selectedComunicado.destino} />
+                  <DetailItem label="Destinatario" value={selectedComunicado.destino} />
                 </div>
 
                 <div className="rounded-[28px] border border-slate-200 bg-slate-50/70 p-5">
@@ -799,6 +970,22 @@ export const ComunicadosPage = () => {
           )}
         </SheetContent>
       </Sheet>
+
+      <ConfirmDialog
+        open={Boolean(comunicadoToDelete)}
+        onOpenChange={(open) => !open && setComunicadoToDelete(null)}
+        title="Excluir comunicado"
+        description={
+          comunicadoToDelete
+            ? `O comunicado "${comunicadoToDelete.assunto}" será removido permanentemente.`
+            : ""
+        }
+        confirmLabel={deleteMutation.isPending ? "Excluindo..." : "Excluir"}
+        onConfirm={() => {
+          if (!comunicadoToDelete || deleteMutation.isPending) return;
+          deleteMutation.mutate(comunicadoToDelete.id);
+        }}
+      />
     </div>
   );
 };

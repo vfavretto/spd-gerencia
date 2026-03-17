@@ -21,6 +21,10 @@ export interface RegisterUserDTO {
   role?: UsuarioRole;
 }
 
+export interface UpdateUserDTO {
+  role: UsuarioRole;
+}
+
 export interface UserListItem {
   id: string;
   nome: string;

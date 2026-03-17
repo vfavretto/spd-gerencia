@@ -24,3 +24,17 @@ authRoutes.get(
   ensureRole('ADMIN'),
   asyncHandler(controller.listUsers.bind(controller))
 );
+
+authRoutes.put(
+  '/users/:id',
+  ensureAuthenticated,
+  ensureRole('ADMIN'),
+  asyncHandler(controller.updateUser.bind(controller))
+);
+
+authRoutes.delete(
+  '/users/:id',
+  ensureAuthenticated,
+  ensureRole('ADMIN'),
+  asyncHandler(controller.deactivateUser.bind(controller))
+);

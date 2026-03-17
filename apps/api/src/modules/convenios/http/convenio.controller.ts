@@ -89,7 +89,7 @@ export class ConvenioController {
   async create(req: Request, res: Response) {
     const payload = createSchema.parse(req.body);
 
-    payload.valorGlobal = (payload.valorRepasse ?? 0) + (payload.valorContrapartida ?? 0);
+    payload.valorGlobal ??= (payload.valorRepasse ?? 0) + (payload.valorContrapartida ?? 0);
     const useCase = new CreateConvenioUseCase(this.repository);
     const convenio = await useCase.execute(payload as Required<Pick<typeof payload, 'valorGlobal'>> & typeof payload);
 

@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { FileText, DollarSign, FolderKanban } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
@@ -62,6 +62,7 @@ export const ConveniosCadastroPage = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
+  const [isValorGlobalManual, setIsValorGlobalManual] = useState(false);
   // Trigger usado para forçar re-render em campos de moeda
   const [, setCurrencyTrigger] = useState(0);
 
@@ -82,6 +83,14 @@ export const ConveniosCadastroPage = () => {
   });
 
   const watchedFields = watch();
+  const valorGlobalCalculado = (watchedFields.valorRepasse ?? 0) + (watchedFields.valorContrapartida ?? 0);
+
+  useEffect(() => {
+    if (isValorGlobalManual) return;
+    if (watchedFields.valorGlobal === valorGlobalCalculado) return;
+
+    setValue("valorGlobal", valorGlobalCalculado, { shouldDirty: false });
+  }, [isValorGlobalManual, setValue, valorGlobalCalculado, watchedFields.valorGlobal]);
 
   const createMutation = useMutation({
     mutationFn: (payload: WizardFormData) =>
@@ -152,6 +161,10 @@ export const ConveniosCadastroPage = () => {
 
   const handleCurrencyChange = (field: "valorGlobal" | "valorRepasse" | "valorContrapartida") => {
     return (value: number | null) => {
+      if (field === "valorGlobal") {
+        setIsValorGlobalManual(true);
+      }
+
       setValue(field, value ?? 0);
       setCurrencyTrigger(prev => prev + 1);
     };
@@ -295,6 +308,10 @@ export const ConveniosCadastroPage = () => {
                       value={watchedFields.valorGlobal}
                       onValueChange={handleCurrencyChange("valorGlobal")}
                     />
+                    <p className="text-xs text-slate-500">
+                      Preenchido automaticamente pela soma de repasse e contrapartida
+                      até edição manual.
+                    </p>
                     {errors.valorGlobal && (
                       <p className="text-xs text-destructive">{errors.valorGlobal.message}</p>
                     )}
@@ -366,6 +383,15 @@ export const ConveniosCadastroPage = () => {
                             style: "currency",
                             currency: "BRL"
                           }).format(watchedFields.valorContrapartida || 0)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between border-t border-slate-200 pt-2">
+                        <span className="text-slate-500">Soma automática:</span>
+                        <span className="font-medium text-slate-700">
+                          {new Intl.NumberFormat("pt-BR", {
+                            style: "currency",
+                            currency: "BRL"
+                          }).format(valorGlobalCalculado)}
                         </span>
                       </div>
                     </div>

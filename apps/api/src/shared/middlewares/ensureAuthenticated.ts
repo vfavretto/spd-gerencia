@@ -2,6 +2,7 @@ import type { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { env } from '@config/env';
 import { AppError } from '../errors/AppError';
+import { PrismaUserRepository } from '../../modules/auth/repositories/implementations/PrismaUserRepository';
 
 type TokenPayload = {
   sub: string;
@@ -18,21 +19,37 @@ export const ensureAuthenticated = (
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
-    throw new AppError('Token não informado', 401);
+    return next(new AppError('Token não informado', 401));
   }
 
   const [, token] = authHeader.split(' ');
 
+  const repository = new PrismaUserRepository();
+
   try {
     const decoded = jwt.verify(token, env.jwtSecret) as TokenPayload;
-    req.user = {
-      id: decoded.sub,
-      email: decoded.email,
-      role: decoded.role,
-      nome: decoded.nome
-    };
-    return next();
+
+    return repository.findById(decoded.sub)
+      .then((user) => {
+        if (!user) {
+          throw new AppError('Usuário não encontrado', 401);
+        }
+
+        if (!user.ativo) {
+          throw new AppError('Usuário desativado. Contate o administrador.', 401);
+        }
+
+        req.user = {
+          id: user.id,
+          email: user.email,
+          role: user.role,
+          nome: user.nome
+        };
+
+        return next();
+      })
+      .catch((error) => next(error));
   } catch {
-    throw new AppError('Token inválido ou expirado', 401);
+    return next(new AppError('Token inválido ou expirado', 401));
   }
 };

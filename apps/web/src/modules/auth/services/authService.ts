@@ -1,5 +1,10 @@
 import { api } from "@/modules/shared/lib/api";
-import type { LoginResponse, RegisterUserDTO, UserListItem } from "@/modules/shared/types";
+import type {
+  LoginResponse,
+  RegisterUserDTO,
+  UpdateUserDTO,
+  UserListItem
+} from "@/modules/shared/types";
 
 export const authService = {
   async login(matricula: string, senha: string): Promise<LoginResponse> {
@@ -18,5 +23,14 @@ export const authService = {
   async listUsers(): Promise<UserListItem[]> {
     const { data } = await api.get<UserListItem[]>("/auth/users");
     return data;
+  },
+
+  async updateUser(id: string, payload: UpdateUserDTO): Promise<UserListItem> {
+    const { data } = await api.put<UserListItem>(`/auth/users/${id}`, payload);
+    return data;
+  },
+
+  async deactivateUser(id: string): Promise<void> {
+    await api.delete(`/auth/users/${id}`);
   }
 };

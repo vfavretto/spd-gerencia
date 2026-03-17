@@ -24,9 +24,11 @@ const makeUser = (overrides: Partial<IUsuario> = {}): IUsuario => ({
 });
 
 const makeRepository = (): jest.Mocked<UserRepository> => ({
+  findById: jest.fn(),
   findByEmail: jest.fn(),
   findByMatricula: jest.fn(),
   create: jest.fn(),
+  update: jest.fn(),
   findAll: jest.fn()
 });
 

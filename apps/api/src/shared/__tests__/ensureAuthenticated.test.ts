@@ -4,6 +4,14 @@ jest.mock('jsonwebtoken', () => ({
   verify: jest.fn()
 }));
 
+const mockFindById = jest.fn();
+
+jest.mock('../../modules/auth/repositories/implementations/PrismaUserRepository', () => ({
+  PrismaUserRepository: jest.fn().mockImplementation(() => ({
+    findById: mockFindById
+  }))
+}));
+
 jest.mock('@config/env', () => ({
   env: { jwtSecret: 'test-secret' }
 }));
@@ -22,21 +30,34 @@ const makeRes = () => ({}) as any;
 const makeNext = () => jest.fn();
 
 describe('ensureAuthenticated', () => {
-  it('deve autenticar com token válido e definir req.user', () => {
-    const payload = { sub: 'user-1', email: 'joao@example.com', role: 'ADMIN' };
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('deve autenticar com token válido e definir req.user com dados atuais do banco', async () => {
+    const payload = { sub: 'user-1', email: 'joao@example.com', role: 'ADMIN', nome: 'João' };
     (jwt.verify as jest.Mock).mockReturnValue(payload);
+    mockFindById.mockResolvedValue({
+      id: 'user-1',
+      nome: 'João Atualizado',
+      email: 'atualizado@example.com',
+      role: 'ANALISTA',
+      ativo: true
+    });
 
     const req = makeReq({ headers: { authorization: 'Bearer valid-token' } });
     const res = makeRes();
     const next = makeNext();
 
-    ensureAuthenticated(req, res, next);
+    await ensureAuthenticated(req, res, next);
 
     expect(jwt.verify).toHaveBeenCalledWith('valid-token', 'test-secret');
+    expect(mockFindById).toHaveBeenCalledWith('user-1');
     expect(req.user).toEqual({
       id: 'user-1',
-      email: 'joao@example.com',
-      role: 'ADMIN'
+      email: 'atualizado@example.com',
+      role: 'ANALISTA',
+      nome: 'João Atualizado'
     });
     expect(next).toHaveBeenCalled();
   });
@@ -46,17 +67,10 @@ describe('ensureAuthenticated', () => {
     const res = makeRes();
     const next = makeNext();
 
-    expect(() => ensureAuthenticated(req, res, next)).toThrow(AppError);
-    expect(() => ensureAuthenticated(req, res, next)).toThrow('Token não informado');
+    ensureAuthenticated(req, res, next);
 
-    try {
-      ensureAuthenticated(req, res, next);
-    } catch (err) {
-      expect(err).toBeInstanceOf(AppError);
-      expect((err as AppError).statusCode).toBe(401);
-    }
-
-    expect(next).not.toHaveBeenCalled();
+    expect(next).toHaveBeenCalledWith(expect.any(AppError));
+    expect((next.mock.calls[0]?.[0] as AppError).message).toBe('Token não informado');
   });
 
   it('deve lançar AppError 401 quando o token é inválido', () => {
@@ -68,16 +82,31 @@ describe('ensureAuthenticated', () => {
     const res = makeRes();
     const next = makeNext();
 
-    expect(() => ensureAuthenticated(req, res, next)).toThrow(AppError);
+    ensureAuthenticated(req, res, next);
 
-    try {
-      ensureAuthenticated(req, res, next);
-    } catch (err) {
-      expect(err).toBeInstanceOf(AppError);
-      expect((err as AppError).statusCode).toBe(401);
-      expect((err as AppError).message).toBe('Token inválido ou expirado');
-    }
+    expect(next).toHaveBeenCalledWith(expect.any(AppError));
+    expect((next.mock.calls[0]?.[0] as AppError).message).toBe('Token inválido ou expirado');
+  });
 
-    expect(next).not.toHaveBeenCalled();
+  it('deve bloquear usuário inativo', async () => {
+    (jwt.verify as jest.Mock).mockReturnValue({ sub: 'user-1' });
+    mockFindById.mockResolvedValue({
+      id: 'user-1',
+      nome: 'João',
+      email: 'joao@example.com',
+      role: 'ADMIN',
+      ativo: false
+    });
+
+    const req = makeReq({ headers: { authorization: 'Bearer valid-token' } });
+    const res = makeRes();
+    const next = makeNext();
+
+    await ensureAuthenticated(req, res, next);
+
+    expect(next).toHaveBeenCalledWith(expect.any(AppError));
+    expect((next.mock.calls[0]?.[0] as AppError).message).toBe(
+      'Usuário desativado. Contate o administrador.'
+    );
   });
 });

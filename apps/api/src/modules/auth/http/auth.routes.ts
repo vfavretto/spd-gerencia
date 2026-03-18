@@ -9,10 +9,8 @@ const controller = new AuthController();
 
 export const authRoutes = Router();
 
-// Rota pública
 authRoutes.post('/login', loginRateLimit, asyncHandler(controller.login.bind(controller)));
 
-// Rotas protegidas - apenas ADMIN
 authRoutes.post(
   '/register',
   ensureAuthenticated,
@@ -25,4 +23,18 @@ authRoutes.get(
   ensureAuthenticated,
   ensureRole('ADMIN'),
   asyncHandler(controller.listUsers.bind(controller))
+);
+
+authRoutes.put(
+  '/users/:id',
+  ensureAuthenticated,
+  ensureRole('ADMIN'),
+  asyncHandler(controller.updateUser.bind(controller))
+);
+
+authRoutes.delete(
+  '/users/:id',
+  ensureAuthenticated,
+  ensureRole('ADMIN'),
+  asyncHandler(controller.deactivateUser.bind(controller))
 );

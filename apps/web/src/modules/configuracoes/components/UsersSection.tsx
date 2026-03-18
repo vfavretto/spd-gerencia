@@ -1,10 +1,14 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Shield, UserPlus, Users } from "lucide-react";
+import { Shield, Trash2, UserPlus, Users } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { authService } from "@/modules/auth/services/authService";
 import { roleBadgeColors, roleLabels } from "@/modules/configuracoes/config";
+import { ConfirmDialog } from "@/modules/shared/components/ConfirmDialog";
+import type { UpdateUserDTO, UserListItem, UsuarioRole } from "@/modules/shared/types";
+import { toast } from "@/modules/shared/ui/toaster";
 
 const registerSchema = z.object({
   nome: z.string().min(2, "Nome deve ter ao menos 2 caracteres"),
@@ -18,6 +22,8 @@ type RegisterForm = z.infer<typeof registerSchema>;
 
 export function UsersSection() {
   const queryClient = useQueryClient();
+  const [roleDrafts, setRoleDrafts] = useState<Record<string, UsuarioRole>>({});
+  const [userToDeactivate, setUserToDeactivate] = useState<UserListItem | null>(null);
 
   const usersQuery = useQuery({
     queryKey: ["users"],
@@ -39,10 +45,71 @@ export function UsersSection() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
       reset({ role: "ANALISTA" } as RegisterForm);
+      toast.success("Usuário cadastrado com sucesso.");
+    },
+    onError: () => {
+      toast.error("Erro ao cadastrar usuário.");
+    }
+  });
+
+  const updateRoleMutation = useMutation({
+    mutationFn: ({ id, payload }: { id: string; payload: UpdateUserDTO }) =>
+      authService.updateUser(id, payload),
+    onSuccess: (_updatedUser, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      setRoleDrafts((current) => {
+        const nextDrafts = { ...current };
+        delete nextDrafts[variables.id];
+        return nextDrafts;
+      });
+      toast.success("Permissão atualizada com sucesso.");
+    },
+    onError: (error) => {
+      toast.error(
+        (
+          error as {
+            response?: { data?: { message?: string } };
+          }
+        )?.response?.data?.message ?? "Erro ao atualizar permissão."
+      );
+    }
+  });
+
+  const deactivateMutation = useMutation({
+    mutationFn: (id: string) => authService.deactivateUser(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      toast.success("Usuário desativado com sucesso.");
+    },
+    onError: (error) => {
+      toast.error(
+        (
+          error as {
+            response?: { data?: { message?: string } };
+          }
+        )?.response?.data?.message ?? "Erro ao desativar usuário."
+      );
     }
   });
 
   const users = usersQuery.data ?? [];
+  const isProcessingUser = (userId: string) =>
+    updateRoleMutation.variables?.id === userId || deactivateMutation.variables === userId;
+
+  const handleRoleChange = (userId: string, role: UsuarioRole) => {
+    setRoleDrafts((current) => ({ ...current, [userId]: role }));
+  };
+
+  const handleSaveRole = (user: UserListItem) => {
+    const nextRole = roleDrafts[user.id] ?? user.role;
+
+    if (nextRole === user.role) return;
+
+    updateRoleMutation.mutate({
+      id: user.id,
+      payload: { role: nextRole }
+    });
+  };
 
   return (
     <section className="glass-panel flex flex-col gap-4 p-6">
@@ -112,9 +179,6 @@ export function UsersSection() {
             {createMutation.isPending ? "Cadastrando..." : "Cadastrar usuário"}
           </button>
         </div>
-        {createMutation.isSuccess && (
-          <p className="text-sm text-emerald-600">Usuário cadastrado com sucesso.</p>
-        )}
         {createMutation.isError && (
           <p className="text-sm text-rose-600">
             Erro ao cadastrar:{" "}
@@ -136,6 +200,7 @@ export function UsersSection() {
               <th className="px-4 py-3">E-mail</th>
               <th className="px-4 py-3">Permissão</th>
               <th className="px-4 py-3 text-center">Status</th>
+              <th className="px-4 py-3 text-right">Ações</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-50 bg-white/80">
@@ -153,9 +218,52 @@ export function UsersSection() {
                   </span>
                 </td>
                 <td className="px-4 py-3 text-center">
-                  <span
-                    className={`inline-block h-2.5 w-2.5 rounded-full ${user.ativo ? "bg-emerald-400" : "bg-slate-300"}`}
-                  />
+                  <div className="inline-flex items-center gap-2">
+                    <span
+                      className={`inline-block h-2.5 w-2.5 rounded-full ${user.ativo ? "bg-emerald-400" : "bg-slate-300"}`}
+                    />
+                    <span className="text-xs text-slate-500">
+                      {user.ativo ? "Ativo" : "Inativo"}
+                    </span>
+                  </div>
+                </td>
+                <td className="px-4 py-3">
+                  <div className="flex items-center justify-end gap-2">
+                    <select
+                      className="form-input min-w-[148px]"
+                      value={roleDrafts[user.id] ?? user.role}
+                      disabled={!user.ativo || isProcessingUser(user.id)}
+                      onChange={(event) =>
+                        handleRoleChange(user.id, event.target.value as UsuarioRole)
+                      }
+                    >
+                      <option value="ANALISTA">Analista</option>
+                      <option value="ESTAGIARIO">Estagiário</option>
+                      <option value="OBSERVADOR">Observador</option>
+                      <option value="ADMIN">Administrador</option>
+                    </select>
+                    <button
+                      type="button"
+                      className="rounded-2xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+                      disabled={
+                        !user.ativo ||
+                        isProcessingUser(user.id) ||
+                        (roleDrafts[user.id] ?? user.role) === user.role
+                      }
+                      onClick={() => handleSaveRole(user)}
+                    >
+                      Salvar
+                    </button>
+                    <button
+                      type="button"
+                      className="inline-flex items-center gap-1 rounded-2xl border border-rose-200 px-3 py-2 text-xs font-semibold text-rose-600 transition hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-60"
+                      disabled={!user.ativo || isProcessingUser(user.id)}
+                      onClick={() => setUserToDeactivate(user)}
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                      Desativar
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
@@ -165,6 +273,25 @@ export function UsersSection() {
           <p className="p-6 text-center text-sm text-slate-400">Nenhum usuário cadastrado.</p>
         )}
       </div>
+
+      <ConfirmDialog
+        open={Boolean(userToDeactivate)}
+        onOpenChange={(open) => {
+          if (!open) setUserToDeactivate(null);
+        }}
+        title="Desativar usuário"
+        description={
+          userToDeactivate
+            ? `O usuário ${userToDeactivate.nome} não poderá mais acessar o sistema.`
+            : ""
+        }
+        confirmLabel="Desativar"
+        onConfirm={() => {
+          if (!userToDeactivate) return;
+          deactivateMutation.mutate(userToDeactivate.id);
+          setUserToDeactivate(null);
+        }}
+      />
     </section>
   );
 }

@@ -1,6 +1,6 @@
 import { convenioService } from "@/modules/convenios/services/convenioService";
 import type { Convenio } from "@/modules/shared/types";
-import { formatCurrency, formatDate } from "@/modules/shared/utils/format";
+import { formatCurrency, formatDate } from "@/modules/shared/lib/format";
 
 type ExportRow = {
   codigo: string;

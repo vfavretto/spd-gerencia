@@ -1,4 +1,0 @@
-interface:
-  display_name: "Strict Code Review"
-  short_description: "Blocking gate for logic, architecture, and SOLID."
-  default_prompt: "Run a strict review gate with PASS/FAIL. Block on logic bugs, architecture leaks, SOLID violations, and missing test obligations. Return required fixes before merge."

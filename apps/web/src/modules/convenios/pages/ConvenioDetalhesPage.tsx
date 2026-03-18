@@ -36,7 +36,7 @@ import { ConfirmDialog } from "@/modules/shared/components/ConfirmDialog";
 import { usePermissions } from "@/modules/shared/hooks";
 import { convenioService } from "@/modules/convenios/services/convenioService";
 import { aditivoService } from "@/modules/convenios/services/aditivoService";
-import { formatCurrency } from "@/modules/shared/utils/format";
+import { formatCurrency } from "@/modules/shared/lib/format";
 import { formatDateBR } from "@/modules/shared/lib/date";
 import { toast } from "@/modules/shared/ui/toaster";
 

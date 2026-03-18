@@ -51,7 +51,7 @@ export class ComunicadoController {
     const useCase = new CreateComunicadoUseCase(this.repository);
     const comunicado = await useCase.execute(payload);
 
-    // Registra auditoria
+
     await AuditService.logCreate(
       { id: req.user!.id, nome: req.user!.nome, email: req.user!.email },
       'Comunicado',
@@ -68,14 +68,14 @@ export class ComunicadoController {
     const id = req.params.id;
     const payload = updateSchema.parse(req.body);
 
-    // Busca dados antigos para auditoria
+
     const getUseCase = new GetComunicadoUseCase(this.repository);
     const dadosAntigos = await getUseCase.execute(id);
 
     const useCase = new UpdateComunicadoUseCase(this.repository);
     const comunicado = await useCase.execute(id, payload);
 
-    // Registra auditoria
+
     await AuditService.logUpdate(
       { id: req.user!.id, nome: req.user!.nome, email: req.user!.email },
       'Comunicado',
@@ -92,14 +92,14 @@ export class ComunicadoController {
   async remove(req: Request, res: Response) {
     const id = req.params.id;
 
-    // Busca dados para auditoria antes de excluir
+
     const getUseCase = new GetComunicadoUseCase(this.repository);
     const dadosAntigos = await getUseCase.execute(id);
 
     const useCase = new DeleteComunicadoUseCase(this.repository);
     await useCase.execute(id);
 
-    // Registra auditoria
+
     await AuditService.logDelete(
       { id: req.user!.id, nome: req.user!.nome, email: req.user!.email },
       'Comunicado',

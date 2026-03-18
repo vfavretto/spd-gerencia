@@ -325,25 +325,83 @@ MYSQL_ROOT_PASSWORD=root
 MYSQL_DATABASE=spd_gerencia
 MYSQL_USER=spd_user
 MYSQL_PASSWORD=spd_pass
+MYSQL_PORT=3306
 VITE_API_URL=http://localhost:4000
 FRONTEND_URL=http://localhost
 ```
 
-### Bootstrap
+### Desenvolvimento com banco local vazio
+
+Nesta etapa, o fluxo validado em Docker e o MySQL local. API e Web seguem no fluxo normal de desenvolvimento fora dos containers.
 
 ```bash
 npm install
-docker compose up -d
+docker compose up -d mysql
 npm run prisma:setup
 npm run seed
 npm run dev
 ```
 
-Serviços esperados:
+Se sua máquina usa o binário legado, substitua `docker compose` por `docker-compose`.
 
-- Web: `http://localhost:5173`
+Serviços esperados nesse fluxo:
+
+- MySQL: `localhost:3306`
 - API: `http://localhost:4000`
+- Web: `http://localhost:5173`
 - Healthcheck: `http://localhost:4000/api/health`
+
+### Copiar o banco atual do Railway para o MySQL local
+
+Use este fluxo quando quiser trazer uma fotografia do banco que hoje roda no Railway para dentro do `mysql` do compose.
+
+1. Copie o ambiente base:
+
+```bash
+cp .env.example .env
+mkdir -p backups
+```
+
+2. Gere um dump do Railway usando os dados extraídos da sua `DATABASE_URL` atual:
+
+```bash
+mysqldump \
+  --host=SEU_HOST_RAILWAY \
+  --port=SUA_PORTA_RAILWAY \
+  --user=SEU_USUARIO_RAILWAY \
+  --password='SUA_SENHA_RAILWAY' \
+  --single-transaction \
+  --quick \
+  --no-tablespaces \
+  SEU_BANCO_RAILWAY > backups/railway-$(date +%Y%m%d).sql
+```
+
+3. Suba apenas o MySQL local:
+
+```bash
+docker compose up -d mysql
+```
+
+4. Restaure o dump no banco local do compose:
+
+```bash
+npm run db:restore -- backups/railway-YYYYMMDD.sql
+```
+
+O comando também aceita arquivos `*.sql.gz`.
+
+5. Depois da restauração, suba a aplicação no fluxo normal de desenvolvimento:
+
+```bash
+npm run dev
+```
+
+Notas importantes:
+
+- O restore atua apenas no MySQL local do Docker.
+- O banco local é recriado antes da importação para evitar conflitos.
+- Não execute `npm run seed` depois de restaurar um banco real do Railway.
+- Dumps em `backups/*.sql` e `backups/*.sql.gz` ficam ignorados no git.
 
 ## Scripts úteis
 
@@ -354,6 +412,7 @@ Serviços esperados:
 | `npm run dev:web` | Sobe apenas o frontend |
 | `npm run prisma:setup` | Aplica migrations e gera Prisma Client |
 | `npm run seed` | Popula usuário admin e dados base de convênios |
+| `npm run db:restore -- <arquivo.sql|.sql.gz>` | Restaura um dump no MySQL local do Docker |
 | `npm run build` | Build completo do monorepo |
 | `npm run lint` | Lint em todos os workspaces |
 | `npm run test` | Testes API + Web |

@@ -28,7 +28,7 @@ import { Link } from "react-router-dom";
 import { PageHeader } from "@/modules/shared/components/PageHeader";
 import { StatCard } from "@/modules/shared/components/StatCard";
 import { dashboardService } from "@/modules/dashboard/services/dashboardService";
-import { formatCurrency, formatDate } from "@/modules/shared/utils/format";
+import { formatCurrency, formatDate } from "@/modules/shared/lib/format";
 import { StatusBadge } from "@/modules/shared/components/StatusBadge";
 
 const COLORS = [

@@ -5,9 +5,18 @@ import { MemoryRouter } from "react-router-dom";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { ComunicadosPage } from "../ComunicadosPage";
 
-const { listMock, createMock, toastSuccessMock, toastErrorMock } = vi.hoisted(() => ({
+const {
+  listMock,
+  createMock,
+  updateMock,
+  removeMock,
+  toastSuccessMock,
+  toastErrorMock,
+} = vi.hoisted(() => ({
   listMock: vi.fn(),
   createMock: vi.fn(),
+  updateMock: vi.fn(),
+  removeMock: vi.fn(),
   toastSuccessMock: vi.fn(),
   toastErrorMock: vi.fn(),
 }));
@@ -16,8 +25,8 @@ vi.mock("@/modules/comunicados/services/comunicadoService", () => ({
   comunicadoService: {
     list: listMock,
     create: createMock,
-    update: vi.fn(),
-    remove: vi.fn(),
+    update: updateMock,
+    remove: removeMock,
   },
 }));
 
@@ -53,7 +62,7 @@ const comunicadosFixture = [
     tipo: "ENTRADA" as const,
     dataRegistro: "2026-03-15T12:00:00.000Z",
     origem: "Secretaria de Obras",
-    destino: "Gerencia de Convenios",
+    destino: null,
     responsavel: "Maria Souza",
     arquivoUrl: "https://example.com/doc-1.pdf",
   },
@@ -64,7 +73,7 @@ const comunicadosFixture = [
     conteudo: null,
     tipo: "SAIDA" as const,
     dataRegistro: "2026-03-10T12:00:00.000Z",
-    origem: "Gerencia de Convenios",
+    origem: null,
     destino: "Orgao Concedente",
     responsavel: "Joao Lima",
     arquivoUrl: null,
@@ -115,13 +124,30 @@ describe("ComunicadosPage", () => {
   beforeEach(() => {
     listMock.mockReset();
     createMock.mockReset();
+    updateMock.mockReset();
+    removeMock.mockReset();
     toastSuccessMock.mockReset();
     toastErrorMock.mockReset();
+
     listMock.mockResolvedValue(comunicadosFixture);
-    createMock.mockResolvedValue(comunicadosFixture[0]);
+    createMock.mockResolvedValue({
+      ...comunicadosFixture[0],
+      id: "com-3",
+      protocolo: "COM-003/2026",
+      assunto: "Novo comunicado",
+      tipo: "SAIDA",
+      origem: null,
+      destino: "Setor interno",
+    });
+    updateMock.mockImplementation(async (_id, payload) => ({
+      ...comunicadosFixture[0],
+      ...payload,
+      id: "com-1",
+    }));
+    removeMock.mockResolvedValue(undefined);
   });
 
-  it("renderiza metricas e cards do historico", async () => {
+  it("renderiza metricas compactas e cards do historico", async () => {
     renderPage();
 
     expect(await screen.findByText("Comunicados cadastrados")).toBeInTheDocument();
@@ -130,9 +156,8 @@ describe("ComunicadosPage", () => {
     expect(screen.getByText("Entradas")).toBeInTheDocument();
     expect(screen.getByText("Saídas")).toBeInTheDocument();
     expect(screen.getByText("Responsáveis")).toBeInTheDocument();
-    expect(screen.getByText("itens no contexto atual")).toBeInTheDocument();
-    expect(screen.getByText("filtros aplicados")).toBeInTheDocument();
-    expect(screen.getAllByText("Abrir painel")).toHaveLength(2);
+    expect(screen.getByText("Historico com consulta e manutencao no mesmo fluxo")).toBeInTheDocument();
+    expect(screen.getAllByRole("button", { name: /abrir detalhes de/i })).toHaveLength(2);
   });
 
   it("aplica busca e limpa filtros", async () => {
@@ -161,7 +186,9 @@ describe("ComunicadosPage", () => {
     renderPage();
 
     await user.click(
-      await screen.findByRole("button", { name: /resposta ao orgao concedente/i }),
+      await screen.findByRole("button", {
+        name: /abrir detalhes de resposta ao orgao concedente/i,
+      }),
     );
 
     expect(
@@ -172,7 +199,7 @@ describe("ComunicadosPage", () => {
     ).toBeInTheDocument();
   });
 
-  it("envia cadastro no modal e limpa campo oculto ao alternar tipo", async () => {
+  it("envia cadastro no modal e limpa o campo oculto ao alternar tipo", async () => {
     const user = userEvent.setup();
     renderPage();
 
@@ -182,28 +209,71 @@ describe("ComunicadosPage", () => {
 
     await user.type(screen.getByLabelText("Protocolo"), "COM-003/2026");
     await user.type(screen.getByLabelText("Assunto"), "Novo comunicado");
-    await user.type(screen.getByLabelText("Destinatario"), "Setor interno");
-    await user.click(screen.getByLabelText("Saída"));
     await user.type(screen.getByLabelText("Origem"), "Secretaria de Educacao");
+    await user.click(screen.getByLabelText("Saída"));
+    await user.type(screen.getByLabelText("Destinatario"), "Setor interno");
     await user.click(screen.getByRole("button", { name: /^registrar comunicado$/i }));
 
     await waitFor(() => {
-      expect(createMock).toHaveBeenCalledWith(
+        expect(createMock).toHaveBeenCalledWith(
+          expect.objectContaining({
+            protocolo: "COM-003/2026",
+            assunto: "Novo comunicado",
+            tipo: "SAIDA",
+            origem: "",
+            destino: "Setor interno",
+          }),
+        );
+    });
+
+    expect(toastSuccessMock).toHaveBeenCalledWith("Comunicado registrado com sucesso.");
+  });
+
+  it("edita um comunicado existente pelo modal", async () => {
+    const user = userEvent.setup();
+    renderPage();
+
+    await user.click(
+      await screen.findByRole("button", {
+        name: /editar comunicado solicitacao de documentos/i,
+      }),
+    );
+
+    const assuntoInput = screen.getByLabelText("Assunto");
+    await user.clear(assuntoInput);
+    await user.type(assuntoInput, "Solicitacao atualizada");
+    await user.click(screen.getByRole("button", { name: /salvar alteracoes/i }));
+
+    await waitFor(() => {
+      expect(updateMock).toHaveBeenCalledWith(
+        "com-1",
         expect.objectContaining({
-          protocolo: "COM-003/2026",
-          assunto: "Novo comunicado",
-          tipo: "SAIDA",
-          origem: "Secretaria de Educacao",
-          destino: undefined,
+          assunto: "Solicitacao atualizada",
+          tipo: "ENTRADA",
+          origem: "Secretaria de Obras",
         }),
       );
     });
 
+    expect(toastSuccessMock).toHaveBeenCalledWith("Comunicado atualizado com sucesso.");
+  });
+
+  it("exclui um comunicado com confirmacao", async () => {
+    const user = userEvent.setup();
+    renderPage();
+
+    await user.click(
+      await screen.findByRole("button", {
+        name: /excluir comunicado solicitacao de documentos/i,
+      }),
+    );
+
+    await user.click(await screen.findByRole("button", { name: /^excluir$/i }));
+
     await waitFor(() => {
-      expect(
-        screen.queryByText(/Cadastre o protocolo com os campos ja usados pelo sistema/i),
-      ).not.toBeInTheDocument();
+      expect(removeMock).toHaveBeenCalledWith("com-1");
     });
-    expect(toastSuccessMock).toHaveBeenCalledWith("Comunicado registrado com sucesso.");
+
+    expect(toastSuccessMock).toHaveBeenCalledWith("Comunicado excluido com sucesso.");
   });
 });

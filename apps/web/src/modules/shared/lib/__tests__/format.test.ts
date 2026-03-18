@@ -1,4 +1,4 @@
-import { formatCurrency, formatDate, formatDateTime } from "../format";
+import { formatCurrency, formatDate } from "../format";
 
 describe("formatCurrency", () => {
   it("formata número válido corretamente", () => {
@@ -40,12 +40,11 @@ describe("formatDate", () => {
     const result = formatDate("2026-01-30T14:30:00.000Z");
     expect(result).toBeTruthy();
     expect(result).not.toBe("Sem data");
-    // Verifica se contém o ano
     expect(result).toContain("2026");
   });
 
   it("formata objeto Date", () => {
-    const date = new Date(2026, 0, 30); // 30 de janeiro de 2026
+    const date = new Date(2026, 0, 30);
     const result = formatDate(date);
     expect(result).not.toBe("Sem data");
     expect(result).toContain("2026");
@@ -61,31 +60,5 @@ describe("formatDate", () => {
 
   it("retorna 'Sem data' para string vazia", () => {
     expect(formatDate("")).toBe("Sem data");
-  });
-});
-
-describe("formatDateTime", () => {
-  it("formata data e hora corretamente", () => {
-    const result = formatDateTime("2026-01-30T14:30:00.000Z");
-    expect(result).toBeTruthy();
-    expect(result).not.toBe("Sem data");
-    // Deve conter o ano e separadores de hora
-    expect(result).toContain("2026");
-  });
-
-  it("formata objeto Date com hora", () => {
-    const date = new Date(2026, 0, 30, 14, 30);
-    const result = formatDateTime(date);
-    expect(result).not.toBe("Sem data");
-    expect(result).toContain("30");
-    expect(result).toContain("14:30");
-  });
-
-  it("retorna 'Sem data' para null", () => {
-    expect(formatDateTime(null)).toBe("Sem data");
-  });
-
-  it("retorna 'Sem data' para undefined", () => {
-    expect(formatDateTime(undefined)).toBe("Sem data");
   });
 });

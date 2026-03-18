@@ -32,7 +32,7 @@ routes.use('/agenda', agendaRoutes);
 routes.use('/configuracoes', configuracoesRoutes);
 routes.use('/auditoria', auditoriaRoutes);
 
-// Rotas aninhadas de convênios
+
 routes.use('/convenios/:convenioId/emendas', emendaRoutes);
 routes.use('/convenios/:convenioId/financeiro', financeiroRoutes);
 routes.use('/convenios/:convenioId/contratos', contratoRoutes);
@@ -42,5 +42,5 @@ routes.use('/convenios/:convenioId/fichas-orcamentarias', fichaOrcamentariaRoute
 routes.use('/convenios/:convenioId/notas-empenho', notaEmpenhoRoutes);
 routes.use('/convenios/:convenioId/snapshots', snapshotRoutes);
 
-// Rotas aninhadas de contratos
+
 routes.use('/contratos/:contratoId/medicoes', medicaoRoutes);

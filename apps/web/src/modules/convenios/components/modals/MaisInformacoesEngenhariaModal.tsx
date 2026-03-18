@@ -14,7 +14,7 @@ import { Button } from "@/modules/shared/ui/button";
 import { Label } from "@/modules/shared/ui/label";
 import { CurrencyInput } from "@/modules/shared/ui/currency-input";
 import { financeiroService } from "@/modules/convenios/services/financeiroService";
-import { formatCurrency } from "@/modules/shared/utils/format";
+import { formatCurrency } from "@/modules/shared/lib/format";
 import { toast } from "@/modules/shared/ui/toaster";
 
 type Props = {

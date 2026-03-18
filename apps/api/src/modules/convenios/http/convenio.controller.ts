@@ -70,7 +70,7 @@ export class ConvenioController {
     const valorMin = req.query.valorMin ? Number(req.query.valorMin) : undefined;
     const valorMax = req.query.valorMax ? Number(req.query.valorMax) : undefined;
 
-    // Usa listLite para performance na listagem
+
     const useCase = new ListConveniosLiteUseCase(this.repository);
     const convenios = await useCase.execute({
       search, status, secretariaId, esfera, modalidadeRepasseId,
@@ -88,12 +88,12 @@ export class ConvenioController {
 
   async create(req: Request, res: Response) {
     const payload = createSchema.parse(req.body);
-    // Auto-calcular valorGlobal = valorRepasse + valorContrapartida
-    payload.valorGlobal = (payload.valorRepasse ?? 0) + (payload.valorContrapartida ?? 0);
+
+    payload.valorGlobal ??= (payload.valorRepasse ?? 0) + (payload.valorContrapartida ?? 0);
     const useCase = new CreateConvenioUseCase(this.repository);
     const convenio = await useCase.execute(payload as Required<Pick<typeof payload, 'valorGlobal'>> & typeof payload);
 
-    // Registra auditoria
+
     await AuditService.logCreate(
       { id: req.user!.id, nome: req.user!.nome, email: req.user!.email },
       'Convenio',
@@ -109,16 +109,16 @@ export class ConvenioController {
   async update(req: Request, res: Response) {
     const id = req.params.id;
     const payload = updateSchema.parse(req.body);
-    // Auto-calcular valorGlobal se repasse ou contrapartida foram enviados
+
     if (payload.valorRepasse !== undefined || payload.valorContrapartida !== undefined) {
       payload.valorGlobal = (payload.valorRepasse ?? 0) + (payload.valorContrapartida ?? 0);
     }
 
-    // Busca dados antigos para auditoria e snapshot
+
     const getUseCase = new GetConvenioUseCase(this.repository);
     const dadosAntigos = await getUseCase.execute(id);
 
-    // Cria snapshot antes da atualização (histórico de versões)
+
     await SnapshotService.beforeUpdate(
       id,
       dadosAntigos as unknown as Record<string, unknown>,
@@ -128,7 +128,7 @@ export class ConvenioController {
     const useCase = new UpdateConvenioUseCase(this.repository);
     const convenio = await useCase.execute(id, payload);
 
-    // Registra auditoria
+
     await AuditService.logUpdate(
       { id: req.user!.id, nome: req.user!.nome, email: req.user!.email },
       'Convenio',
@@ -145,14 +145,14 @@ export class ConvenioController {
   async remove(req: Request, res: Response) {
     const id = req.params.id;
 
-    // Busca dados para auditoria antes de excluir
+
     const getUseCase = new GetConvenioUseCase(this.repository);
     const dadosAntigos = await getUseCase.execute(id);
 
     const useCase = new DeleteConvenioUseCase(this.repository);
     await useCase.execute(id);
 
-    // Registra auditoria
+
     await AuditService.logDelete(
       { id: req.user!.id, nome: req.user!.nome, email: req.user!.email },
       'Convenio',
@@ -175,7 +175,7 @@ export class ConvenioController {
   async concluir(req: Request, res: Response) {
     const id = req.params.id;
 
-    // Busca dados antigos para auditoria e snapshot
+
     const getUseCase = new GetConvenioUseCase(this.repository);
     const dadosAntigos = await getUseCase.execute(id);
 
@@ -204,7 +204,7 @@ export class ConvenioController {
   async cancelar(req: Request, res: Response) {
     const id = req.params.id;
 
-    // Busca dados antigos para auditoria e snapshot
+
     const getUseCase = new GetConvenioUseCase(this.repository);
     const dadosAntigos = await getUseCase.execute(id);
 

@@ -139,7 +139,7 @@ export class ConfiguracoesController {
     return res.status(204).send();
   }
 
-  // Tipos de Termo de Formalização
+
   async listarTiposTermoFormalizacao(_req: Request, res: Response) {
     const dados = await prisma.tipoTermoFormalizacaoCatalogo.findMany({
       orderBy: { nome: 'asc' }

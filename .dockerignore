@@ -5,6 +5,12 @@ node_modules
 # Builds locais
 **/dist
 **/build
+!apps/api/dist
+!apps/api/dist/**
+!apps/web/dist
+!apps/web/dist/**
+!packages/db/dist
+!packages/db/dist/**
 
 # Git
 .git

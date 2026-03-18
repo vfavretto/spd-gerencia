@@ -117,18 +117,18 @@ export class PrismaConvenioRepository implements ConvenioRepository {
   ): IConvenio {
     return {
       ...conv,
-      // Valores financeiros do convênio
+
       valorGlobal: conv.valorGlobal.toNumber(),
       valorRepasse: conv.valorRepasse ? conv.valorRepasse.toNumber() : null,
       valorContrapartida: conv.valorContrapartida ? conv.valorContrapartida.toNumber() : null,
       etapas: [],
       anexos: [],
-      // Emendas parlamentares
+
       emendas: (conv.emendas ?? []).map((e) => ({
         ...e,
         valorIndicado: e.valorIndicado ? e.valorIndicado.toNumber() : e.valorIndicado
       })),
-      // Financeiro contas
+
       financeiroContas: conv.financeiroContas
         ? {
             ...conv.financeiroContas,
@@ -138,7 +138,7 @@ export class PrismaConvenioRepository implements ConvenioRepository {
             ajusteContrapartidaVigente: conv.financeiroContas.ajusteContrapartidaVigente ? conv.financeiroContas.ajusteContrapartidaVigente.toNumber() : conv.financeiroContas.ajusteContrapartidaVigente,
           }
         : null,
-      // Contratos com medições
+
       contratos: (conv.contratos ?? []).map((c) => ({
         ...c,
         valorContrato: c.valorContrato ? c.valorContrato.toNumber() : c.valorContrato,
@@ -151,18 +151,18 @@ export class PrismaConvenioRepository implements ConvenioRepository {
           valorPago: m.valorPago ? m.valorPago.toNumber() : m.valorPago,
         })),
       })),
-      // Aditivos
+
       aditivos: (conv.aditivos ?? []).map((a) => ({
         ...a,
         valorAcrescimo: a.valorAcrescimo ? a.valorAcrescimo.toNumber() : a.valorAcrescimo,
         valorSupressao: a.valorSupressao ? a.valorSupressao.toNumber() : a.valorSupressao,
       })),
-      // Fichas orçamentárias
+
       fichasOrcamentarias: (conv.fichasOrcamentarias ?? []).map((f) => ({
         ...f,
         valor: f.valor ? f.valor.toNumber() : f.valor,
       })),
-      // Notas de empenho
+
       notasEmpenho: (conv.notasEmpenho ?? []).map((n) => ({
         ...n,
         valor: n.valor.toNumber(),

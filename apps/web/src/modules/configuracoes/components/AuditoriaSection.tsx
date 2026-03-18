@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ScrollText } from "lucide-react";
 import { useState } from "react";
 import { auditoriaService } from "@/modules/configuracoes/services/auditoriaService";
-import { formatDate } from "@/modules/shared/utils/format";
+import { formatDate } from "@/modules/shared/lib/format";
 
 export function AuditoriaSection() {
   const [filters, setFilters] = useState({

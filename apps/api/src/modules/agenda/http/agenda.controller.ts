@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express';
 import { z } from 'zod';
+import { zLocalDate } from '@shared/schemas/dateSchema';
 import { PrismaEventoRepository } from '../repositories/implementations/PrismaEventoRepository';
 import { ListEventosUseCase } from '../useCases/ListEventosUseCase';
 import { GetEventoUseCase } from '../useCases/GetEventoUseCase';
@@ -22,8 +23,8 @@ const createSchema = z.object({
     ])
     .nullable()
     .optional(),
-  dataInicio: z.coerce.date(),
-  dataFim: z.coerce.date().nullable().optional(),
+  dataInicio: zLocalDate,
+  dataFim: zLocalDate.nullable().optional(),
   local: z.string().nullable().optional(),
   responsavel: z.string().nullable().optional(),
   convenioId: z.string().nullable().optional()
@@ -32,7 +33,7 @@ const createSchema = z.object({
 const updateSchema = createSchema
   .partial()
   .extend({
-    concluidoEm: z.coerce.date().nullable().optional()
+    concluidoEm: zLocalDate.nullable().optional()
   });
 
 export class AgendaController {

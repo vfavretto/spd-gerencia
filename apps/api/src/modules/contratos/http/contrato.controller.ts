@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express';
 import { z } from 'zod';
+import { zLocalDate } from '@shared/schemas/dateSchema';
 import { PrismaContratoRepository } from '../repositories/implementations/PrismaContratoRepository';
 import { PrismaConvenioRepository } from '../../convenios/repositories/implementations/PrismaConvenioRepository';
 import { ConvenioStatusService } from '../../convenios/services/ConvenioStatusService';
@@ -23,10 +24,10 @@ const createSchema = z.object({
   numeroContrato: z.string().optional().nullable(),
   contratadaCnpj: z.string().optional().nullable(),
   contratadaNome: z.string().optional().nullable(),
-  dataAssinatura: z.coerce.date().nullable().optional(),
-  dataVigenciaInicio: z.coerce.date().nullable().optional(),
-  dataVigenciaFim: z.coerce.date().nullable().optional(),
-  dataOIS: z.coerce.date().nullable().optional(),
+  dataAssinatura: zLocalDate.nullable().optional(),
+  dataVigenciaInicio: zLocalDate.nullable().optional(),
+  dataVigenciaFim: zLocalDate.nullable().optional(),
+  dataOIS: zLocalDate.nullable().optional(),
   valorContrato: z.number().min(0).optional().nullable(),
   valorExecutado: z.number().min(0).optional().nullable(),
   valorCPExclusiva: z.number().min(0).optional().nullable(),
@@ -38,7 +39,7 @@ const createSchema = z.object({
   // Novos campos
   cno: z.string().optional().nullable(),
   prazoExecucaoDias: z.number().int().min(0).optional().nullable(),
-  dataTerminoExecucao: z.coerce.date().nullable().optional(),
+  dataTerminoExecucao: zLocalDate.nullable().optional(),
   convenioId: z.string()
 });
 

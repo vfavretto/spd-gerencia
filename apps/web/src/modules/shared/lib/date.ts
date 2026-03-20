@@ -54,7 +54,7 @@ export function toDateInputValue(date: Date | null | undefined): string {
 export function toStringDateInputValue(value?: string | null): string {
   if (!value) return "";
 
-  const date = new Date(value);
+  const date = new Date(value.length === 10 ? value + "T00:00:00" : value);
   if (Number.isNaN(date.getTime())) return "";
 
   const year = date.getFullYear();

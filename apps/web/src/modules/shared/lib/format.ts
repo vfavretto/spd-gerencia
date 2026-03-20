@@ -1,6 +1,3 @@
-/**
- * Formata um valor numérico como moeda BRL.
- */
 export const formatCurrency = (value: number | string | null | undefined = 0): string =>
   Number(value ?? 0).toLocaleString("pt-BR", {
     style: "currency",
@@ -8,12 +5,11 @@ export const formatCurrency = (value: number | string | null | undefined = 0): s
     maximumFractionDigits: 2
   });
 
-/**
- * Formata uma data para exibição resumida (ex: "30 de jan. de 2026").
- */
 export const formatDate = (value?: string | Date | null): string => {
   if (!value) return "Sem data";
-  const date = typeof value === "string" ? new Date(value) : value;
+  const date = typeof value === "string"
+    ? new Date(value.length === 10 ? value + "T00:00:00" : value)
+    : value;
   return date.toLocaleDateString("pt-BR", {
     day: "2-digit",
     month: "short",

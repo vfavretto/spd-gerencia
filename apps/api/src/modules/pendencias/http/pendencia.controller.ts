@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express';
 import { z } from 'zod';
+import { zLocalDate } from '@shared/schemas/dateSchema';
 import { StatusPendencia } from '@spd/db';
 import { PrismaPendenciaRepository } from '../repositories/implementations/PrismaPendenciaRepository';
 import { PrismaConvenioRepository } from '../../convenios/repositories/implementations/PrismaConvenioRepository';
@@ -17,11 +18,11 @@ const statusEnum = z.nativeEnum(StatusPendencia);
 const createSchema = z.object({
   descricao: z.string().min(1),
   responsavel: z.string().nullable().optional(),
-  prazo: z.coerce.date().nullable().optional(),
+  prazo: zLocalDate.nullable().optional(),
   status: statusEnum.optional(),
   prioridade: z.number().int().min(1).max(3).optional(),
   resolucao: z.string().nullable().optional(),
-  dataResolucao: z.coerce.date().nullable().optional(),
+  dataResolucao: zLocalDate.nullable().optional(),
   orgaoResponsavel: z.string().nullable().optional()
 });
 

@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express';
 import { z } from 'zod';
+import { zLocalDate } from '@shared/schemas/dateSchema';
 import { PrismaMedicaoRepository } from '../repositories/implementations/PrismaMedicaoRepository';
 import { ListMedicoesUseCase } from '../useCases/ListMedicoesUseCase';
 import { GetMedicaoUseCase } from '../useCases/GetMedicaoUseCase';
@@ -10,10 +11,10 @@ import { GetSaldoContratoUseCase } from '../useCases/GetSaldoContratoUseCase';
 
 const createSchema = z.object({
   numeroMedicao: z.number().int().min(0).optional(),
-  dataMedicao: z.coerce.date(),
+  dataMedicao: zLocalDate,
   percentualFisico: z.number().min(0).max(100).optional().nullable(),
   valorMedido: z.number().min(0),
-  dataPagamento: z.coerce.date().nullable().optional(),
+  dataPagamento: zLocalDate.nullable().optional(),
   valorPago: z.number().min(0).optional().nullable(),
   observacoes: z.string().optional().nullable(),
   situacao: z.string().optional().nullable(),

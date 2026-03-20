@@ -1,7 +1,7 @@
 {
   "name": "spd-prefeitura",
   "private": true,
-  "version": "2.2.0",
+  "version": "2.4.0",
   "description": "Sistema de gerenciamento interno da Secretaria de Planejamento e Desenvolvimento de Votorantim",
   "scripts": {
     "dev:db": "npm --workspace packages/db run dev",

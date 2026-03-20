@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express';
 import { z } from 'zod';
+import { zLocalDate } from '@shared/schemas/dateSchema';
 import { PrismaAditivoRepository } from '../repositories/implementations/PrismaAditivoRepository';
 import { ListAditivosUseCase } from '../useCases/ListAditivosUseCase';
 import { GetAditivoUseCase } from '../useCases/GetAditivoUseCase';
@@ -19,8 +20,8 @@ const tipoAditivoEnum = z.enum([
 const createSchema = z.object({
   numeroAditivo: z.number().int().positive().nullable().optional(),
   tipoAditivo: tipoAditivoEnum,
-  dataAssinatura: z.coerce.date().nullable().optional(),
-  novaVigencia: z.coerce.date().nullable().optional(),
+  dataAssinatura: zLocalDate.nullable().optional(),
+  novaVigencia: zLocalDate.nullable().optional(),
   valorAcrescimo: z.number().min(0).nullable().optional(),
   valorSupressao: z.number().min(0).nullable().optional(),
   motivo: z.string().nullable().optional(),

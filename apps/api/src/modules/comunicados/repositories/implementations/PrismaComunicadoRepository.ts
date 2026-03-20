@@ -31,10 +31,10 @@ export class PrismaComunicadoRepository implements ComunicadoRepository {
     if (filters?.dataInicio || filters?.dataFim) {
       where.dataRegistro = {};
       if (filters.dataInicio) {
-        where.dataRegistro.gte = new Date(filters.dataInicio);
+        where.dataRegistro.gte = new Date(filters.dataInicio + 'T00:00:00');
       }
       if (filters.dataFim) {
-        where.dataRegistro.lte = new Date(filters.dataFim);
+        where.dataRegistro.lte = new Date(filters.dataFim + 'T23:59:59');
       }
     }
 

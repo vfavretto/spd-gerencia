@@ -58,10 +58,10 @@ export class PrismaConvenioRepository implements ConvenioRepository {
     if (filters?.dataInicioVigencia || filters?.dataFimVigencia) {
       where.dataInicioVigencia = {};
       if (filters.dataInicioVigencia) {
-        (where.dataInicioVigencia as Record<string, unknown>).gte = new Date(filters.dataInicioVigencia);
+        (where.dataInicioVigencia as Record<string, unknown>).gte = new Date(filters.dataInicioVigencia + 'T00:00:00');
       }
       if (filters.dataFimVigencia) {
-        where.dataFimVigencia = { lte: new Date(filters.dataFimVigencia) };
+        where.dataFimVigencia = { lte: new Date(filters.dataFimVigencia + 'T23:59:59') };
       }
     }
 

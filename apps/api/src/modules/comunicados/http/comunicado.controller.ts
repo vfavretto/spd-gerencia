@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express';
 import { z } from 'zod';
+import { zLocalDate } from '@shared/schemas/dateSchema';
 import { PrismaComunicadoRepository } from '../repositories/implementations/PrismaComunicadoRepository';
 import { ListComunicadosUseCase } from '../useCases/ListComunicadosUseCase';
 import { GetComunicadoUseCase } from '../useCases/GetComunicadoUseCase';
@@ -13,7 +14,7 @@ const createSchema = z.object({
   assunto: z.string().min(3),
   conteudo: z.string().nullable().optional(),
   tipo: z.enum(['ENTRADA', 'SAIDA']),
-  dataRegistro: z.coerce.date().optional(),
+  dataRegistro: zLocalDate.optional(),
   origem: z.string().nullable().optional(),
   destino: z.string().nullable().optional(),
   responsavel: z.string().nullable().optional(),

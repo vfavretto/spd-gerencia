@@ -1,4 +1,5 @@
 import { z, ZodError } from 'zod';
+import { zLocalDate } from '@shared/schemas/dateSchema';
 
 // Replica os schemas do comunicado.controller.ts para testar isoladamente
 const createSchema = z.object({
@@ -6,7 +7,7 @@ const createSchema = z.object({
   assunto: z.string().min(3),
   conteudo: z.string().nullable().optional(),
   tipo: z.enum(['ENTRADA', 'SAIDA']),
-  dataRegistro: z.coerce.date().optional(),
+  dataRegistro: zLocalDate.optional(),
   origem: z.string().nullable().optional(),
   destino: z.string().nullable().optional(),
   responsavel: z.string().nullable().optional(),
@@ -144,6 +145,15 @@ describe('ComunicadoController — Zod Schemas', () => {
       const result = createSchema.parse(payload);
 
       expect(result.dataRegistro).toBeInstanceOf(Date);
+    });
+
+    it('não deve alterar o dia da data ao parsear YYYY-MM-DD', () => {
+      const payload = { ...validPayload, dataRegistro: '2025-03-15' };
+      const result = createSchema.parse(payload);
+
+      expect(result.dataRegistro!.getDate()).toBe(15);
+      expect(result.dataRegistro!.getMonth()).toBe(2); // Março = index 2
+      expect(result.dataRegistro!.getFullYear()).toBe(2025);
     });
   });
 

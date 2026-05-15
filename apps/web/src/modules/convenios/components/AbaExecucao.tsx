@@ -15,6 +15,7 @@ import { Progress, ProgressCircle } from "@/modules/shared/ui/progress";
 import { Button } from "@/modules/shared/ui/button";
 import { ConfirmDialog } from "@/modules/shared/components/ConfirmDialog";
 import { convenioService } from "@/modules/convenios/services/convenioService";
+import { usePermissions } from "@/modules/shared/hooks";
 import { toast } from "@/modules/shared/ui/toaster";
 
 type Props = {
@@ -25,6 +26,7 @@ type Props = {
 
 export function AbaExecucao({ convenio, valoresVigentes, onUpdate }: Props) {
   const queryClient = useQueryClient();
+  const { canUpdate } = usePermissions();
   const [showConcluirConfirm, setShowConcluirConfirm] = useState(false);
   const [showCancelarConfirm, setShowCancelarConfirm] = useState(false);
 
@@ -124,7 +126,7 @@ export function AbaExecucao({ convenio, valoresVigentes, onUpdate }: Props) {
         <h3 className="text-lg font-semibold text-slate-900">
           Acompanhamento da Execução
         </h3>
-        {podeFinalizarOuCancelar && (
+        {podeFinalizarOuCancelar && canUpdate("convenio") && (
           <div className="flex gap-2">
             <Button
               variant="outline"

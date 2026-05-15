@@ -7,6 +7,7 @@ import { ConfirmDialog } from "@/modules/shared/components/ConfirmDialog";
 import { convenioService } from "@/modules/convenios/services/convenioService";
 import { configService } from "@/modules/configuracoes/services/configService";
 import { emendaService } from "@/modules/convenios/services/emendaService";
+import { usePermissions } from "@/modules/shared/hooks";
 import { formatDateBR } from "@/modules/shared/lib/date";
 import { Button } from "@/modules/shared/ui/button";
 import { Input } from "@/modules/shared/ui/input";
@@ -23,6 +24,7 @@ type Props = {
 
 export function AbaGeral({ convenio, onUpdate }: Props) {
   const queryClient = useQueryClient();
+  const { canCreate, canUpdate, canDelete } = usePermissions();
   const [isEditing, setIsEditing] = useState(false);
   const [showAssinaturaModal, setShowAssinaturaModal] = useState(false);
   const [showAditivoModal, setShowAditivoModal] = useState(false);
@@ -240,9 +242,7 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
             <Label>Órgão Concedente</Label>
             <select
               className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
-              {...register("orgaoId", {
-                setValueAs: (v) => (v === "" ? undefined : Number(v))
-              })}
+              {...register("orgaoId")}
             >
               <option value="">Selecione</option>
               {catalogs?.orgaos.map((o) => (
@@ -279,22 +279,24 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold">Dados Gerais</h3>
         <div className="flex gap-2">
-          {podeRegistrarAssinatura && (
+          {podeRegistrarAssinatura && canUpdate("convenio") && (
             <Button onClick={() => setShowAssinaturaModal(true)} className="bg-emerald-600 hover:bg-emerald-500">
               <CalendarCheck className="h-4 w-4 mr-2" />
               Registrar Assinatura
             </Button>
           )}
-          {convenio.dataAssinatura && (
+          {convenio.dataAssinatura && canCreate("aditivo") && (
             <Button onClick={() => setShowAditivoModal(true)} variant="outline" className="border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100">
               <FileSignature className="h-4 w-4 mr-2" />
               Aditivar
             </Button>
           )}
-          <Button variant="secondary" onClick={() => setIsEditing(true)}>
-            <Edit2 className="h-4 w-4 mr-2" />
-            Editar
-          </Button>
+          {canUpdate("convenio") && (
+            <Button variant="secondary" onClick={() => setIsEditing(true)}>
+              <Edit2 className="h-4 w-4 mr-2" />
+              Editar
+            </Button>
+          )}
         </div>
       </div>
 
@@ -423,15 +425,17 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
             <Landmark className="h-4 w-4" />
             Emendas Parlamentares
           </h4>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleNovaEmenda}
-            className="border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
-          >
-            <Plus className="h-4 w-4 mr-1" />
-            Adicionar Emenda
-          </Button>
+          {canCreate("emenda") && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleNovaEmenda}
+              className="border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+            >
+              <Plus className="h-4 w-4 mr-1" />
+              Adicionar Emenda
+            </Button>
+          )}
         </div>
         
         {convenio.emendas && convenio.emendas.length > 0 ? (
@@ -465,27 +469,31 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          handleEditarEmenda(emenda);
-                        }}
-                        className="p-1.5 rounded-lg text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 transition"
-                        title="Editar emenda"
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </button>
-                      <button
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          handleDeletarEmenda(emenda);
-                        }}
-                        className="p-1.5 rounded-lg text-slate-500 hover:text-red-600 hover:bg-red-50 transition"
-                        title="Remover emenda"
-                        disabled={deletarEmendaMutation.isPending}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
+                      {canUpdate("emenda") && (
+                        <button
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            handleEditarEmenda(emenda);
+                          }}
+                          className="p-1.5 rounded-lg text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 transition"
+                          title="Editar emenda"
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </button>
+                      )}
+                      {canDelete("emenda") && (
+                        <button
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            handleDeletarEmenda(emenda);
+                          }}
+                          className="p-1.5 rounded-lg text-slate-500 hover:text-red-600 hover:bg-red-50 transition"
+                          title="Remover emenda"
+                          disabled={deletarEmendaMutation.isPending}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      )}
                     </div>
                     <ChevronDown
                       className={`h-4 w-4 text-slate-500 transition-transform ${expandedEmendaId === emenda.id ? "rotate-180" : ""}`}
@@ -541,14 +549,16 @@ export function AbaGeral({ convenio, onUpdate }: Props) {
             <p className="text-sm text-slate-500">
               Nenhuma emenda parlamentar vinculada a este convênio.
             </p>
-            <Button
-              variant="link"
-              size="sm"
-              onClick={handleNovaEmenda}
-              className="mt-2 text-emerald-600"
-            >
-              Adicionar primeira emenda
-            </Button>
+            {canCreate("emenda") && (
+              <Button
+                variant="link"
+                size="sm"
+                onClick={handleNovaEmenda}
+                className="mt-2 text-emerald-600"
+              >
+                Adicionar primeira emenda
+              </Button>
+            )}
           </div>
         )}
       </div>

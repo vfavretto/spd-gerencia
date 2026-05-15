@@ -1,0 +1,2602 @@
+{
+  "geradoEm": "2026-05-15T10:16:22",
+  "secretarias": [
+    {
+      "id": "sec-sea",
+      "sigla": "SEA",
+      "nome": "Secretaria de Administração",
+      "responsavel": "Claudio Toledo de Camargo (Caio)"
+    },
+    {
+      "id": "sec-seci",
+      "sigla": "SECI",
+      "nome": "Secretaria de Cidadania e Geração de Renda",
+      "responsavel": "Leda Diniz"
+    },
+    {
+      "id": "sec-sec",
+      "sigla": "SEC",
+      "nome": "Secretaria de Cultura e Turismo",
+      "responsavel": "Evandro Gonçalves Domingues"
+    },
+    {
+      "id": "sec-seed",
+      "sigla": "SEED",
+      "nome": "Secretaria de Educação",
+      "responsavel": "Tiago Antonio de Araújo"
+    },
+    {
+      "id": "sec-sedesp",
+      "sigla": "SEDESP",
+      "nome": "Secretaria de Esportes",
+      "responsavel": "Sheila Corrêa"
+    },
+    {
+      "id": "sec-sef",
+      "sigla": "SEF",
+      "nome": "Secretaria de Finanças",
+      "responsavel": "Rafael Bassi"
+    },
+    {
+      "id": "sec-seg",
+      "sigla": "SEG",
+      "nome": "Secretaria de Governo",
+      "responsavel": "Roberto Bellini Martins"
+    },
+    {
+      "id": "sec-sema",
+      "sigla": "SEMA",
+      "nome": "Secretaria de Meio Ambiente",
+      "responsavel": "Luiz Carlos Corrêa"
+    },
+    {
+      "id": "sec-dtt",
+      "sigla": "DTT",
+      "nome": "Secretaria de Mobilidade Urbana",
+      "responsavel": "Jonata Elias Mena"
+    },
+    {
+      "id": "sec-senj",
+      "sigla": "SENJ",
+      "nome": "Secretaria de Negócios Jurídicos",
+      "responsavel": "Jonata Elias Mena (interino)"
+    },
+    {
+      "id": "sec-sourb",
+      "sigla": "SOURB",
+      "nome": "Secretaria de Obras e Urbanismo",
+      "responsavel": "Carlos José de Almeida (Carlota)"
+    },
+    {
+      "id": "sec-spd",
+      "sigla": "SPD",
+      "nome": "Secretaria de Planejamento e Desenvolvimento",
+      "responsavel": "Carlos José de Almeida (interino)"
+    },
+    {
+      "id": "sec-sesa",
+      "sigla": "SESA",
+      "nome": "Secretaria da Saúde",
+      "responsavel": "Alan Francisco Almeida (interino)"
+    },
+    {
+      "id": "sec-sesp",
+      "sigla": "SESP",
+      "nome": "Secretaria de Serviços Públicos",
+      "responsavel": "Luiz Antonio Cares"
+    }
+  ],
+  "orgaos": [
+    {
+      "id": "org-cidades",
+      "nome": "Cidades",
+      "esfera": "FEDERAL"
+    },
+    {
+      "id": "org-educacao",
+      "nome": "Educação",
+      "esfera": "ESTADUAL"
+    },
+    {
+      "id": "org-esporte",
+      "nome": "Esporte",
+      "esfera": "FEDERAL"
+    },
+    {
+      "id": "org-fnde",
+      "nome": "FNDE",
+      "esfera": "FEDERAL"
+    },
+    {
+      "id": "org-fazenda",
+      "nome": "Fazenda",
+      "esfera": "FEDERAL"
+    },
+    {
+      "id": "org-mapa",
+      "nome": "MAPA",
+      "esfera": "FEDERAL"
+    },
+    {
+      "id": "org-mcidades",
+      "nome": "MCIDADES",
+      "esfera": "FEDERAL"
+    },
+    {
+      "id": "org-saude",
+      "nome": "SAÚDE",
+      "esfera": "FEDERAL"
+    },
+    {
+      "id": "org-sduh",
+      "nome": "SDUH",
+      "esfera": "ESTADUAL"
+    },
+    {
+      "id": "org-sgri",
+      "nome": "SGRI",
+      "esfera": "ESTADUAL"
+    },
+    {
+      "id": "org-ssp",
+      "nome": "SSP",
+      "esfera": "ESTADUAL"
+    },
+    {
+      "id": "org-turismo",
+      "nome": "Turismo",
+      "esfera": "ESTADUAL"
+    }
+  ],
+  "programas": [
+    {
+      "id": "prog-001",
+      "nome": "(PAINSP) ALFABETIZA JUNTOS SP - Plataformas Digitais - Alfabetização",
+      "descricao": "(PAINSP) ALFABETIZA JUNTOS SP - Plataformas Digitais - Alfabetização"
+    },
+    {
+      "id": "prog-002",
+      "nome": "(PAINSP) ALFABETIZA JUNTOS SP - Prêmio Excelência Educacional",
+      "descricao": "(PAINSP) ALFABETIZA JUNTOS SP - Prêmio Excelência Educacional"
+    },
+    {
+      "id": "prog-003",
+      "nome": "2200020250003 - Programa Nacional de Modernização e Apoio à Produção Agrícola - PROMAQ",
+      "descricao": "2200020250003 - Programa Nacional de Modernização e Apoio à Produção Agrícola - PROMAQ"
+    },
+    {
+      "id": "prog-004",
+      "nome": "2200020250004 - Programa Nacional de Estradas Rurais - PRONER",
+      "descricao": "2200020250004 - Programa Nacional de Estradas Rurais - PRONER"
+    },
+    {
+      "id": "prog-005",
+      "nome": "2200020250010 - Fomento ao Setor Agropecuário - Equipamentos, Execução de Custeio, Obras e Serviços de Engenharia",
+      "descricao": "2200020250010 - Fomento ao Setor Agropecuário - Equipamentos, Execução de Custeio, Obras e Serviços de Engenharia"
+    },
+    {
+      "id": "prog-006",
+      "nome": "2629820230005 - Novo PAC - Creches e Escolas de Educação Infantil",
+      "descricao": "2629820230005 - Novo PAC - Creches e Escolas de Educação Infantil"
+    },
+    {
+      "id": "prog-007",
+      "nome": "3600020230050 - Novo PAC - Unidades Básicas de Saúde",
+      "descricao": "3600020230050 - Novo PAC - Unidades Básicas de Saúde"
+    },
+    {
+      "id": "prog-008",
+      "nome": "462 - Aquisição de equipamentos da SSP",
+      "descricao": "462 - Aquisição de equipamentos da SSP"
+    },
+    {
+      "id": "prog-009",
+      "nome": "5100020230001 - Apoio à Implantação e Modernização de Infraestrutura para Esporte Educacional, Recreativo e de Lazer",
+      "descricao": "5100020230001 - Apoio à Implantação e Modernização de Infraestrutura para Esporte Educacional, Recreativo e de Lazer"
+    },
+    {
+      "id": "prog-010",
+      "nome": "5300020250005 - Ação 00SX - Apoio a Projetos de Desenvolvimento Sustentável Local Integrado - RP2 - Equipamentos e Obras",
+      "descricao": "5300020250005 - Ação 00SX - Apoio a Projetos de Desenvolvimento Sustentável Local Integrado - RP2 - Equipamentos e Obras"
+    },
+    {
+      "id": "prog-011",
+      "nome": "5300020250006 - Ação 00SX - Apoio a Projetos de Desenvolvimento Sustentável Local Integrado - RP2 - Obras",
+      "descricao": "5300020250006 - Ação 00SX - Apoio a Projetos de Desenvolvimento Sustentável Local Integrado - RP2 - Obras"
+    },
+    {
+      "id": "prog-012",
+      "nome": "674 - Infraestrutura Urbana",
+      "descricao": "674 - Infraestrutura Urbana"
+    },
+    {
+      "id": "prog-013",
+      "nome": "674 - Infraestrutura Urbana e Obras para Melhoria do Município",
+      "descricao": "674 - Infraestrutura Urbana e Obras para Melhoria do Município"
+    },
+    {
+      "id": "prog-014",
+      "nome": "679 - Equipamentos - Aquisição de equipamentos, materiais e bens diversos",
+      "descricao": "679 - Equipamentos - Aquisição de equipamentos, materiais e bens diversos"
+    },
+    {
+      "id": "prog-015",
+      "nome": "6900020250015 - Evolução das Microempresas e das Empresas de Pequeno Porte visando a interiorização das estratégias para a implementação da Política Nacional de Desenvolvimento das Microemp…",
+      "descricao": "6900020250015 - Evolução das Microempresas e das Empresas de Pequeno Porte visando a interiorização das estratégias para a implementação da Política Nacional de Desenvolvimento das Microemp…"
+    },
+    {
+      "id": "prog-016",
+      "nome": "746 - (CONVÊNIO) Infraestrutura Física",
+      "descricao": "746 - (CONVÊNIO) Infraestrutura Física"
+    },
+    {
+      "id": "prog-017",
+      "nome": "764 - Obras de Infraestrutura Urbana",
+      "descricao": "764 - Obras de Infraestrutura Urbana"
+    },
+    {
+      "id": "prog-018",
+      "nome": "Desenvolvimento de Atividades e Apoio a Programas e Projetos de Esporte Amador, Educacao, Lazer e Inclusao Social - SNEAELIS (Emenda Parlamentar Individual - RP6 - Convênio)",
+      "descricao": "Desenvolvimento de Atividades e Apoio a Programas e Projetos de Esporte Amador, Educacao, Lazer e Inclusao Social - SNEAELIS (Emenda Parlamentar Individual - RP6 - Convênio)"
+    },
+    {
+      "id": "prog-019",
+      "nome": "FECOP",
+      "descricao": "FECOP"
+    },
+    {
+      "id": "prog-020",
+      "nome": "Infraestrutura / Sistema de Lazer",
+      "descricao": "Infraestrutura / Sistema de Lazer"
+    },
+    {
+      "id": "prog-021",
+      "nome": "Infraestrutura Urbana",
+      "descricao": "Infraestrutura Urbana"
+    },
+    {
+      "id": "prog-022",
+      "nome": "MIT - Município de Interesse Turístico de Votorantim - 584 - Infraestrutura Turística",
+      "descricao": "MIT - Município de Interesse Turístico de Votorantim - 584 - Infraestrutura Turística"
+    },
+    {
+      "id": "prog-023",
+      "nome": "Obras Esportivas",
+      "descricao": "Obras Esportivas"
+    },
+    {
+      "id": "prog-024",
+      "nome": "Política Nacional Aldir Blanc de Fomento à Cultura",
+      "descricao": "Política Nacional Aldir Blanc de Fomento à Cultura"
+    },
+    {
+      "id": "prog-025",
+      "nome": "Programa 2217 - Ação Orçamentária 1D73 – Apoio a Política Nacional de Desenvolvimento Urbano e Qualificação Viária",
+      "descricao": "Programa 2217 - Ação Orçamentária 1D73 – Apoio a Política Nacional de Desenvolvimento Urbano e Qualificação Viária"
+    },
+    {
+      "id": "prog-026",
+      "nome": "Programa 2219 - Acao 00T1 - Apoio a Politica Nacional de Desenvolvimento Urbano Voltado a Implantacao e Qualificacao Viaria - RP2",
+      "descricao": "Programa 2219 - Acao 00T1 - Apoio a Politica Nacional de Desenvolvimento Urbano Voltado a Implantacao e Qualificacao Viaria - RP2"
+    },
+    {
+      "id": "prog-027",
+      "nome": "Programa 2319 - Ação 00T1 - Apoio a Politica Nacional de Desenvolvimento Urbano Voltado a Implantação e Qualificação Viaria – RP2",
+      "descricao": "Programa 2319 - Ação 00T1 - Apoio a Politica Nacional de Desenvolvimento Urbano Voltado a Implantação e Qualificação Viaria – RP2"
+    },
+    {
+      "id": "prog-028",
+      "nome": "SNDUM - MCidades 00SY - Apoio a Projetos e Obras de Reabilitação, de Acessibilidade e Modernização Tecnológica em Áreas Urbanas - RP2",
+      "descricao": "SNDUM - MCidades 00SY - Apoio a Projetos e Obras de Reabilitação, de Acessibilidade e Modernização Tecnológica em Áreas Urbanas - RP2"
+    },
+    {
+      "id": "prog-029",
+      "nome": "Todos contra a Desordem",
+      "descricao": "Todos contra a Desordem"
+    },
+    {
+      "id": "prog-030",
+      "nome": "Transferência Especial - Investimento",
+      "descricao": "Transferência Especial - Investimento"
+    },
+    {
+      "id": "prog-031",
+      "nome": "Transferência Especial – Investimento",
+      "descricao": "Transferência Especial – Investimento"
+    }
+  ],
+  "modalidadesRepasse": [
+    {
+      "id": "mod-doacao",
+      "nome": "Doação"
+    },
+    {
+      "id": "mod-emenda",
+      "nome": "Emenda"
+    },
+    {
+      "id": "mod-programa",
+      "nome": "Programa"
+    },
+    {
+      "id": "mod-transferencia-especial",
+      "nome": "Transferência Especial"
+    },
+    {
+      "id": "mod-transferencia-voluntaria",
+      "nome": "Transferência Voluntária"
+    }
+  ],
+  "tiposTermoFormalizacao": [
+    {
+      "id": "tipo-contrato-de-repasse",
+      "nome": "Contrato de Repasse"
+    },
+    {
+      "id": "tipo-convenio",
+      "nome": "Convênio"
+    },
+    {
+      "id": "tipo-investsus",
+      "nome": "InvestSUS"
+    },
+    {
+      "id": "tipo-plano-de-trabalho",
+      "nome": "Plano de Trabalho"
+    },
+    {
+      "id": "tipo-termo-de-colaboracao",
+      "nome": "Termo de Colaboração"
+    },
+    {
+      "id": "tipo-termo-de-compromisso",
+      "nome": "Termo de Compromisso"
+    },
+    {
+      "id": "tipo-termo-de-fomento",
+      "nome": "Termo de Fomento"
+    },
+    {
+      "id": "tipo-transferencia-especial",
+      "nome": "Transferência Especial"
+    }
+  ],
+  "convenios": [
+    {
+      "codigo": "CONV-001",
+      "titulo": "Recapeamento da Rua Victório Zanchetta e Cezina de Almeida",
+      "objeto": "Recapeamento da Rua Victório Zanchetta e Cezina de Almeida",
+      "descricao": null,
+      "status": "EM_EXECUCAO",
+      "esfera": "FEDERAL",
+      "clausulaSuspensiva": false,
+      "numeroProposta": "031513/2021",
+      "numeroTermo": "916433",
+      "ministerioOrgao": "Cidades",
+      "area": "INFRAESTRUTURA",
+      "dataInicioProcesso": "2021-07-16",
+      "dataAssinatura": "2021-09-29",
+      "dataInicioVigencia": "2021-09-29",
+      "dataFimVigencia": "2026-10-31",
+      "processoSPD": "3909/2021",
+      "processoCreditoAdicional": null,
+      "valorGlobal": 249412.89,
+      "valorRepasse": 238856.0,
+      "valorContrapartida": 10556.89,
+      "secretariaSigla": "SOURB",
+      "orgaoNome": "Cidades",
+      "programaNome": "Programa 2217 - Ação\nOrçamentária 1D73 – Apoio a Política Nacional de Desenvolvimento Urbano e Qualificação Viária",
+      "modalidadeNome": "Emenda",
+      "tipoTermoNome": "Contrato de Repasse",
+      "emenda": {
+        "nomeParlamentar": "RELATOR GERAL / EMENDA 740 3088 - EDUARDO BOLSONARO , 3777 - VITOR LIPPI",
+        "partido": "PL / PSDB",
+        "codigoEmenda": "202181000740",
+        "funcao": "15 - Urbanismo",
+        "subfuncao": "451 - Infra-Estrutura Urbana",
+        "programa": "Programa 2217 - Ação Orçamentária 1D73 – Apoio a Política Nacional de Desenvolvimento Urbano e Qualificação Viária",
+        "valorIndicado": 238856.0,
+        "anoEmenda": 2021
+      },
+      "financeiro": {
+        "contaBancaria": "006.006647054-0 574185931-0",
+        "valorLiberadoTotal": 230338.43,
+        "dataDeposito": "2025-07-11",
+        "saldoRendimentos": 3622.91,
+        "codigoReceita": null
+      },
+      "contrato": {
+        "modalidadeLicitacao": "CONCORRENCIA",
+        "numProcessoLicitatorio": "8528/2023 1678/2025",
+        "numeroContrato": "032/2024",
+        "contratadaNome": "Nogueira Construções e Serviços Ltda",
+        "dataAssinatura": "2024-04-30",
+        "dataVigenciaFim": "2025-04-30",
+        "dataOIS": null,
+        "dataTerminoExecucao": null,
+        "valorContrato": 230338.43,
+        "cno": null,
+        "engenheiroResponsavel": "Adilson"
+      },
+      "pendencias": [
+        {
+          "descricao": "Em elaboração do ETP e despacho para o DCLC - Processo Licitatório FEDERAL e ESTADUAL",
+          "orgaoResponsavel": "SOURB / SPD",
+          "status": "ABERTA"
+        }
+      ],
+      "aditivos": [],
+      "secretariaId": "sec-sourb",
+      "orgaoId": "org-cidades",
+      "programaId": "prog-025",
+      "modalidadeRepasseId": "mod-emenda",
+      "tipoTermoFormalizacaoId": "tipo-contrato-de-repasse"
+    },
+    {
+      "codigo": "CONV-002",
+      "titulo": "Revitalização do Prédio da Biblioteca para instalação do Museu",
+      "objeto": "Revitalização do Prédio da Biblioteca para instalação do Museu",
+      "descricao": null,
+      "status": "EM_EXECUCAO",
+      "esfera": "ESTADUAL",
+      "clausulaSuspensiva": false,
+      "numeroProposta": "017413 076464",
+      "numeroTermo": "128",
+      "ministerioOrgao": "Turismo",
+      "area": "CULTURA",
+      "dataInicioProcesso": "2020-02-20",
+      "dataAssinatura": "2021-12-15",
+      "dataInicioVigencia": "2021-12-15",
+      "dataFimVigencia": "2026-12-13",
+      "processoSPD": "5912/2021",
+      "processoCreditoAdicional": "9771/2022",
+      "valorGlobal": 649749.83,
+      "valorRepasse": 615073.96,
+      "valorContrapartida": 34675.87,
+      "secretariaSigla": "SEC",
+      "orgaoNome": "Turismo",
+      "programaNome": "MIT - Município de Interesse Turístico de Votorantim - 584 - Infraestrutura Turística",
+      "modalidadeNome": "Programa",
+      "tipoTermoNome": "Convênio",
+      "emenda": null,
+      "financeiro": {
+        "contaBancaria": "31122-7",
+        "valorLiberadoTotal": 307536.98,
+        "dataDeposito": "2022-12-28",
+        "saldoRendimentos": null,
+        "codigoReceita": null
+      },
+      "contrato": {
+        "modalidadeLicitacao": "TOMADA_PRECOS",
+        "numProcessoLicitatorio": "9776/2021 357/2025",
+        "numeroContrato": "071/2022",
+        "contratadaNome": "DCA Engenharia e Construções Eireli-EPP",
+        "dataAssinatura": "2022-07-06",
+        "dataVigenciaFim": "2023-07-06",
+        "dataOIS": "2022-12-05",
+        "dataTerminoExecucao": "2023-06-03",
+        "valorContrato": 675296.76,
+        "cno": "90.013.14269/76",
+        "engenheiroResponsavel": "Fábio"
+      },
+      "pendencias": [
+        {
+          "descricao": "Aguardando vistoria",
+          "orgaoResponsavel": "1. DADETUR 2. DCLC",
+          "status": "ABERTA"
+        },
+        {
+          "descricao": "CE 05/2025 - Pintura - Aguardando homologação",
+          "orgaoResponsavel": "1. DADETUR 2. DCLC",
+          "status": "ABERTA"
+        },
+        {
+          "descricao": "Aguardando parecer jurídico",
+          "orgaoResponsavel": "1. DADETUR 2. DCLC",
+          "status": "ABERTA"
+        }
+      ],
+      "aditivos": [
+        {
+          "tipoAditivo": "PRAZO",
+          "novaVigencia": "2024-05-02",
+          "motivo": "Aditamento de vigência",
+          "numeroAditivo": 1
+        },
+        {
+          "tipoAditivo": "PRAZO",
+          "novaVigencia": "2024-04-01",
+          "motivo": "Aditamento de prazo de execução",
+          "numeroAditivo": 2
+        },
+        {
+          "tipoAditivo": "VALOR",
+          "valorAcrescimo": 219090.66,
+          "motivo": "Aditamento de valor",
+          "numeroAditivo": 3
+        }
+      ],
+      "secretariaId": "sec-sec",
+      "orgaoId": "org-turismo",
+      "programaId": "prog-022",
+      "modalidadeRepasseId": "mod-programa",
+      "tipoTermoFormalizacaoId": "tipo-convenio"
+    },
+    {
+      "codigo": "CONV-003",
+      "titulo": "Aquisição de equipamentos e material permanente na Clínica Veterinária Municipal",
+      "objeto": "Aquisição de equipamentos e material permanente na Clínica Veterinária Municipal",
+      "descricao": "Licitação",
+      "status": "APROVADO",
+      "esfera": "FEDERAL",
+      "clausulaSuspensiva": false,
+      "numeroProposta": "09032022-2-022112",
+      "numeroTermo": "09032022-2-022112",
+      "ministerioOrgao": "Fazenda",
+      "area": "MEIO AMBIENTE",
+      "dataInicioProcesso": "2022-04-21",
+      "dataAssinatura": "2023-03-29",
+      "dataInicioVigencia": "2023-03-29",
+      "dataFimVigencia": "2026-03-13",
+      "processoSPD": "3520/2022",
+      "processoCreditoAdicional": null,
+      "valorGlobal": 300000.0,
+      "valorRepasse": 300000.0,
+      "valorContrapartida": null,
+      "secretariaSigla": "SEMA",
+      "orgaoNome": "Fazenda",
+      "programaNome": "Transferência Especial – Investimento",
+      "modalidadeNome": "Emenda",
+      "tipoTermoNome": "Transferência Especial",
+      "emenda": {
+        "nomeParlamentar": "2356 - Arnaldo Jardim",
+        "partido": "Cidadania",
+        "codigoEmenda": "202223560001",
+        "funcao": "28 - Encargos especiais",
+        "subfuncao": "845 - Outras transferências",
+        "programa": "Transferência Especial – Investimento",
+        "valorIndicado": 300000.0,
+        "anoEmenda": 2022
+      },
+      "financeiro": {
+        "contaBancaria": "6672006-6 575858238-3",
+        "valorLiberadoTotal": 300000.0,
+        "dataDeposito": "2023-03-30",
+        "saldoRendimentos": 129919.2,
+        "codigoReceita": null
+      },
+      "contrato": null,
+      "pendencias": [
+        {
+          "descricao": "Aguardando DCLC enviar o Processo para a SEMA corrigir",
+          "orgaoResponsavel": "DCLC",
+          "status": "ABERTA"
+        }
+      ],
+      "aditivos": [],
+      "secretariaId": "sec-sema",
+      "orgaoId": "org-fazenda",
+      "programaId": "prog-031",
+      "modalidadeRepasseId": "mod-emenda",
+      "tipoTermoFormalizacaoId": "tipo-transferencia-especial"
+    },
+    {
+      "codigo": "CONV-004",
+      "titulo": "Reforma do Campo de Futebol do CERMAG",
+      "objeto": "Reforma do Campo de Futebol do CERMAG",
+      "descricao": "Execução",
+      "status": "EM_EXECUCAO",
+      "esfera": "FEDERAL",
+      "clausulaSuspensiva": true,
+      "numeroProposta": "010870/2023",
+      "numeroTermo": "941152",
+      "ministerioOrgao": "Esporte",
+      "area": "ESPORTE",
+      "dataInicioProcesso": "2023-02-28",
+      "dataAssinatura": "2023-06-23",
+      "dataInicioVigencia": "2023-06-23",
+      "dataFimVigencia": "2026-06-23",
+      "processoSPD": "3410/2023",
+      "processoCreditoAdicional": null,
+      "valorGlobal": 550322.8,
+      "valorRepasse": 544562.97,
+      "valorContrapartida": 5759.83,
+      "secretariaSigla": "SEDESP",
+      "orgaoNome": "Esporte",
+      "programaNome": "5100020230001 - Apoio à Implantação e Modernização de Infraestrutura para Esporte Educacional, Recreativo e de Lazer",
+      "modalidadeNome": "Emenda",
+      "tipoTermoNome": "Contrato de Repasse",
+      "emenda": {
+        "nomeParlamentar": "15810009 - Jefferson Campos",
+        "partido": "PL",
+        "codigoEmenda": "202315810009",
+        "funcao": "27 - Desporto e lazer",
+        "subfuncao": "812 - Desporto comunitário",
+        "programa": "5100020230001 - Apoio à Implantação e Modernização de Infraestrutura para Esporte Educacional, Recreativo e de Lazer",
+        "valorIndicado": 544562.97,
+        "anoEmenda": 2023
+      },
+      "financeiro": {
+        "contaBancaria": "006.647055-8 5741859328",
+        "valorLiberadoTotal": 544562.97,
+        "dataDeposito": "2025-06-30",
+        "saldoRendimentos": null,
+        "codigoReceita": null
+      },
+      "contrato": {
+        "modalidadeLicitacao": "CONCORRENCIA",
+        "numProcessoLicitatorio": "790/2024",
+        "numeroContrato": "010/2025",
+        "contratadaNome": "DCA Engenharia e Construções Eireli-EPP",
+        "dataAssinatura": "2025-02-24",
+        "dataVigenciaFim": "2026-02-24",
+        "dataOIS": "2025-08-20",
+        "dataTerminoExecucao": "2025-11-18",
+        "valorContrato": 753948.26,
+        "cno": "90.025.22966/73",
+        "engenheiroResponsavel": "Adilson"
+      },
+      "pendencias": [
+        {
+          "descricao": "Aguardando autorização do ordenador de despesa",
+          "orgaoResponsavel": "SEF",
+          "status": "ABERTA"
+        }
+      ],
+      "aditivos": [],
+      "secretariaId": "sec-sedesp",
+      "orgaoId": "org-esporte",
+      "programaId": "prog-009",
+      "modalidadeRepasseId": "mod-emenda",
+      "tipoTermoFormalizacaoId": "tipo-contrato-de-repasse"
+    },
+    {
+      "codigo": "CONV-005",
+      "titulo": "Reforma de Quadra Esportiva no Parque São Luiz",
+      "objeto": "Reforma de Quadra Esportiva no Parque São Luiz",
+      "descricao": "Plano de Trabalho",
+      "status": "EM_EXECUCAO",
+      "esfera": "FEDERAL",
+      "clausulaSuspensiva": false,
+      "numeroProposta": "09032023-037404",
+      "numeroTermo": "09032023-037404",
+      "ministerioOrgao": "Fazenda",
+      "area": "ESPORTE",
+      "dataInicioProcesso": "2023-05-26",
+      "dataAssinatura": "2023-12-05",
+      "dataInicioVigencia": "2023-12-05",
+      "dataFimVigencia": "2026-11-19",
+      "processoSPD": "4773/2023",
+      "processoCreditoAdicional": null,
+      "valorGlobal": 200000.0,
+      "valorRepasse": 200000.0,
+      "valorContrapartida": null,
+      "secretariaSigla": "SEDESP",
+      "orgaoNome": "Fazenda",
+      "programaNome": "Transferência Especial - Investimento",
+      "modalidadeNome": "Emenda",
+      "tipoTermoNome": "Transferência Especial",
+      "emenda": {
+        "nomeParlamentar": "3977 - Enrico Misasi",
+        "partido": "MDB",
+        "codigoEmenda": "202339770009",
+        "funcao": "28 - Encargos especiais",
+        "subfuncao": "845 - Outras transferências",
+        "programa": "Transferência Especial - Investimento",
+        "valorIndicado": 200000.0,
+        "anoEmenda": 2023
+      },
+      "financeiro": {
+        "contaBancaria": "6672007-4 575858239-1",
+        "valorLiberadoTotal": 200000.0,
+        "dataDeposito": "2023-12-12",
+        "saldoRendimentos": 33520.41,
+        "codigoReceita": null
+      },
+      "contrato": {
+        "modalidadeLicitacao": "CONCORRENCIA",
+        "numProcessoLicitatorio": "709/2024",
+        "numeroContrato": "128/2024",
+        "contratadaNome": "Construtora e Serralheria São José Ltda",
+        "dataAssinatura": "2024-12-31",
+        "dataVigenciaFim": "2025-12-31",
+        "dataOIS": null,
+        "dataTerminoExecucao": null,
+        "valorContrato": 178870.0,
+        "cno": null,
+        "engenheiroResponsavel": "Adilson"
+      },
+      "pendencias": [
+        {
+          "descricao": "Aguardando OIS e ampliação de meta",
+          "orgaoResponsavel": "SOURB",
+          "status": "ABERTA"
+        }
+      ],
+      "aditivos": [],
+      "secretariaId": "sec-sedesp",
+      "orgaoId": "org-fazenda",
+      "programaId": "prog-030",
+      "modalidadeRepasseId": "mod-emenda",
+      "tipoTermoFormalizacaoId": "tipo-transferencia-especial"
+    },
+    {
+      "codigo": "CONV-006",
+      "titulo": "Troca de iluminação convencional por tecnologia LED no Bairro da Chave e Jardim Europa",
+      "objeto": "Troca de iluminação convencional por tecnologia LED no Bairro da Chave e Jardim Europa",
+      "descricao": "Licitação",
+      "status": "APROVADO",
+      "esfera": "ESTADUAL",
+      "clausulaSuspensiva": false,
+      "numeroProposta": "62292",
+      "numeroTermo": "100882",
+      "ministerioOrgao": "SGRI",
+      "area": "INFRAESTRUTURA",
+      "dataInicioProcesso": "2023-08-03",
+      "dataAssinatura": "2024-05-13",
+      "dataInicioVigencia": "2024-05-13",
+      "dataFimVigencia": "2026-05-03",
+      "processoSPD": "7096/2023",
+      "processoCreditoAdicional": "489/2024",
+      "valorGlobal": 629674.9,
+      "valorRepasse": 500000.0,
+      "valorContrapartida": 129674.9,
+      "secretariaSigla": "SOURB",
+      "orgaoNome": "SGRI",
+      "programaNome": "Infraestrutura Urbana",
+      "modalidadeNome": "Transferência Voluntária",
+      "tipoTermoNome": "Convênio",
+      "emenda": {
+        "nomeParlamentar": "Professora Bebel",
+        "partido": null,
+        "codigoEmenda": "2023.073.50755",
+        "funcao": "15 - Urbanismo",
+        "subfuncao": "451 - Infraestrutura Urbana",
+        "programa": "Infraestrutura Urbana",
+        "valorIndicado": 500000.0,
+        "anoEmenda": 2024
+      },
+      "financeiro": {
+        "contaBancaria": "40.842-5",
+        "valorLiberadoTotal": null,
+        "dataDeposito": null,
+        "saldoRendimentos": null,
+        "codigoReceita": null
+      },
+      "contrato": null,
+      "pendencias": [
+        {
+          "descricao": "Aguardando análise do laudo técnico",
+          "orgaoResponsavel": "SOURB",
+          "status": "ABERTA"
+        },
+        {
+          "descricao": "Alterar o responsável técnico",
+          "orgaoResponsavel": "SOURB",
+          "status": "ABERTA"
+        }
+      ],
+      "aditivos": [],
+      "secretariaId": "sec-sourb",
+      "orgaoId": "org-sgri",
+      "programaId": "prog-021",
+      "modalidadeRepasseId": "mod-transferencia-voluntaria",
+      "tipoTermoFormalizacaoId": "tipo-convenio"
+    },
+    {
+      "codigo": "CONV-007",
+      "titulo": "Construção de pista de caminhada na praça do Jardim São Lucas",
+      "objeto": "Construção de pista de caminhada na praça do Jardim São Lucas",
+      "descricao": "Execução",
+      "status": "EM_EXECUCAO",
+      "esfera": "ESTADUAL",
+      "clausulaSuspensiva": false,
+      "numeroProposta": "62307",
+      "numeroTermo": "103279",
+      "ministerioOrgao": "SGRI",
+      "area": "ESPORTE",
+      "dataInicioProcesso": "2023-08-11",
+      "dataAssinatura": "2023-12-28",
+      "dataInicioVigencia": "2023-12-28",
+      "dataFimVigencia": "2025-12-17",
+      "processoSPD": "7095/2023",
+      "processoCreditoAdicional": null,
+      "valorGlobal": 117239.08,
+      "valorRepasse": 100000.0,
+      "valorContrapartida": 17239.08,
+      "secretariaSigla": "SEDESP",
+      "orgaoNome": "SGRI",
+      "programaNome": "Infraestrutura / Sistema de Lazer",
+      "modalidadeNome": "Emenda",
+      "tipoTermoNome": "Convênio",
+      "emenda": {
+        "nomeParlamentar": "Vitão do Cachorrão",
+        "partido": "REPUBLICANOS",
+        "codigoEmenda": "2023.289.50909",
+        "funcao": "27 - Desporto e Lazer",
+        "subfuncao": "813",
+        "programa": "Infraestrutura / Sistema de Lazer",
+        "valorIndicado": 100000.0,
+        "anoEmenda": 2023
+      },
+      "financeiro": {
+        "contaBancaria": "40.841-7",
+        "valorLiberadoTotal": 100000.0,
+        "dataDeposito": "2025-06-12",
+        "saldoRendimentos": null,
+        "codigoReceita": null
+      },
+      "contrato": {
+        "modalidadeLicitacao": "CONCORRENCIA",
+        "numProcessoLicitatorio": "_02/2024",
+        "numeroContrato": "009/2025",
+        "contratadaNome": "DCA Engenharia e Construções Eireli - EPP",
+        "dataAssinatura": "2025-02-24",
+        "dataVigenciaFim": "2026-02-24",
+        "dataOIS": "2025-03-26",
+        "dataTerminoExecucao": "2025-06-24",
+        "valorContrato": 116000.0,
+        "cno": null,
+        "engenheiroResponsavel": "Fábio"
+      },
+      "pendencias": [
+        {
+          "descricao": "Aguardando docs para PC",
+          "orgaoResponsavel": "SEF",
+          "status": "ABERTA"
+        }
+      ],
+      "aditivos": [],
+      "secretariaId": "sec-sedesp",
+      "orgaoId": "org-sgri",
+      "programaId": "prog-020",
+      "modalidadeRepasseId": "mod-emenda",
+      "tipoTermoFormalizacaoId": "tipo-convenio"
+    },
+    {
+      "codigo": "CONV-008",
+      "titulo": "Construção de Creche e Escola de Educação Infantil no Parque Santa Márcia",
+      "objeto": "Construção de Creche e Escola de Educação Infantil no Parque Santa Márcia",
+      "descricao": "Análide do VRPL pela GIGOV",
+      "status": "EM_EXECUCAO",
+      "esfera": "FEDERAL",
+      "clausulaSuspensiva": true,
+      "numeroProposta": "26298009394/2023",
+      "numeroTermo": "962647",
+      "ministerioOrgao": "FNDE",
+      "area": "EDUCAÇÃO",
+      "dataInicioProcesso": "2023-10-09",
+      "dataAssinatura": "2024-08-27",
+      "dataInicioVigencia": "2024-08-27",
+      "dataFimVigencia": "2028-08-27",
+      "processoSPD": "9558/2023",
+      "processoCreditoAdicional": "1064/2024",
+      "valorGlobal": 5795840.6,
+      "valorRepasse": 5737882.19,
+      "valorContrapartida": 57958.41,
+      "secretariaSigla": "SEED",
+      "orgaoNome": "FNDE",
+      "programaNome": "2629820230005 - Novo PAC - Creches e Escolas de Educação Infantil",
+      "modalidadeNome": "Programa",
+      "tipoTermoNome": "Termo de Compromisso",
+      "emenda": null,
+      "financeiro": {
+        "contaBancaria": "66470582 574185935-2",
+        "valorLiberadoTotal": null,
+        "dataDeposito": null,
+        "saldoRendimentos": null,
+        "codigoReceita": null
+      },
+      "contrato": {
+        "modalidadeLicitacao": "CONCORRENCIA",
+        "numProcessoLicitatorio": null,
+        "numeroContrato": "087/2025",
+        "contratadaNome": "Hype Construtora Ltda.",
+        "dataAssinatura": null,
+        "dataVigenciaFim": "2027-04-23",
+        "dataOIS": null,
+        "dataTerminoExecucao": null,
+        "valorContrato": 5026580.9,
+        "cno": null,
+        "engenheiroResponsavel": "Aline"
+      },
+      "pendencias": [
+        {
+          "descricao": "Aguardando VRPL",
+          "orgaoResponsavel": "GIGOV",
+          "status": "ABERTA"
+        },
+        {
+          "descricao": "Aguardando propriedade da área",
+          "orgaoResponsavel": "SENJ/SEED",
+          "status": "ABERTA"
+        },
+        {
+          "descricao": "Projeto de infraestrutura do entorno",
+          "orgaoResponsavel": "SOURB/SEMA",
+          "status": "ABERTA"
+        }
+      ],
+      "aditivos": [],
+      "secretariaId": "sec-seed",
+      "orgaoId": "org-fnde",
+      "programaId": "prog-006",
+      "modalidadeRepasseId": "mod-programa",
+      "tipoTermoFormalizacaoId": "tipo-termo-de-compromisso"
+    },
+    {
+      "codigo": "CONV-009",
+      "titulo": "Construção de UBS no Bairro Vossoroca",
+      "objeto": "Construção de UBS no Bairro Vossoroca",
+      "descricao": null,
+      "status": "EM_EXECUCAO",
+      "esfera": "FEDERAL",
+      "clausulaSuspensiva": false,
+      "numeroProposta": "36000008434/2023",
+      "numeroTermo": "11209.4720001/24-002",
+      "ministerioOrgao": "SAÚDE",
+      "area": "SAÚDE",
+      "dataInicioProcesso": "2023-10-09",
+      "dataAssinatura": null,
+      "dataInicioVigencia": null,
+      "dataFimVigencia": null,
+      "processoSPD": null,
+      "processoCreditoAdicional": null,
+      "valorGlobal": 2435976.95,
+      "valorRepasse": 2435976.95,
+      "valorContrapartida": null,
+      "secretariaSigla": "SESA",
+      "orgaoNome": "SAÚDE",
+      "programaNome": "3600020230050 - Novo PAC - Unidades Básicas de Saúde",
+      "modalidadeNome": "Programa",
+      "tipoTermoNome": "InvestSUS",
+      "emenda": null,
+      "financeiro": null,
+      "contrato": {
+        "modalidadeLicitacao": "CONCORRENCIA",
+        "numProcessoLicitatorio": "1604/2023",
+        "numeroContrato": "66/2025",
+        "contratadaNome": "Novos Negócios Comércio e Transporte Ltda.",
+        "dataAssinatura": "2025-08-15",
+        "dataVigenciaFim": "2026-08-15",
+        "dataOIS": "2025-08-15",
+        "dataTerminoExecucao": "2026-08-10",
+        "valorContrato": 1997393.7,
+        "cno": null,
+        "engenheiroResponsavel": "Aline"
+      },
+      "pendencias": [
+        {
+          "descricao": "Em início de execução",
+          "orgaoResponsavel": "SOURB",
+          "status": "ABERTA"
+        }
+      ],
+      "aditivos": [],
+      "secretariaId": "sec-sesa",
+      "orgaoId": "org-saude",
+      "programaId": "prog-007",
+      "modalidadeRepasseId": "mod-programa",
+      "tipoTermoFormalizacaoId": "tipo-investsus"
+    },
+    {
+      "codigo": "CONV-010",
+      "titulo": "Construção do Centro de Atendimento do Turismo",
+      "objeto": "Construção do Centro de Atendimento do Turismo",
+      "descricao": null,
+      "status": "EM_EXECUCAO",
+      "esfera": "ESTADUAL",
+      "clausulaSuspensiva": false,
+      "numeroProposta": "63953",
+      "numeroTermo": "175",
+      "ministerioOrgao": "Turismo",
+      "area": "TURISMO",
+      "dataInicioProcesso": "2023-10-17",
+      "dataAssinatura": "2023-12-20",
+      "dataInicioVigencia": "2023-12-20",
+      "dataFimVigencia": "2026-12-04",
+      "processoSPD": "9059/2023",
+      "processoCreditoAdicional": null,
+      "valorGlobal": 592414.28,
+      "valorRepasse": 571081.63,
+      "valorContrapartida": 21332.65,
+      "secretariaSigla": "SEC",
+      "orgaoNome": "Turismo",
+      "programaNome": "MIT - Município de Interesse Turístico de Votorantim - 584 - Infraestrutura Turística",
+      "modalidadeNome": "Programa",
+      "tipoTermoNome": "Convênio",
+      "emenda": null,
+      "financeiro": {
+        "contaBancaria": "41.151-5",
+        "valorLiberadoTotal": 285540.81,
+        "dataDeposito": "2025-05-28",
+        "saldoRendimentos": null,
+        "codigoReceita": null
+      },
+      "contrato": {
+        "modalidadeLicitacao": "CONCORRENCIA",
+        "numProcessoLicitatorio": "630/2024",
+        "numeroContrato": "037/2025",
+        "contratadaNome": "Novos Negócios Comércio e Transporte Ltda.",
+        "dataAssinatura": "2025-04-25",
+        "dataVigenciaFim": "2026-04-25",
+        "dataOIS": "2025-05-14",
+        "dataTerminoExecucao": "2025-10-14",
+        "valorContrato": 513547.08,
+        "cno": null,
+        "engenheiroResponsavel": "Fábio"
+      },
+      "pendencias": [
+        {
+          "descricao": "Aguardando abertura de matrícula no Cartório de Votorantim",
+          "orgaoResponsavel": "SPD/SOURB/SENJ",
+          "status": "ABERTA"
+        }
+      ],
+      "aditivos": [],
+      "secretariaId": "sec-sec",
+      "orgaoId": "org-turismo",
+      "programaId": "prog-022",
+      "modalidadeRepasseId": "mod-programa",
+      "tipoTermoFormalizacaoId": "tipo-convenio"
+    },
+    {
+      "codigo": "CONV-011",
+      "titulo": "Reforma do ginásio poliesportivo do Jardim Residencial Altos de Votorantim",
+      "objeto": "Reforma do ginásio poliesportivo do Jardim Residencial Altos de Votorantim",
+      "descricao": "Aditamento de valor",
+      "status": "EM_EXECUCAO",
+      "esfera": "ESTADUAL",
+      "clausulaSuspensiva": false,
+      "numeroProposta": "065119 095322",
+      "numeroTermo": "172/2024",
+      "ministerioOrgao": "Esporte",
+      "area": "ESPORTE",
+      "dataInicioProcesso": "2023-11-24",
+      "dataAssinatura": "2024-06-10",
+      "dataInicioVigencia": "2024-06-10",
+      "dataFimVigencia": "2026-06-10",
+      "processoSPD": "807/2024",
+      "processoCreditoAdicional": "808/2024",
+      "valorGlobal": 222184.95,
+      "valorRepasse": 200000.0,
+      "valorContrapartida": 22184.95,
+      "secretariaSigla": "SEDESP",
+      "orgaoNome": "Esporte",
+      "programaNome": "Obras Esportivas",
+      "modalidadeNome": "Emenda",
+      "tipoTermoNome": "Convênio",
+      "emenda": {
+        "nomeParlamentar": "Delegado Olim",
+        "partido": "PROGRESSISTAS",
+        "codigoEmenda": "2023.032.51620",
+        "funcao": "27 - Desporto e Lazer",
+        "subfuncao": "812 - Desporto Comunitário",
+        "programa": "Obras Esportivas",
+        "valorIndicado": 200000.0,
+        "anoEmenda": 2023
+      },
+      "financeiro": {
+        "contaBancaria": "41.041-1",
+        "valorLiberadoTotal": 200000.0,
+        "dataDeposito": "2025-05-12",
+        "saldoRendimentos": null,
+        "codigoReceita": null
+      },
+      "contrato": {
+        "modalidadeLicitacao": "CONCORRENCIA",
+        "numProcessoLicitatorio": "1112/2024",
+        "numeroContrato": "034/2025",
+        "contratadaNome": "Construtora e Serralheria São José Ltda",
+        "dataAssinatura": "2025-04-10",
+        "dataVigenciaFim": "2026-04-10",
+        "dataOIS": "2025-04-22",
+        "dataTerminoExecucao": "2025-07-21",
+        "valorContrato": 263719.89,
+        "cno": null,
+        "engenheiroResponsavel": "Fábio"
+      },
+      "pendencias": [
+        {
+          "descricao": "Aguardando Processo para pagamento",
+          "orgaoResponsavel": "SEF",
+          "status": "ABERTA"
+        }
+      ],
+      "aditivos": [
+        {
+          "tipoAditivo": "PRAZO",
+          "novaVigencia": "2025-10-20",
+          "motivo": "Aditamento de prazo de execução",
+          "numeroAditivo": 1
+        },
+        {
+          "tipoAditivo": "VALOR",
+          "valorAcrescimo": 82975.43,
+          "motivo": "Aditamento de valor",
+          "numeroAditivo": 2
+        }
+      ],
+      "secretariaId": "sec-sedesp",
+      "orgaoId": "org-esporte",
+      "programaId": "prog-023",
+      "modalidadeRepasseId": "mod-emenda",
+      "tipoTermoFormalizacaoId": "tipo-convenio"
+    },
+    {
+      "codigo": "CONV-012",
+      "titulo": "Troca de Iluminação Convencional por tecnologia LED na Vila Domingues, Jardim Mirante dos Ovnis, Jardim Clarice e adjacência",
+      "objeto": "Troca de Iluminação Convencional por tecnologia LED na Vila Domingues, Jardim Mirante dos Ovnis, Jardim Clarice e adjacência",
+      "descricao": "Licitação",
+      "status": "APROVADO",
+      "esfera": "ESTADUAL",
+      "clausulaSuspensiva": false,
+      "numeroProposta": "65350",
+      "numeroTermo": "101131",
+      "ministerioOrgao": "SGRI",
+      "area": "INFRAESTRUTURA",
+      "dataInicioProcesso": "2023-12-05",
+      "dataAssinatura": "2024-05-17",
+      "dataInicioVigencia": "2024-05-17",
+      "dataFimVigencia": "2026-05-07",
+      "processoSPD": "10120/2023",
+      "processoCreditoAdicional": "490/2024",
+      "valorGlobal": 1500000.0,
+      "valorRepasse": 1500000.0,
+      "valorContrapartida": 0.0,
+      "secretariaSigla": "SOURB",
+      "orgaoNome": "SGRI",
+      "programaNome": "674 - Infraestrutura Urbana",
+      "modalidadeNome": "Programa",
+      "tipoTermoNome": "Convênio",
+      "emenda": null,
+      "financeiro": {
+        "contaBancaria": "41.269-4",
+        "valorLiberadoTotal": null,
+        "dataDeposito": null,
+        "saldoRendimentos": null,
+        "codigoReceita": null
+      },
+      "contrato": null,
+      "pendencias": [
+        {
+          "descricao": "Aguardando análise do laudo técnico",
+          "orgaoResponsavel": "SOURB",
+          "status": "ABERTA"
+        },
+        {
+          "descricao": "Alterar o responsável técnico",
+          "orgaoResponsavel": "SOURB",
+          "status": "ABERTA"
+        }
+      ],
+      "aditivos": [],
+      "secretariaId": "sec-sourb",
+      "orgaoId": "org-sgri",
+      "programaId": "prog-012",
+      "modalidadeRepasseId": "mod-programa",
+      "tipoTermoFormalizacaoId": "tipo-convenio"
+    },
+    {
+      "codigo": "CONV-013",
+      "titulo": "Recapeamento asfáltico no Município de Votorantim/SP (Avenida Gisele Constantino) - Trecho 1",
+      "objeto": "Recapeamento asfáltico no Município de Votorantim/SP (Avenida Gisele Constantino) - Trecho 1",
+      "descricao": "Início de obra",
+      "status": "EM_EXECUCAO",
+      "esfera": "FEDERAL",
+      "clausulaSuspensiva": true,
+      "numeroProposta": "71089",
+      "numeroTermo": "953845",
+      "ministerioOrgao": "Cidades",
+      "area": "INFRAESTRUTURA",
+      "dataInicioProcesso": "2023-12-05",
+      "dataAssinatura": "2023-12-29",
+      "dataInicioVigencia": "2023-12-29",
+      "dataFimVigencia": "2026-12-29",
+      "processoSPD": "003/2024",
+      "processoCreditoAdicional": null,
+      "valorGlobal": 523920.68,
+      "valorRepasse": 481104.0,
+      "valorContrapartida": 42816.68,
+      "secretariaSigla": "SOURB",
+      "orgaoNome": "Cidades",
+      "programaNome": "Programa 2219 - Acao 00T1 - Apoio a Politica Nacional de Desenvolvimento Urbano Voltado a Implantacao e Qualificacao Viaria - RP2",
+      "modalidadeNome": "Programa",
+      "tipoTermoNome": "Contrato de Repasse",
+      "emenda": {
+        "nomeParlamentar": "Jilmar Tatto",
+        "partido": "PT",
+        "codigoEmenda": null,
+        "funcao": null,
+        "subfuncao": null,
+        "programa": "Programa 2219 - Acao 00T1 - Apoio a Politica Nacional de Desenvolvimento Urbano Voltado a Implantacao e Qualificacao Viaria - RP2",
+        "valorIndicado": 481104.0,
+        "anoEmenda": 2023
+      },
+      "financeiro": {
+        "contaBancaria": "66470566 574185933-6",
+        "valorLiberadoTotal": null,
+        "dataDeposito": null,
+        "saldoRendimentos": null,
+        "codigoReceita": null
+      },
+      "contrato": {
+        "modalidadeLicitacao": "CONCORRENCIA",
+        "numProcessoLicitatorio": "1106/2024",
+        "numeroContrato": "013/2025",
+        "contratadaNome": "Céu Azul Terraplanagem e Pavimentadora Ltda.",
+        "dataAssinatura": "2025-02-26",
+        "dataVigenciaFim": "2026-02-26",
+        "dataOIS": null,
+        "dataTerminoExecucao": null,
+        "valorContrato": 386454.26,
+        "cno": null,
+        "engenheiroResponsavel": "Adilson"
+      },
+      "pendencias": [
+        {
+          "descricao": "Aguardando OIS",
+          "orgaoResponsavel": "SOURB",
+          "status": "ABERTA"
+        },
+        {
+          "descricao": "Verificar utilização de saldo",
+          "orgaoResponsavel": "SPD",
+          "status": "ABERTA"
+        }
+      ],
+      "aditivos": [],
+      "secretariaId": "sec-sourb",
+      "orgaoId": "org-cidades",
+      "programaId": "prog-026",
+      "modalidadeRepasseId": "mod-programa",
+      "tipoTermoFormalizacaoId": "tipo-contrato-de-repasse"
+    },
+    {
+      "codigo": "CONV-014",
+      "titulo": "Recapeamento asfáltico no Município de Votorantim/SP (Avenida Gisele Constantino) - Trecho 2",
+      "objeto": "Recapeamento asfáltico no Município de Votorantim/SP (Avenida Gisele Constantino) - Trecho 2",
+      "descricao": "Início de obra",
+      "status": "EM_EXECUCAO",
+      "esfera": "FEDERAL",
+      "clausulaSuspensiva": true,
+      "numeroProposta": "72585",
+      "numeroTermo": "954658",
+      "ministerioOrgao": "Cidades",
+      "area": "INFRAESTRUTURA",
+      "dataInicioProcesso": "2023-12-22",
+      "dataAssinatura": "2023-12-29",
+      "dataInicioVigencia": "2023-12-29",
+      "dataFimVigencia": "2026-12-29",
+      "processoSPD": "004/2024",
+      "processoCreditoAdicional": null,
+      "valorGlobal": 562153.38,
+      "valorRepasse": 481104.0,
+      "valorContrapartida": 81049.38,
+      "secretariaSigla": "SOURB",
+      "orgaoNome": "Cidades",
+      "programaNome": "Programa 2219 - Acao 00T1 - Apoio a Politica Nacional de Desenvolvimento Urbano Voltado a Implantacao e Qualificacao Viaria - RP2",
+      "modalidadeNome": "Programa",
+      "tipoTermoNome": "Contrato de Repasse",
+      "emenda": {
+        "nomeParlamentar": "Jilmar Tatto",
+        "partido": "PT",
+        "codigoEmenda": null,
+        "funcao": null,
+        "subfuncao": null,
+        "programa": "Programa 2219 - Acao 00T1 - Apoio a Politica Nacional de Desenvolvimento Urbano Voltado a Implantacao e Qualificacao Viaria - RP2",
+        "valorIndicado": 481104.0,
+        "anoEmenda": 2023
+      },
+      "financeiro": {
+        "contaBancaria": "66470574 574185934-4",
+        "valorLiberadoTotal": null,
+        "dataDeposito": null,
+        "saldoRendimentos": null,
+        "codigoReceita": null
+      },
+      "contrato": {
+        "modalidadeLicitacao": "CONCORRENCIA",
+        "numProcessoLicitatorio": "1106/2024",
+        "numeroContrato": "013/2025",
+        "contratadaNome": "Céu Azul Terraplanagem e Pavimentadora Ltda.",
+        "dataAssinatura": "2025-02-26",
+        "dataVigenciaFim": "2026-02-26",
+        "dataOIS": null,
+        "dataTerminoExecucao": null,
+        "valorContrato": 529407.07,
+        "cno": null,
+        "engenheiroResponsavel": "Adilson"
+      },
+      "pendencias": [
+        {
+          "descricao": "Aguardando OIS",
+          "orgaoResponsavel": "SOURB",
+          "status": "ABERTA"
+        },
+        {
+          "descricao": "Verificar utilização de saldo",
+          "orgaoResponsavel": "SPD",
+          "status": "ABERTA"
+        }
+      ],
+      "aditivos": [],
+      "secretariaId": "sec-sourb",
+      "orgaoId": "org-cidades",
+      "programaId": "prog-026",
+      "modalidadeRepasseId": "mod-programa",
+      "tipoTermoFormalizacaoId": "tipo-contrato-de-repasse"
+    },
+    {
+      "codigo": "CONV-015",
+      "titulo": "Desenvolvimento do Projeto Esportivo no Município de Votorantim/SP",
+      "objeto": "Desenvolvimento do Projeto Esportivo no Município de Votorantim/SP",
+      "descricao": "Cláusula Suspensiva",
+      "status": "EM_ANALISE",
+      "esfera": "FEDERAL",
+      "clausulaSuspensiva": true,
+      "numeroProposta": "2318",
+      "numeroTermo": "961721",
+      "ministerioOrgao": "Esporte",
+      "area": "ESPORTE",
+      "dataInicioProcesso": "2024-03-11",
+      "dataAssinatura": "2024-12-27",
+      "dataInicioVigencia": "2024-12-27",
+      "dataFimVigencia": "2026-12-17",
+      "processoSPD": "684/2024",
+      "processoCreditoAdicional": null,
+      "valorGlobal": 315000.0,
+      "valorRepasse": 300000.0,
+      "valorContrapartida": 15000.0,
+      "secretariaSigla": "SEDESP",
+      "orgaoNome": "Esporte",
+      "programaNome": "Desenvolvimento de Atividades e Apoio a Programas e Projetos de Esporte Amador, Educacao, Lazer e Inclusao Social - SNEAELIS (Emenda Parlamentar Individual - RP6 - Convênio)",
+      "modalidadeNome": "Emenda",
+      "tipoTermoNome": "Convênio",
+      "emenda": {
+        "nomeParlamentar": "15810017 - Jefferson Campos",
+        "partido": null,
+        "codigoEmenda": "202415810017",
+        "funcao": "97",
+        "subfuncao": "812",
+        "programa": "Desenvolvimento de Atividades e Apoio a Programas e Projetos de Esporte Amador, Educacao, Lazer e Inclusao Social - SNEAELIS (Emenda Parlamentar Individual - RP6 - Convênio)",
+        "valorIndicado": 300000.0,
+        "anoEmenda": 2024
+      },
+      "financeiro": {
+        "contaBancaria": "6071018-2 574185928-0",
+        "valorLiberadoTotal": null,
+        "dataDeposito": null,
+        "saldoRendimentos": null,
+        "codigoReceita": null
+      },
+      "contrato": null,
+      "pendencias": [
+        {
+          "descricao": "Análise da Planilha de Custo suspensa pelo MESP. Retoma em janeiro/2026.",
+          "orgaoResponsavel": "MESP",
+          "status": "ABERTA"
+        }
+      ],
+      "aditivos": [],
+      "secretariaId": "sec-sedesp",
+      "orgaoId": "org-esporte",
+      "programaId": "prog-018",
+      "modalidadeRepasseId": "mod-emenda",
+      "tipoTermoFormalizacaoId": "tipo-convenio"
+    },
+    {
+      "codigo": "CONV-016",
+      "titulo": "Aquisição de equipamentos GCM",
+      "objeto": "Aquisição de equipamentos GCM",
+      "descricao": null,
+      "status": "APROVADO",
+      "esfera": "ESTADUAL",
+      "clausulaSuspensiva": false,
+      "numeroProposta": "72316",
+      "numeroTermo": "211/2025",
+      "ministerioOrgao": "SSP",
+      "area": "SEGURANÇA",
+      "dataInicioProcesso": "2024-03-25",
+      "dataAssinatura": "2025-11-05",
+      "dataInicioVigencia": "2025-11-05",
+      "dataFimVigencia": "2026-11-28",
+      "processoSPD": "167/2024",
+      "processoCreditoAdicional": null,
+      "valorGlobal": 115312.84,
+      "valorRepasse": 100000.0,
+      "valorContrapartida": 15312.84,
+      "secretariaSigla": "SEG",
+      "orgaoNome": "SSP",
+      "programaNome": "462 - Aquisição de equipamentos da SSP",
+      "modalidadeNome": "Transferência Voluntária",
+      "tipoTermoNome": "Convênio",
+      "emenda": {
+        "nomeParlamentar": "Delegado da Cunha",
+        "partido": null,
+        "codigoEmenda": "2024.313.53517",
+        "funcao": "06 - Segurança Pública",
+        "subfuncao": "181 - Policiamento",
+        "programa": "462 - Aquisição de equipamentos da SSP",
+        "valorIndicado": 100000.0,
+        "anoEmenda": 2025
+      },
+      "financeiro": {
+        "contaBancaria": "42.041-7",
+        "valorLiberadoTotal": null,
+        "dataDeposito": null,
+        "saldoRendimentos": null,
+        "codigoReceita": null
+      },
+      "contrato": null,
+      "pendencias": [
+        {
+          "descricao": "Processo Licitatório/Cotação de Preços",
+          "orgaoResponsavel": "DCLC",
+          "status": "ABERTA"
+        },
+        {
+          "descricao": "Aguardando liberação do repasse",
+          "orgaoResponsavel": "SSP",
+          "status": "ABERTA"
+        }
+      ],
+      "aditivos": [],
+      "secretariaId": "sec-seg",
+      "orgaoId": "org-ssp",
+      "programaId": "prog-008",
+      "modalidadeRepasseId": "mod-transferencia-voluntaria",
+      "tipoTermoFormalizacaoId": "tipo-convenio"
+    },
+    {
+      "codigo": "CONV-017",
+      "titulo": "Revitalização da Quadra Poliesportiva, localizada no conjunto da CMEI Raphaela Resio Cau, Rua Carlos Caldini, 300 - Vila Garcia",
+      "objeto": "Revitalização da Quadra Poliesportiva, localizada no conjunto da CMEI Raphaela Resio Cau, Rua Carlos Caldini, 300 - Vila Garcia",
+      "descricao": null,
+      "status": "APROVADO",
+      "esfera": "ESTADUAL",
+      "clausulaSuspensiva": false,
+      "numeroProposta": "72949",
+      "numeroTermo": "SEDUC-PRC-2024-01102-DM",
+      "ministerioOrgao": "Educação",
+      "area": "EDUCAÇÃO",
+      "dataInicioProcesso": "2024-04-16",
+      "dataAssinatura": "2024-12-18",
+      "dataInicioVigencia": "2024-12-18",
+      "dataFimVigencia": "2025-12-17",
+      "processoSPD": "272/2024",
+      "processoCreditoAdicional": null,
+      "valorGlobal": 219199.66,
+      "valorRepasse": 200000.0,
+      "valorContrapartida": 19199.66,
+      "secretariaSigla": "SEED",
+      "orgaoNome": "Educação",
+      "programaNome": "746 - (CONVÊNIO) Infraestrutura Física",
+      "modalidadeNome": "Emenda",
+      "tipoTermoNome": "Convênio",
+      "emenda": {
+        "nomeParlamentar": "Luiz Fernando T Ferreira",
+        "partido": null,
+        "codigoEmenda": null,
+        "funcao": null,
+        "subfuncao": null,
+        "programa": "746 - (CONVÊNIO) Infraestrutura Física",
+        "valorIndicado": 200000.0,
+        "anoEmenda": 2024
+      },
+      "financeiro": {
+        "contaBancaria": "42042-5",
+        "valorLiberadoTotal": null,
+        "dataDeposito": null,
+        "saldoRendimentos": null,
+        "codigoReceita": null
+      },
+      "contrato": null,
+      "pendencias": [
+        {
+          "descricao": "CND Estadual Positiva",
+          "orgaoResponsavel": "SEA",
+          "status": "ABERTA"
+        },
+        {
+          "descricao": "Em análise administrativa ARINS",
+          "orgaoResponsavel": "SEESP",
+          "status": "ABERTA"
+        },
+        {
+          "descricao": "Convênio vence em dezembro de 2025",
+          "orgaoResponsavel": "SPD/SEED",
+          "status": "ABERTA"
+        }
+      ],
+      "aditivos": [],
+      "secretariaId": "sec-seed",
+      "orgaoId": "org-educacao",
+      "programaId": "prog-016",
+      "modalidadeRepasseId": "mod-emenda",
+      "tipoTermoFormalizacaoId": "tipo-convenio"
+    },
+    {
+      "codigo": "CONV-018",
+      "titulo": "Recapeamento asfáltico da Avenida Vitório Zancheta",
+      "objeto": "Recapeamento asfáltico da Avenida Vitório Zancheta",
+      "descricao": null,
+      "status": "APROVADO",
+      "esfera": "ESTADUAL",
+      "clausulaSuspensiva": false,
+      "numeroProposta": "85086",
+      "numeroTermo": "100568",
+      "ministerioOrgao": "SGRI",
+      "area": "INFRAESTRUTURA",
+      "dataInicioProcesso": "2025-02-10",
+      "dataAssinatura": "2025-10-03",
+      "dataInicioVigencia": "2025-10-03",
+      "dataFimVigencia": "2027-10-03",
+      "processoSPD": "159/2025",
+      "processoCreditoAdicional": "1678/2025",
+      "valorGlobal": 412751.04,
+      "valorRepasse": 400000.0,
+      "valorContrapartida": 12751.04,
+      "secretariaSigla": "SOURB",
+      "orgaoNome": "SGRI",
+      "programaNome": "674 - Infraestrutura Urbana e Obras para Melhoria do Município",
+      "modalidadeNome": "Emenda",
+      "tipoTermoNome": "Convênio",
+      "emenda": {
+        "nomeParlamentar": "Jorge Wilson Xerife do Consumidor",
+        "partido": null,
+        "codigoEmenda": "2025.053.68773",
+        "funcao": "15 - Urbanismo",
+        "subfuncao": "451 - Infraestrutura Urbana",
+        "programa": "674 - Infraestrutura Urbana e Obras para Melhoria do Município",
+        "valorIndicado": 400000.0,
+        "anoEmenda": 2025
+      },
+      "financeiro": {
+        "contaBancaria": "45073-1",
+        "valorLiberadoTotal": null,
+        "dataDeposito": null,
+        "saldoRendimentos": null,
+        "codigoReceita": null
+      },
+      "contrato": null,
+      "pendencias": [
+        {
+          "descricao": "Em elaboração do ETP e despacho para o DCLC - Processo Licitatório FEDERAL e ESTADUAL",
+          "orgaoResponsavel": "SOURB / SPD",
+          "status": "ABERTA"
+        }
+      ],
+      "aditivos": [],
+      "secretariaId": "sec-sourb",
+      "orgaoId": "org-sgri",
+      "programaId": "prog-013",
+      "modalidadeRepasseId": "mod-emenda",
+      "tipoTermoFormalizacaoId": "tipo-convenio"
+    },
+    {
+      "codigo": "CONV-019",
+      "titulo": "Reforma da praça do Conj. Habitacional Dr. Eliseu Vieira Rodrigues",
+      "objeto": "Reforma da praça do Conj. Habitacional Dr. Eliseu Vieira Rodrigues",
+      "descricao": null,
+      "status": "APROVADO",
+      "esfera": "ESTADUAL",
+      "clausulaSuspensiva": false,
+      "numeroProposta": "85715",
+      "numeroTermo": "SDUH-PRC-2025-00002-DM",
+      "ministerioOrgao": "SDUH",
+      "area": "INFRAESTRUTURA",
+      "dataInicioProcesso": "2025-02-12",
+      "dataAssinatura": "2025-11-25",
+      "dataInicioVigencia": "2025-11-25",
+      "dataFimVigencia": "2026-11-25",
+      "processoSPD": "161/2025",
+      "processoCreditoAdicional": "1681/2025",
+      "valorGlobal": 250265.1,
+      "valorRepasse": 200000.0,
+      "valorContrapartida": 50265.1,
+      "secretariaSigla": "SOURB",
+      "orgaoNome": "SDUH",
+      "programaNome": "764 - Obras de Infraestrutura Urbana",
+      "modalidadeNome": "Emenda",
+      "tipoTermoNome": "Convênio",
+      "emenda": {
+        "nomeParlamentar": "Luiz Fernando T Ferreira",
+        "partido": "PT",
+        "codigoEmenda": "2025.058.67945",
+        "funcao": "15 - Urbanismo",
+        "subfuncao": "451 - Infraestrutura Urbana",
+        "programa": "764 - Obras de Infraestrutura Urbana",
+        "valorIndicado": 200000.0,
+        "anoEmenda": 2025
+      },
+      "financeiro": {
+        "contaBancaria": "45074-X",
+        "valorLiberadoTotal": null,
+        "dataDeposito": null,
+        "saldoRendimentos": null,
+        "codigoReceita": null
+      },
+      "contrato": null,
+      "pendencias": [
+        {
+          "descricao": "Aguardando processo licitatório",
+          "orgaoResponsavel": "SOURB",
+          "status": "ABERTA"
+        }
+      ],
+      "aditivos": [],
+      "secretariaId": "sec-sourb",
+      "orgaoId": "org-sduh",
+      "programaId": "prog-017",
+      "modalidadeRepasseId": "mod-emenda",
+      "tipoTermoFormalizacaoId": "tipo-convenio"
+    },
+    {
+      "codigo": "CONV-020",
+      "titulo": "Itens e Bens Diversos - Mobiliário Administrativo e Mobiliário Sala de Aula",
+      "objeto": "Itens e Bens Diversos - Mobiliário Administrativo e Mobiliário Sala de Aula",
+      "descricao": null,
+      "status": "RASCUNHO",
+      "esfera": "ESTADUAL",
+      "clausulaSuspensiva": false,
+      "numeroProposta": "90120",
+      "numeroTermo": null,
+      "ministerioOrgao": "Educação",
+      "area": "EDUCAÇÃO",
+      "dataInicioProcesso": "2025-03-18",
+      "dataAssinatura": null,
+      "dataInicioVigencia": null,
+      "dataFimVigencia": null,
+      "processoSPD": null,
+      "processoCreditoAdicional": null,
+      "valorGlobal": 400000.0,
+      "valorRepasse": 400000.0,
+      "valorContrapartida": null,
+      "secretariaSigla": "SEED",
+      "orgaoNome": "Educação",
+      "programaNome": "679 - Equipamentos - Aquisição de equipamentos, materiais e bens diversos",
+      "modalidadeNome": "Emenda",
+      "tipoTermoNome": null,
+      "emenda": {
+        "nomeParlamentar": "Delegado Olim",
+        "partido": null,
+        "codigoEmenda": "2025.032.69363",
+        "funcao": null,
+        "subfuncao": null,
+        "programa": "679 - Equipamentos - Aquisição de equipamentos, materiais e bens diversos",
+        "valorIndicado": 400000.0,
+        "anoEmenda": 2025
+      },
+      "financeiro": null,
+      "contrato": null,
+      "pendencias": [
+        {
+          "descricao": "Aguardando crédito",
+          "orgaoResponsavel": "SEDUC",
+          "status": "ABERTA"
+        }
+      ],
+      "aditivos": [],
+      "secretariaId": "sec-seed",
+      "orgaoId": "org-educacao",
+      "programaId": "prog-014",
+      "modalidadeRepasseId": "mod-emenda",
+      "tipoTermoFormalizacaoId": null
+    },
+    {
+      "codigo": "CONV-021",
+      "titulo": "Aquisição de caminhão plataforma",
+      "objeto": "Aquisição de caminhão plataforma",
+      "descricao": null,
+      "status": "RASCUNHO",
+      "esfera": "FEDERAL",
+      "clausulaSuspensiva": false,
+      "numeroProposta": "55732",
+      "numeroTermo": null,
+      "ministerioOrgao": "MAPA",
+      "area": "PRODUÇÃO AGRÍCOLA",
+      "dataInicioProcesso": "2025-04-23",
+      "dataAssinatura": null,
+      "dataInicioVigencia": null,
+      "dataFimVigencia": null,
+      "processoSPD": null,
+      "processoCreditoAdicional": null,
+      "valorGlobal": 631528.48,
+      "valorRepasse": 631528.48,
+      "valorContrapartida": 0.0,
+      "secretariaSigla": "SOURB",
+      "orgaoNome": "MAPA",
+      "programaNome": "2200020250003 - Programa Nacional de Modernização e Apoio à Produção Agrícola - PROMAQ",
+      "modalidadeNome": "Programa",
+      "tipoTermoNome": null,
+      "emenda": null,
+      "financeiro": null,
+      "contrato": null,
+      "pendencias": [
+        {
+          "descricao": "Aguardando análise da proposta",
+          "orgaoResponsavel": "MAPA",
+          "status": "ABERTA"
+        }
+      ],
+      "aditivos": [],
+      "secretariaId": "sec-sourb",
+      "orgaoId": "org-mapa",
+      "programaId": "prog-003",
+      "modalidadeRepasseId": "mod-programa",
+      "tipoTermoFormalizacaoId": null
+    },
+    {
+      "codigo": "CONV-022",
+      "titulo": "Obras de Pavimentação de estrada vicinal no Município de Votorantim/SP (Estrada do Carafá)",
+      "objeto": "Obras de Pavimentação de estrada vicinal no Município de Votorantim/SP (Estrada do Carafá)",
+      "descricao": null,
+      "status": "RASCUNHO",
+      "esfera": "FEDERAL",
+      "clausulaSuspensiva": false,
+      "numeroProposta": "55921",
+      "numeroTermo": null,
+      "ministerioOrgao": null,
+      "area": "PRODUÇÃO AGRÍCOLA",
+      "dataInicioProcesso": "2025-04-23",
+      "dataAssinatura": null,
+      "dataInicioVigencia": null,
+      "dataFimVigencia": null,
+      "processoSPD": null,
+      "processoCreditoAdicional": null,
+      "valorGlobal": 22094984.76,
+      "valorRepasse": 21874034.91,
+      "valorContrapartida": 220949.85,
+      "secretariaSigla": "SOURB",
+      "orgaoNome": null,
+      "programaNome": "2200020250004 - Programa Nacional de Estradas Rurais - PRONER",
+      "modalidadeNome": "Programa",
+      "tipoTermoNome": null,
+      "emenda": null,
+      "financeiro": null,
+      "contrato": null,
+      "pendencias": [
+        {
+          "descricao": "Aguardando análise da proposta",
+          "orgaoResponsavel": "MAPA",
+          "status": "ABERTA"
+        }
+      ],
+      "aditivos": [],
+      "secretariaId": "sec-sourb",
+      "orgaoId": null,
+      "programaId": "prog-004",
+      "modalidadeRepasseId": "mod-programa",
+      "tipoTermoFormalizacaoId": null
+    },
+    {
+      "codigo": "CONV-023",
+      "titulo": "Obras de Pavimentação em Estrada vicinal no Município de Votorantim (Pedro Monari)",
+      "objeto": "Obras de Pavimentação em Estrada vicinal no Município de Votorantim (Pedro Monari)",
+      "descricao": null,
+      "status": "RASCUNHO",
+      "esfera": "FEDERAL",
+      "clausulaSuspensiva": false,
+      "numeroProposta": "55875",
+      "numeroTermo": null,
+      "ministerioOrgao": null,
+      "area": "PRODUÇÃO AGRÍCOLA",
+      "dataInicioProcesso": "2025-04-23",
+      "dataAssinatura": null,
+      "dataInicioVigencia": null,
+      "dataFimVigencia": null,
+      "processoSPD": null,
+      "processoCreditoAdicional": null,
+      "valorGlobal": 32117452.08,
+      "valorRepasse": 31796277.56,
+      "valorContrapartida": 321174.52,
+      "secretariaSigla": "SOURB",
+      "orgaoNome": null,
+      "programaNome": "2200020250010 - Fomento ao Setor Agropecuário - Equipamentos, Execução de Custeio, Obras e Serviços de Engenharia",
+      "modalidadeNome": "Programa",
+      "tipoTermoNome": null,
+      "emenda": null,
+      "financeiro": null,
+      "contrato": null,
+      "pendencias": [
+        {
+          "descricao": "Aguardando análise da proposta",
+          "orgaoResponsavel": "MAPA",
+          "status": "ABERTA"
+        }
+      ],
+      "aditivos": [],
+      "secretariaId": "sec-sourb",
+      "orgaoId": null,
+      "programaId": "prog-005",
+      "modalidadeRepasseId": "mod-programa",
+      "tipoTermoFormalizacaoId": null
+    },
+    {
+      "codigo": "CONV-024",
+      "titulo": "Obras rodoviárias no Município de Votorantim (Interligação Pedro/Jaziel)",
+      "objeto": "Obras rodoviárias no Município de Votorantim (Interligação Pedro/Jaziel)",
+      "descricao": null,
+      "status": "RASCUNHO",
+      "esfera": "FEDERAL",
+      "clausulaSuspensiva": false,
+      "numeroProposta": "55846",
+      "numeroTermo": null,
+      "ministerioOrgao": null,
+      "area": "INFRAESTRUTURA PRODUTIVA",
+      "dataInicioProcesso": "2025-04-23",
+      "dataAssinatura": null,
+      "dataInicioVigencia": null,
+      "dataFimVigencia": null,
+      "processoSPD": null,
+      "processoCreditoAdicional": null,
+      "valorGlobal": 24354000.0,
+      "valorRepasse": 24110460.0,
+      "valorContrapartida": 243540.0,
+      "secretariaSigla": "SOURB",
+      "orgaoNome": null,
+      "programaNome": "5300020250005 - Ação 00SX - Apoio a Projetos de Desenvolvimento Sustentável Local Integrado - RP2 - Equipamentos e Obras",
+      "modalidadeNome": "Programa",
+      "tipoTermoNome": null,
+      "emenda": null,
+      "financeiro": null,
+      "contrato": null,
+      "pendencias": [
+        {
+          "descricao": "Aguardando análise da proposta",
+          "orgaoResponsavel": "MIDR",
+          "status": "ABERTA"
+        }
+      ],
+      "aditivos": [],
+      "secretariaId": "sec-sourb",
+      "orgaoId": null,
+      "programaId": "prog-010",
+      "modalidadeRepasseId": "mod-programa",
+      "tipoTermoFormalizacaoId": null
+    },
+    {
+      "codigo": "CONV-025",
+      "titulo": "Obras de Pavimentação Vicinal no Município de Votorantim (Capoavinha).",
+      "objeto": "Obras de Pavimentação Vicinal no Município de Votorantim (Capoavinha).",
+      "descricao": null,
+      "status": "RASCUNHO",
+      "esfera": "FEDERAL",
+      "clausulaSuspensiva": false,
+      "numeroProposta": "55905",
+      "numeroTermo": null,
+      "ministerioOrgao": null,
+      "area": "INFRAESTRUTURA PRODUTIVA",
+      "dataInicioProcesso": "2025-05-14",
+      "dataAssinatura": null,
+      "dataInicioVigencia": null,
+      "dataFimVigencia": null,
+      "processoSPD": null,
+      "processoCreditoAdicional": null,
+      "valorGlobal": 2890000.0,
+      "valorRepasse": 2861100.0,
+      "valorContrapartida": 28900.0,
+      "secretariaSigla": "SOURB",
+      "orgaoNome": null,
+      "programaNome": "5300020250006 - Ação 00SX - Apoio a Projetos de Desenvolvimento Sustentável Local Integrado - RP2 - Obras",
+      "modalidadeNome": "Programa",
+      "tipoTermoNome": null,
+      "emenda": null,
+      "financeiro": null,
+      "contrato": null,
+      "pendencias": [
+        {
+          "descricao": "Aguardando análise da proposta",
+          "orgaoResponsavel": "MIDR",
+          "status": "ABERTA"
+        }
+      ],
+      "aditivos": [],
+      "secretariaId": "sec-sourb",
+      "orgaoId": null,
+      "programaId": "prog-011",
+      "modalidadeRepasseId": "mod-programa",
+      "tipoTermoFormalizacaoId": null
+    },
+    {
+      "codigo": "CONV-026",
+      "titulo": "Feira Empreendedora",
+      "objeto": "Feira Empreendedora",
+      "descricao": null,
+      "status": "RASCUNHO",
+      "esfera": "FEDERAL",
+      "clausulaSuspensiva": false,
+      "numeroProposta": null,
+      "numeroTermo": null,
+      "ministerioOrgao": null,
+      "area": "MEs e EPPs",
+      "dataInicioProcesso": "2025-05-14",
+      "dataAssinatura": null,
+      "dataInicioVigencia": null,
+      "dataFimVigencia": null,
+      "processoSPD": null,
+      "processoCreditoAdicional": null,
+      "valorGlobal": 0.0,
+      "valorRepasse": null,
+      "valorContrapartida": null,
+      "secretariaSigla": "SECI",
+      "orgaoNome": null,
+      "programaNome": "6900020250015 - Evolução das Microempresas e das Empresas de Pequeno Porte visando a interiorização das estratégias para a implementação da Política Nacional de Desenvolvimento das Microempresas e Empresas de Pequeno Porte",
+      "modalidadeNome": "Programa",
+      "tipoTermoNome": null,
+      "emenda": null,
+      "financeiro": null,
+      "contrato": null,
+      "pendencias": [
+        {
+          "descricao": "Aguardando aprovação do Plano de Trabalho",
+          "orgaoResponsavel": "Carlota",
+          "status": "ABERTA"
+        }
+      ],
+      "aditivos": [],
+      "secretariaId": "sec-seci",
+      "orgaoId": null,
+      "programaId": "prog-015",
+      "modalidadeRepasseId": "mod-programa",
+      "tipoTermoFormalizacaoId": null
+    },
+    {
+      "codigo": "CONV-027",
+      "titulo": "Custeio",
+      "objeto": "Custeio",
+      "descricao": null,
+      "status": "RASCUNHO",
+      "esfera": "FEDERAL",
+      "clausulaSuspensiva": false,
+      "numeroProposta": null,
+      "numeroTermo": null,
+      "ministerioOrgao": null,
+      "area": "CULTURA",
+      "dataInicioProcesso": "2025-04-17",
+      "dataAssinatura": null,
+      "dataInicioVigencia": null,
+      "dataFimVigencia": null,
+      "processoSPD": null,
+      "processoCreditoAdicional": null,
+      "valorGlobal": 3580655.2,
+      "valorRepasse": 3580655.2,
+      "valorContrapartida": null,
+      "secretariaSigla": "SEC",
+      "orgaoNome": null,
+      "programaNome": "Política Nacional Aldir Blanc de Fomento à Cultura",
+      "modalidadeNome": "Programa",
+      "tipoTermoNome": null,
+      "emenda": null,
+      "financeiro": null,
+      "contrato": null,
+      "pendencias": [
+        {
+          "descricao": "Plano de Ação Aprovado",
+          "orgaoResponsavel": "SECULT",
+          "status": "ABERTA"
+        }
+      ],
+      "aditivos": [],
+      "secretariaId": "sec-sec",
+      "orgaoId": null,
+      "programaId": "prog-024",
+      "modalidadeRepasseId": "mod-programa",
+      "tipoTermoFormalizacaoId": null
+    },
+    {
+      "codigo": "CONV-028",
+      "titulo": "Pavimentação asfáltica da Estrada do Moranguinho, Estrada do Cubatão e Rua Espedito",
+      "objeto": "Pavimentação asfáltica da Estrada do Moranguinho, Estrada do Cubatão e Rua Espedito",
+      "descricao": null,
+      "status": "APROVADO",
+      "esfera": "ESTADUAL",
+      "clausulaSuspensiva": false,
+      "numeroProposta": "95209",
+      "numeroTermo": "100286/2025",
+      "ministerioOrgao": null,
+      "area": "INFRAESTRUTURA",
+      "dataInicioProcesso": "2025-07-24",
+      "dataAssinatura": "2025-11-14",
+      "dataInicioVigencia": "2025-11-14",
+      "dataFimVigencia": "2027-11-14",
+      "processoSPD": "1331/2025",
+      "processoCreditoAdicional": "C.I 236_2025",
+      "valorGlobal": 5246220.9,
+      "valorRepasse": 5000000.0,
+      "valorContrapartida": 246220.9,
+      "secretariaSigla": "SOURB",
+      "orgaoNome": null,
+      "programaNome": "674 - Infraestrutura Urbana",
+      "modalidadeNome": "Transferência Voluntária",
+      "tipoTermoNome": "Convênio",
+      "emenda": null,
+      "financeiro": {
+        "contaBancaria": "46.471-6",
+        "valorLiberadoTotal": null,
+        "dataDeposito": null,
+        "saldoRendimentos": null,
+        "codigoReceita": null
+      },
+      "contrato": null,
+      "pendencias": [
+        {
+          "descricao": "Aguardando a emissão da Nota de Empenho",
+          "orgaoResponsavel": "SGRI",
+          "status": "ABERTA"
+        },
+        {
+          "descricao": "Aguardando processo licitatório",
+          "orgaoResponsavel": "SOURB",
+          "status": "ABERTA"
+        },
+        {
+          "descricao": "Implantação de rede de esgoto",
+          "orgaoResponsavel": "CAV",
+          "status": "ABERTA"
+        },
+        {
+          "descricao": "Implantação de postes de IP na descida",
+          "orgaoResponsavel": "PMV",
+          "status": "ABERTA"
+        }
+      ],
+      "aditivos": [],
+      "secretariaId": "sec-sourb",
+      "orgaoId": null,
+      "programaId": "prog-012",
+      "modalidadeRepasseId": "mod-transferencia-voluntaria",
+      "tipoTermoFormalizacaoId": "tipo-convenio"
+    },
+    {
+      "codigo": "CONV-029",
+      "titulo": "Prêmio Excelência Educacional",
+      "objeto": "Prêmio Excelência Educacional",
+      "descricao": null,
+      "status": "RASCUNHO",
+      "esfera": "ESTADUAL",
+      "clausulaSuspensiva": false,
+      "numeroProposta": "95708",
+      "numeroTermo": null,
+      "ministerioOrgao": null,
+      "area": "EDUCAÇÃO",
+      "dataInicioProcesso": "2025-08-19",
+      "dataAssinatura": null,
+      "dataInicioVigencia": null,
+      "dataFimVigencia": null,
+      "processoSPD": null,
+      "processoCreditoAdicional": null,
+      "valorGlobal": 194500.0,
+      "valorRepasse": 194500.0,
+      "valorContrapartida": null,
+      "secretariaSigla": "SEED",
+      "orgaoNome": null,
+      "programaNome": "(PAINSP) ALFABETIZA JUNTOS SP - Prêmio Excelência Educacional",
+      "modalidadeNome": "Programa",
+      "tipoTermoNome": null,
+      "emenda": null,
+      "financeiro": null,
+      "contrato": null,
+      "pendencias": [
+        {
+          "descricao": "Em execução do pagamento - COEFIN/DIORF",
+          "orgaoResponsavel": "SEED",
+          "status": "ABERTA"
+        }
+      ],
+      "aditivos": [],
+      "secretariaId": "sec-seed",
+      "orgaoId": null,
+      "programaId": "prog-002",
+      "modalidadeRepasseId": "mod-programa",
+      "tipoTermoFormalizacaoId": null
+    },
+    {
+      "codigo": "CONV-030",
+      "titulo": "Aquisição de prancha (FECOP)",
+      "objeto": "Aquisição de prancha (FECOP)",
+      "descricao": null,
+      "status": "RASCUNHO",
+      "esfera": "ESTADUAL",
+      "clausulaSuspensiva": false,
+      "numeroProposta": null,
+      "numeroTermo": null,
+      "ministerioOrgao": null,
+      "area": "RESÍDUOS SÓLIDOS",
+      "dataInicioProcesso": "2025-08-28",
+      "dataAssinatura": null,
+      "dataInicioVigencia": null,
+      "dataFimVigencia": null,
+      "processoSPD": "1299/2025",
+      "processoCreditoAdicional": null,
+      "valorGlobal": 0.0,
+      "valorRepasse": null,
+      "valorContrapartida": null,
+      "secretariaSigla": "SEMA",
+      "orgaoNome": null,
+      "programaNome": "FECOP",
+      "modalidadeNome": "Programa",
+      "tipoTermoNome": null,
+      "emenda": null,
+      "financeiro": null,
+      "contrato": null,
+      "pendencias": [
+        {
+          "descricao": "Edital Publicado - CHAMADA PÚBLICA Nº 01/2025",
+          "orgaoResponsavel": "SEMIL",
+          "status": "ABERTA"
+        }
+      ],
+      "aditivos": [],
+      "secretariaId": "sec-sema",
+      "orgaoId": null,
+      "programaId": "prog-019",
+      "modalidadeRepasseId": "mod-programa",
+      "tipoTermoFormalizacaoId": null
+    },
+    {
+      "codigo": "CONV-031",
+      "titulo": "Construção de Campo de Futebol",
+      "objeto": "Construção de Campo de Futebol",
+      "descricao": null,
+      "status": "RASCUNHO",
+      "esfera": "ESTADUAL",
+      "clausulaSuspensiva": false,
+      "numeroProposta": "98053",
+      "numeroTermo": null,
+      "ministerioOrgao": null,
+      "area": "ESPORTE",
+      "dataInicioProcesso": "2025-09-25",
+      "dataAssinatura": null,
+      "dataInicioVigencia": null,
+      "dataFimVigencia": null,
+      "processoSPD": null,
+      "processoCreditoAdicional": null,
+      "valorGlobal": 370000.0,
+      "valorRepasse": 370000.0,
+      "valorContrapartida": null,
+      "secretariaSigla": "SEDESP",
+      "orgaoNome": null,
+      "programaNome": "Obras Esportivas",
+      "modalidadeNome": "Transferência Voluntária",
+      "tipoTermoNome": null,
+      "emenda": {
+        "nomeParlamentar": "Rogério Santos",
+        "partido": null,
+        "codigoEmenda": "2025.263.75794",
+        "funcao": null,
+        "subfuncao": null,
+        "programa": "Obras Esportivas",
+        "valorIndicado": 370000.0,
+        "anoEmenda": 2025
+      },
+      "financeiro": null,
+      "contrato": null,
+      "pendencias": [
+        {
+          "descricao": "Aguardando matrícula da área",
+          "orgaoResponsavel": "SENJ",
+          "status": "ABERTA"
+        }
+      ],
+      "aditivos": [],
+      "secretariaId": "sec-sedesp",
+      "orgaoId": null,
+      "programaId": "prog-023",
+      "modalidadeRepasseId": "mod-transferencia-voluntaria",
+      "tipoTermoFormalizacaoId": null
+    },
+    {
+      "codigo": "CONV-032",
+      "titulo": "Plataformas Digitais - Alfabetização",
+      "objeto": "Plataformas Digitais - Alfabetização",
+      "descricao": null,
+      "status": "RASCUNHO",
+      "esfera": "ESTADUAL",
+      "clausulaSuspensiva": false,
+      "numeroProposta": "97945",
+      "numeroTermo": null,
+      "ministerioOrgao": null,
+      "area": null,
+      "dataInicioProcesso": null,
+      "dataAssinatura": null,
+      "dataInicioVigencia": null,
+      "dataFimVigencia": null,
+      "processoSPD": null,
+      "processoCreditoAdicional": null,
+      "valorGlobal": 0.0,
+      "valorRepasse": null,
+      "valorContrapartida": null,
+      "secretariaSigla": "SEED",
+      "orgaoNome": null,
+      "programaNome": "(PAINSP) ALFABETIZA JUNTOS SP - Plataformas Digitais - Alfabetização",
+      "modalidadeNome": null,
+      "tipoTermoNome": null,
+      "emenda": null,
+      "financeiro": null,
+      "contrato": null,
+      "pendencias": [
+        {
+          "descricao": "Aguardando Assinaturas",
+          "orgaoResponsavel": null,
+          "status": "ABERTA"
+        }
+      ],
+      "aditivos": [],
+      "secretariaId": "sec-seed",
+      "orgaoId": null,
+      "programaId": "prog-001",
+      "modalidadeRepasseId": null,
+      "tipoTermoFormalizacaoId": null
+    },
+    {
+      "codigo": "CONV-033",
+      "titulo": "Construção de um campo de futebol society, no bairro São Lucas",
+      "objeto": "Construção de um campo de futebol society, no bairro São Lucas",
+      "descricao": null,
+      "status": "RASCUNHO",
+      "esfera": "ESTADUAL",
+      "clausulaSuspensiva": false,
+      "numeroProposta": null,
+      "numeroTermo": null,
+      "ministerioOrgao": null,
+      "area": null,
+      "dataInicioProcesso": "2025-10-10",
+      "dataAssinatura": null,
+      "dataInicioVigencia": null,
+      "dataFimVigencia": null,
+      "processoSPD": "1735/2025",
+      "processoCreditoAdicional": null,
+      "valorGlobal": 500000.0,
+      "valorRepasse": 500000.0,
+      "valorContrapartida": null,
+      "secretariaSigla": "SEDESP",
+      "orgaoNome": null,
+      "programaNome": null,
+      "modalidadeNome": "Transferência Voluntária",
+      "tipoTermoNome": null,
+      "emenda": {
+        "nomeParlamentar": "Vitão do Cachorrão",
+        "partido": null,
+        "codigoEmenda": "2025.289.76524",
+        "funcao": null,
+        "subfuncao": null,
+        "programa": null,
+        "valorIndicado": 500000.0,
+        "anoEmenda": 2025
+      },
+      "financeiro": null,
+      "contrato": null,
+      "pendencias": [
+        {
+          "descricao": "Aguardando definição do objeto",
+          "orgaoResponsavel": "1. SOURB 2 SEDESP",
+          "status": "ABERTA"
+        },
+        {
+          "descricao": "Posteriormente, solicitar ao deputado a alteração do objeto",
+          "orgaoResponsavel": "1. SOURB 2 SEDESP",
+          "status": "ABERTA"
+        }
+      ],
+      "aditivos": [],
+      "secretariaId": "sec-sedesp",
+      "orgaoId": null,
+      "programaId": null,
+      "modalidadeRepasseId": "mod-transferencia-voluntaria",
+      "tipoTermoFormalizacaoId": null
+    },
+    {
+      "codigo": "CONV-034",
+      "titulo": "Aquisição de 01 (uma) viatura caracterizada - veículo automotor, tipo camioneta, utilitário (SUV - Sport Utility Vehicle) médio porte ou Minivan, montado em estrutura monobloco, equipado co…",
+      "objeto": "Aquisição de 01 (uma) viatura caracterizada - veículo automotor, tipo camioneta, utilitário (SUV - Sport Utility Vehicle) médio porte ou Minivan, montado em estrutura monobloco, equipado com sistema de tração 4x2 ou sistema de tração integral, carroceria em aço e original de fábrica, zero-quilômetro de fábrica, destinado ao transporte de passageiros e carga no mesmo compartimento, em cor sólida, modificado para policiamento ostensivo, com o objetivo de apoiar as atividades institucionais da GCM da localidade",
+      "descricao": null,
+      "status": "APROVADO",
+      "esfera": "ESTADUAL",
+      "clausulaSuspensiva": false,
+      "numeroProposta": "025.00012742/2025-39",
+      "numeroTermo": null,
+      "ministerioOrgao": null,
+      "area": null,
+      "dataInicioProcesso": "2025-10-21",
+      "dataAssinatura": "2025-10-21",
+      "dataInicioVigencia": "2025-10-21",
+      "dataFimVigencia": "2027-10-21",
+      "processoSPD": null,
+      "processoCreditoAdicional": null,
+      "valorGlobal": 253255.81,
+      "valorRepasse": 253255.81,
+      "valorContrapartida": null,
+      "secretariaSigla": "SEG",
+      "orgaoNome": null,
+      "programaNome": "Todos contra a Desordem",
+      "modalidadeNome": "Transferência Especial",
+      "tipoTermoNome": "Plano de Trabalho",
+      "emenda": {
+        "nomeParlamentar": "Adilson Barroso",
+        "partido": null,
+        "codigoEmenda": "2025.429.20005",
+        "funcao": null,
+        "subfuncao": null,
+        "programa": "Todos contra a Desordem",
+        "valorIndicado": 253255.81,
+        "anoEmenda": 2025
+      },
+      "financeiro": null,
+      "contrato": null,
+      "pendencias": [
+        {
+          "descricao": "Aguardando liberação do repasse",
+          "orgaoResponsavel": "SSP",
+          "status": "ABERTA"
+        },
+        {
+          "descricao": "Aguardando abertura de conta bancária",
+          "orgaoResponsavel": "SPD",
+          "status": "ABERTA"
+        }
+      ],
+      "aditivos": [],
+      "secretariaId": "sec-seg",
+      "orgaoId": null,
+      "programaId": "prog-029",
+      "modalidadeRepasseId": "mod-transferencia-especial",
+      "tipoTermoFormalizacaoId": "tipo-plano-de-trabalho"
+    },
+    {
+      "codigo": "CONV-035",
+      "titulo": "Aquisição de equipamento e serviços de Tecnologia da informação e Comunicação",
+      "objeto": "Aquisição de equipamento e serviços de Tecnologia da informação e Comunicação",
+      "descricao": null,
+      "status": "RASCUNHO",
+      "esfera": "ESTADUAL",
+      "clausulaSuspensiva": false,
+      "numeroProposta": "99099",
+      "numeroTermo": null,
+      "ministerioOrgao": null,
+      "area": "SEGURANÇA",
+      "dataInicioProcesso": "2025-11-17",
+      "dataAssinatura": null,
+      "dataInicioVigencia": null,
+      "dataFimVigencia": null,
+      "processoSPD": null,
+      "processoCreditoAdicional": null,
+      "valorGlobal": 168900.67,
+      "valorRepasse": 150000.0,
+      "valorContrapartida": 18900.67,
+      "secretariaSigla": "SEG",
+      "orgaoNome": null,
+      "programaNome": "462 - Aquisição de equipamentos da SSP",
+      "modalidadeNome": "Transferência Voluntária",
+      "tipoTermoNome": null,
+      "emenda": {
+        "nomeParlamentar": "Agente Federal Danilo Balas",
+        "partido": null,
+        "codigoEmenda": "2025.005.77350",
+        "funcao": "06 - Segurança Pública",
+        "subfuncao": "181 - Policiamento",
+        "programa": "462 - Aquisição de equipamentos da SSP",
+        "valorIndicado": 150000.0,
+        "anoEmenda": 2025
+      },
+      "financeiro": {
+        "contaBancaria": "47669-2",
+        "valorLiberadoTotal": null,
+        "dataDeposito": null,
+        "saldoRendimentos": null,
+        "codigoReceita": null
+      },
+      "contrato": null,
+      "pendencias": [
+        {
+          "descricao": "Aguardando análise técnica",
+          "orgaoResponsavel": "SSP",
+          "status": "ABERTA"
+        }
+      ],
+      "aditivos": [],
+      "secretariaId": "sec-seg",
+      "orgaoId": null,
+      "programaId": "prog-008",
+      "modalidadeRepasseId": "mod-transferencia-voluntaria",
+      "tipoTermoFormalizacaoId": null
+    },
+    {
+      "codigo": "CONV-036",
+      "titulo": "Recapeamento das Francisco de Paula e Noé Carlos de Campos",
+      "objeto": "Recapeamento das Francisco de Paula e Noé Carlos de Campos",
+      "descricao": null,
+      "status": "RASCUNHO",
+      "esfera": "ESTADUAL",
+      "clausulaSuspensiva": false,
+      "numeroProposta": "99447",
+      "numeroTermo": null,
+      "ministerioOrgao": null,
+      "area": "INFRAESTRUTURA",
+      "dataInicioProcesso": null,
+      "dataAssinatura": null,
+      "dataInicioVigencia": null,
+      "dataFimVigencia": null,
+      "processoSPD": null,
+      "processoCreditoAdicional": null,
+      "valorGlobal": 150000.0,
+      "valorRepasse": 150000.0,
+      "valorContrapartida": null,
+      "secretariaSigla": "SOURB",
+      "orgaoNome": null,
+      "programaNome": "674 - Infraestrutura Urbana",
+      "modalidadeNome": "Transferência Voluntária",
+      "tipoTermoNome": null,
+      "emenda": {
+        "nomeParlamentar": "Maria Lúcia Amary",
+        "partido": null,
+        "codigoEmenda": "2025.065.77512",
+        "funcao": "15 - Urbanismo",
+        "subfuncao": "451 - Infraestrutura Urbana",
+        "programa": "674 - Infraestrutura Urbana",
+        "valorIndicado": 150000.0,
+        "anoEmenda": 2025
+      },
+      "financeiro": {
+        "contaBancaria": "47670-6",
+        "valorLiberadoTotal": null,
+        "dataDeposito": null,
+        "saldoRendimentos": null,
+        "codigoReceita": null
+      },
+      "contrato": null,
+      "pendencias": [
+        {
+          "descricao": "1. Aguardando projeto 2 Aguardando abertura de conta bancária",
+          "orgaoResponsavel": "1. SOURB 2. SEF",
+          "status": "ABERTA"
+        }
+      ],
+      "aditivos": [],
+      "secretariaId": "sec-sourb",
+      "orgaoId": null,
+      "programaId": "prog-012",
+      "modalidadeRepasseId": "mod-transferencia-voluntaria",
+      "tipoTermoFormalizacaoId": null
+    },
+    {
+      "codigo": "CONV-037",
+      "titulo": "Aquisição Direta (Doação)",
+      "objeto": "Aquisição Direta (Doação)",
+      "descricao": null,
+      "status": "RASCUNHO",
+      "esfera": "FEDERAL",
+      "clausulaSuspensiva": false,
+      "numeroProposta": null,
+      "numeroTermo": null,
+      "ministerioOrgao": null,
+      "area": null,
+      "dataInicioProcesso": "2025-12-04",
+      "dataAssinatura": null,
+      "dataInicioVigencia": null,
+      "dataFimVigencia": null,
+      "processoSPD": null,
+      "processoCreditoAdicional": null,
+      "valorGlobal": 400000.0,
+      "valorRepasse": 400000.0,
+      "valorContrapartida": null,
+      "secretariaSigla": "SEG",
+      "orgaoNome": null,
+      "programaNome": null,
+      "modalidadeNome": "Doação",
+      "tipoTermoNome": null,
+      "emenda": {
+        "nomeParlamentar": "Eduardo Bolsonaro",
+        "partido": null,
+        "codigoEmenda": "30880008",
+        "funcao": "06 - Segurança Pública",
+        "subfuncao": "181 - Policiamento",
+        "programa": null,
+        "valorIndicado": 400000.0,
+        "anoEmenda": 2025
+      },
+      "financeiro": null,
+      "contrato": null,
+      "pendencias": [
+        {
+          "descricao": "Aguardando formalização da doação",
+          "orgaoResponsavel": "MJSP",
+          "status": "ABERTA"
+        }
+      ],
+      "aditivos": [],
+      "secretariaId": "sec-seg",
+      "orgaoId": null,
+      "programaId": null,
+      "modalidadeRepasseId": "mod-doacao",
+      "tipoTermoFormalizacaoId": null
+    },
+    {
+      "codigo": "CONV-038",
+      "titulo": "Revitalização de Espaços Públicos do Município de Votorantim/SP.",
+      "objeto": "Revitalização de Espaços Públicos do Município de Votorantim/SP.",
+      "descricao": null,
+      "status": "RASCUNHO",
+      "esfera": "FEDERAL",
+      "clausulaSuspensiva": false,
+      "numeroProposta": "68229",
+      "numeroTermo": null,
+      "ministerioOrgao": "MCIDADES",
+      "area": null,
+      "dataInicioProcesso": "2025-12-18",
+      "dataAssinatura": null,
+      "dataInicioVigencia": null,
+      "dataFimVigencia": null,
+      "processoSPD": null,
+      "processoCreditoAdicional": null,
+      "valorGlobal": 2525252.53,
+      "valorRepasse": 2500000.0,
+      "valorContrapartida": 25252.53,
+      "secretariaSigla": "SOURB",
+      "orgaoNome": "MCIDADES",
+      "programaNome": "SNDUM - MCidades 00SY - Apoio a Projetos e Obras de Reabilitação, de Acessibilidade e Modernização Tecnológica em Áreas Urbanas - RP2",
+      "modalidadeNome": "Transferência Voluntária",
+      "tipoTermoNome": null,
+      "emenda": null,
+      "financeiro": null,
+      "contrato": null,
+      "pendencias": [
+        {
+          "descricao": "Proposta Aprovada. Aguardando análise do Plano de Trabalho",
+          "orgaoResponsavel": "MCIDADES",
+          "status": "ABERTA"
+        }
+      ],
+      "aditivos": [],
+      "secretariaId": "sec-sourb",
+      "orgaoId": "org-mcidades",
+      "programaId": "prog-028",
+      "modalidadeRepasseId": "mod-transferencia-voluntaria",
+      "tipoTermoFormalizacaoId": null
+    },
+    {
+      "codigo": "CONV-039",
+      "titulo": "Implantação de qualificação de vias urbanas no Município de Votorantim/SP.",
+      "objeto": "Implantação de qualificação de vias urbanas no Município de Votorantim/SP.",
+      "descricao": null,
+      "status": "RASCUNHO",
+      "esfera": "FEDERAL",
+      "clausulaSuspensiva": false,
+      "numeroProposta": "68238",
+      "numeroTermo": null,
+      "ministerioOrgao": "MCIDADES",
+      "area": null,
+      "dataInicioProcesso": "2025-12-18",
+      "dataAssinatura": null,
+      "dataInicioVigencia": null,
+      "dataFimVigencia": null,
+      "processoSPD": null,
+      "processoCreditoAdicional": null,
+      "valorGlobal": 1500000.0,
+      "valorRepasse": 1485000.0,
+      "valorContrapartida": 15000.0,
+      "secretariaSigla": "SOURB",
+      "orgaoNome": "MCIDADES",
+      "programaNome": "Programa 2319 - Ação 00T1 - Apoio a Politica Nacional de Desenvolvimento Urbano Voltado a Implantação e Qualificação Viaria – RP2",
+      "modalidadeNome": "Transferência Voluntária",
+      "tipoTermoNome": null,
+      "emenda": null,
+      "financeiro": null,
+      "contrato": null,
+      "pendencias": [
+        {
+          "descricao": "Aguardando análise da proposta",
+          "orgaoResponsavel": "MCIDADES",
+          "status": "ABERTA"
+        }
+      ],
+      "aditivos": [],
+      "secretariaId": "sec-sourb",
+      "orgaoId": "org-mcidades",
+      "programaId": "prog-027",
+      "modalidadeRepasseId": "mod-transferencia-voluntaria",
+      "tipoTermoFormalizacaoId": null
+    }
+  ]
+}

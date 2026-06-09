@@ -77,8 +77,11 @@ Git history follows **Conventional Commit** style: `feat:`, `fix:`, `refactor:`,
 
 ## Deployment
 
-- **Railway**: API is deployed with `npm run build:railway:api` (build) and `npm run start:railway:api` (start, applies migrations).
-- Database: MySQL on Railway; managed via Prisma migrations in `packages/db/prisma/migrations`.
+- **Status atual:** O sistema saiu do Railway e está **sem infraestrutura de produção**.
+- **Próxima direção:** VPS própria (ver ADR-004 no second-brain).
+- **Scripts antigos (Railway — obsoletos):** `npm run build:railway:api` e `npm run start:railway:api`.
+- **TODO:** Criar novos scripts de deploy para VPS (PM2 + Nginx + SSL).
+- Database: MySQL (provisoriamente local; será migrado para VPS).
 
 ## Development Philosophy & AI Agents
 

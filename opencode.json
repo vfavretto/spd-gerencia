@@ -1,0 +1,103 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "username": "spd-dev",
+  "logLevel": "INFO",
+  "snapshot": true,
+  "instructions": [
+    "AGENTS.md",
+    "CLAUDE.md"
+  ],
+  "skills": {
+    "paths": [
+      ".opencode/skills"
+    ]
+  },
+  "agent": {
+    "arquiteto": {
+      "description": "Guardião da integridade arquitetural. Valida decisões antes da execução. Produz ADRs, contratos e diagramas.",
+      "mode": "subagent",
+      "permission": {
+        "edit": "allow",
+        "bash": "ask",
+        "task": "allow"
+      }
+    },
+    "tech-lead": {
+      "description": "Dev sênior que orquestra o time. Distribui tarefas, revisa handoffs e atualiza o second-brain.",
+      "mode": "subagent",
+      "permission": {
+        "edit": "allow",
+        "bash": "ask",
+        "task": "allow"
+      }
+    },
+    "dev-frontend": {
+      "description": "Especialista em React, Vite, TypeScript e UI/UX. Executa demandas frontend delegadas.",
+      "mode": "subagent",
+      "permission": {
+        "edit": "allow",
+        "bash": "ask",
+        "task": "allow"
+      }
+    },
+    "dev-backend": {
+      "description": "Especialista em Express, Prisma, TypeScript e Clean Architecture. Executa demandas backend delegadas.",
+      "mode": "subagent",
+      "permission": {
+        "edit": "allow",
+        "bash": "ask",
+        "task": "allow"
+      }
+    },
+    "qa": {
+      "description": "Especialista em Jest, Vitest e qualidade. Valida entregas com TDD antes da revisão final.",
+      "mode": "subagent",
+      "permission": {
+        "edit": "allow",
+        "bash": "ask",
+        "task": "allow"
+      }
+    }
+  },
+  "command": {
+    "spd": {
+      "description": "Carrega o contexto rápido do projeto SPD-Gerência via skill spd-project",
+      "template": "Use the skill 'spd-project' to provide a quick overview of the current project state.",
+      "agent": "general",
+      "subtask": false
+    },
+    "plan": {
+      "description": "Inicia o planejamento SDD+TDD para uma nova feature ou mudança",
+      "template": "Use the skill 'planner' to start a new planning session. Ask the user for the feature or change they want to plan.",
+      "agent": "plan",
+      "subtask": false
+    },
+    "execute": {
+      "description": "Executa um battleplan aprovado via skill dev-team",
+      "template": "Use the skill 'dev-team' to execute an approved battleplan. Ask the user for the battleplan ID (e.g., BP-007).",
+      "agent": "build",
+      "subtask": false
+    },
+    "retro": {
+      "description": "Executa retrospectiva de um battleplan concluído",
+      "template": "Use the skill 'retro' to run a retrospective. Ask the user for the battleplan ID (e.g., BP-007).",
+      "agent": "general",
+      "subtask": false
+    }
+  },
+  "permission": {
+    "edit": "allow",
+    "bash": { "git *": "allow", "npm *": "allow", "*": "ask" },
+    "task": "allow",
+    "external_directory": { "~/Documentos/SPD/SPD-Second-Brain/**": "allow", "*": "ask" }
+  },
+  "compaction": {
+    "auto": true,
+    "tail_turns": 15,
+    "prune": false
+  },
+  "tool_output": {
+    "max_lines": 200,
+    "max_bytes": 8192
+  }
+}

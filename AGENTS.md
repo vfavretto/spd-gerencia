@@ -80,6 +80,49 @@ Git history follows **Conventional Commit** style: `feat:`, `fix:`, `refactor:`,
 - **Railway**: API is deployed with `npm run build:railway:api` (build) and `npm run start:railway:api` (start, applies migrations).
 - Database: MySQL on Railway; managed via Prisma migrations in `packages/db/prisma/migrations`.
 
+## Development Philosophy & AI Agents
+
+This project follows a structured development philosophy built on three pillars: a **second-brain** knowledge base, **SDD + TDD battleplanning**, and a **specialized agent team**.
+
+### Second-Brain (Obsidian)
+
+The project knowledge base lives in `/Documentos/SPD/SPD-Second-Brain` as an Obsidian vault.
+- `SUMMARY.md` — condensed index (max 400 words) with current state, key decisions, and links
+- `ADRs/` — Architecture Decision Records (ADR-001, ADR-002, ADR-003...)
+- `architecture/`, `debt/`, `backlog/`, `decisions/`, `patterns/` — detailed notes
+- Always updated via diff/append; never rewrite entire files without need
+
+### Battleplan Workflow
+
+1. **Planning** (`/planner` skill): spec-first planning with SDD + TDD. Produces a battleplan in `docs/battleplan/YYYY-MM-DD_<slug>.md`
+2. **Execution** (`/dev-team` skill): specialized agents (arquiteto, tech-lead, dev-frontend, dev-backend, qa) execute the approved battleplan
+3. **Retrospective** (`/retro` skill): closes the learning cycle, updates `SUMMARY.md`, and records patterns in `patterns/`
+
+### Agent Team
+
+| Agent | Role | Scope |
+|-------|------|-------|
+| `arquiteto` | Architectural guardian | ADRs, contracts, diagrams — no code |
+| `tech-lead` | Senior dev orchestrator | Task distribution, handoff review, SUMMARY updates |
+| `dev-frontend` | Frontend specialist | React/Vite/TS/UI — only `[agent: frontend]` sections |
+| `dev-backend` | Backend specialist | Express/Prisma/TS — only `[agent: backend]` sections |
+| `qa` | Quality & testing | Jest/Vitest/TDD — only `[agent: qa]` sections |
+
+### Context Efficiency Protocol
+
+- Lazy load second-brain: always start with `SUMMARY.md`, load full notes only on demand
+- Battleplan sections are tagged with `[agent: X]` — each agent loads only their tagged sections
+- Reference specs/ADRs by ID (`ADR-003`, `SPEC-012`) — never repeat content
+- Handoffs between agents use compact YAML schema
+- Agents output without preamble; updates use diffs
+
+### Commands
+
+- `opencode spd` — quick project overview
+- `opencode plan` — start a new battleplan
+- `opencode execute` — execute an approved battleplan
+- `opencode retro` — run a retrospective
+
 ## Security & Configuration
 
 - Never commit `.env` or secrets.

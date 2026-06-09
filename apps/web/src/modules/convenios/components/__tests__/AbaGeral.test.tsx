@@ -14,6 +14,21 @@ vi.mock("@/modules/configuracoes/services/configService", () => ({
   }
 }));
 
+vi.mock("@/modules/shared/hooks", () => ({
+  usePermissions: () => ({
+    canCreate: () => true,
+    canUpdate: () => true,
+    canDelete: () => true,
+    canWrite: () => true,
+    isAdmin: true,
+    isAnalista: false,
+    isEstagiario: false,
+    isObservador: false,
+    userRole: "ADMIN",
+    hasRole: () => true
+  })
+}));
+
 const emendaModalMock = vi.fn(() => null);
 
 vi.mock("../modals/RegistrarAssinaturaModal", () => ({

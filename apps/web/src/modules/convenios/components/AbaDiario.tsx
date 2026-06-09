@@ -14,6 +14,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import type { Convenio, Pendencia, StatusPendencia } from "@/modules/shared/types";
 import { pendenciaService } from "@/modules/convenios/services/pendenciaService";
+import { usePermissions } from "@/modules/shared/hooks";
 import { formatDateBR } from "@/modules/shared/lib/date";
 import { Badge } from "@/modules/shared/ui/badge";
 import { Button } from "@/modules/shared/ui/button";
@@ -50,6 +51,7 @@ const prioridadeLabel: Record<number, { label: string; color: string }> = {
 
 export function AbaDiario({ convenio, onUpdate }: Props) {
   const queryClient = useQueryClient();
+  const { canCreate, canUpdate } = usePermissions();
   const [showNovaPendencia, setShowNovaPendencia] = useState(false);
   const [pendenciaParaEditar, setPendenciaParaEditar] = useState<Pendencia | null>(null);
   const [filtroStatus, setFiltroStatus] = useState<string>("");
@@ -133,10 +135,12 @@ export function AbaDiario({ convenio, onUpdate }: Props) {
         <h3 className="text-lg font-semibold">
           Diário de Pendências
         </h3>
-        <Button onClick={() => setShowNovaPendencia(true)}>
-          <Plus className="h-4 w-4 mr-2" />
-          Nova Pendência
-        </Button>
+        {canCreate("pendencia") && (
+          <Button onClick={() => setShowNovaPendencia(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            Nova Pendência
+          </Button>
+        )}
       </div>
 
       {/* Filtros por Status */}
@@ -272,7 +276,7 @@ export function AbaDiario({ convenio, onUpdate }: Props) {
                     )}
 
                     {/* Ações de Status */}
-                    {pendencia.status !== "RESOLVIDA" && pendencia.status !== "CANCELADA" && (
+                    {canUpdate("pendencia") && pendencia.status !== "RESOLVIDA" && pendencia.status !== "CANCELADA" && (
                       <div className="mt-3 flex gap-2">
                         <button
                           onClick={() => setPendenciaParaEditar(pendencia)}

@@ -16,6 +16,7 @@ import { AgendaFilters } from "@/modules/agenda/components/AgendaFilters";
 import { EventoCard } from "@/modules/agenda/components/EventoCard";
 import { EventoEditorSheet, type AgendaFormData } from "@/modules/agenda/components/EventoEditorSheet";
 import { convenioService } from "@/modules/convenios/services/convenioService";
+import { fromDateTimeInputValue } from "@/modules/shared/lib/date";
 import { PageHeader } from "@/modules/shared/components/PageHeader";
 import { cn } from "@/modules/shared/lib/utils";
 import type {
@@ -101,8 +102,8 @@ export const CalendarioPage = () => {
         titulo: payload.titulo!.trim(),
         descricao: payload.descricao?.trim() || null,
         tipo: payload.tipo ?? "REUNIAO",
-        dataInicio: payload.dataInicio!,
-        dataFim: payload.dataFim || null,
+        dataInicio: fromDateTimeInputValue(payload.dataInicio)!,
+        dataFim: fromDateTimeInputValue(payload.dataFim),
         local: payload.local?.trim() || null,
         responsavel: payload.responsavel?.trim() || null,
         convenioId: payload.convenioId || null,
@@ -261,8 +262,8 @@ export const CalendarioPage = () => {
           titulo: data.titulo.trim(),
           descricao: data.descricao?.trim() || null,
           tipo: data.tipo ?? "REUNIAO",
-          dataInicio: data.dataInicio,
-          dataFim: data.dataFim || null,
+          dataInicio: fromDateTimeInputValue(data.dataInicio)!,
+          dataFim: fromDateTimeInputValue(data.dataFim),
           local: data.local?.trim() || null,
           responsavel: data.responsavel?.trim() || null,
           convenioId: data.convenioId || null,

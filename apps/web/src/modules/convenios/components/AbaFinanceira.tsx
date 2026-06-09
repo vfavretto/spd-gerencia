@@ -10,6 +10,7 @@ import { Input } from "@/modules/shared/ui/input";
 import { Label } from "@/modules/shared/ui/label";
 import { toast } from "@/modules/shared/ui/toaster";
 import { CurrencyInput } from "@/modules/shared/ui/currency-input";
+import { usePermissions } from "@/modules/shared/hooks";
 
 type Props = {
   convenio: Convenio;
@@ -19,6 +20,7 @@ type Props = {
 
 export function AbaFinanceira({ convenio, valoresVigentes, onUpdate }: Props) {
   const queryClient = useQueryClient();
+  const { canWrite } = usePermissions();
   const [isEditing, setIsEditing] = useState(false);
   const financeiro = convenio.financeiroContas;
 
@@ -226,10 +228,12 @@ export function AbaFinanceira({ convenio, valoresVigentes, onUpdate }: Props) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold">Dados Financeiros</h3>
-        <Button variant="secondary" onClick={() => setIsEditing(true)}>
-          <Edit2 className="h-4 w-4 mr-2" />
-          Editar
-        </Button>
+        {canWrite("financeiro") && (
+          <Button variant="secondary" onClick={() => setIsEditing(true)}>
+            <Edit2 className="h-4 w-4 mr-2" />
+            Editar
+          </Button>
+        )}
       </div>
 
       {/* Cards de Valores */}
@@ -286,12 +290,14 @@ export function AbaFinanceira({ convenio, valoresVigentes, onUpdate }: Props) {
             <p className="text-sm text-slate-500">
               Dados bancários não informados
             </p>
-            <button
-              onClick={() => setIsEditing(true)}
-              className="mt-2 text-sm font-medium text-primary-600 hover:text-primary-500"
-            >
-              Adicionar dados bancários
-            </button>
+            {canWrite("financeiro") && (
+              <button
+                onClick={() => setIsEditing(true)}
+                className="mt-2 text-sm font-medium text-primary-600 hover:text-primary-500"
+              >
+                Adicionar dados bancários
+              </button>
+            )}
           </div>
         )}
       </div>

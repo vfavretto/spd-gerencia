@@ -78,6 +78,17 @@ export function toDateTimeInputValue(value?: string | null): string {
   return `${year}-${month}-${day}T${hours}:${minutes}`;
 }
 
+/**
+ * Converte o valor de um input `datetime-local` (horário local, sem fuso)
+ * em um instante ISO com fuso, para que o servidor armazene o horário correto.
+ */
+export function fromDateTimeInputValue(value?: string | null): string | null {
+  if (!value) return null;
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+  return date.toISOString();
+}
+
 function getDaysRemaining(
   targetDate: string | Date | null | undefined
 ): number | null {

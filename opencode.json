@@ -16,7 +16,7 @@
     "arquiteto": {
       "description": "Guardião da integridade arquitetural. Valida decisões antes da execução. Produz ADRs, contratos e diagramas.",
       "mode": "subagent",
-      "model": "opencode-go/deepseek-v4-flash",
+      "model": "opencode-go/kimi-k2.6",
       "permission": {
         "edit": "allow",
         "bash": "ask",
@@ -26,7 +26,7 @@
     "tech-lead": {
       "description": "Dev sênior que orquestra o time. Distribui tarefas, revisa handoffs e atualiza o second-brain.",
       "mode": "subagent",
-      "model": "opencode-go/deepseek-v4-flash",
+      "model": "opencode-go/kimi-k2.6",
       "permission": {
         "edit": "allow",
         "bash": "ask",

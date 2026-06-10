@@ -119,15 +119,23 @@ export function ConveniosListFilters({
             type="number"
             className="form-input"
             placeholder="Mín"
-            value={filters.valorMin || ""}
-            onChange={(event) => onChange({ valorMin: event.target.value })}
+            value={filters.valorMin ?? ""}
+            onChange={(event) =>
+              onChange({
+                valorMin: event.target.value === "" ? undefined : Number(event.target.value)
+              })
+            }
           />
           <input
             type="number"
             className="form-input"
             placeholder="Máx"
-            value={filters.valorMax || ""}
-            onChange={(event) => onChange({ valorMax: event.target.value })}
+            value={filters.valorMax ?? ""}
+            onChange={(event) =>
+              onChange({
+                valorMax: event.target.value === "" ? undefined : Number(event.target.value)
+              })
+            }
           />
         </div>
       </div>

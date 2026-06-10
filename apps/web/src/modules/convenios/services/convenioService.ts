@@ -1,5 +1,5 @@
 import { api } from "@/modules/shared/lib/api";
-import type { Convenio, ConvenioStatus, ValoresVigentes } from "@/modules/shared/types";
+import type { Convenio, ConvenioStatus, PaginatedResult, ValoresVigentes } from "@/modules/shared/types";
 
 export type ConvenioFilters = {
   search?: string;
@@ -9,12 +9,14 @@ export type ConvenioFilters = {
   modalidadeRepasseId?: string | "";
   dataInicioVigencia?: string | "";
   dataFimVigencia?: string | "";
-  valorMin?: string | "";
-  valorMax?: string | "";
+  valorMin?: number;
+  valorMax?: number;
+  page?: number;
+  limit?: number;
 };
 
 export const convenioService = {
-  async list(filters?: ConvenioFilters): Promise<Convenio[]> {
+  async list(filters?: ConvenioFilters): Promise<PaginatedResult<Convenio>> {
     const params: Record<string, string> = {};
     if (filters?.search) params.search = filters.search;
     if (filters?.status) params.status = filters.status;
@@ -23,10 +25,12 @@ export const convenioService = {
     if (filters?.modalidadeRepasseId) params.modalidadeRepasseId = filters.modalidadeRepasseId;
     if (filters?.dataInicioVigencia) params.dataInicioVigencia = filters.dataInicioVigencia;
     if (filters?.dataFimVigencia) params.dataFimVigencia = filters.dataFimVigencia;
-    if (filters?.valorMin) params.valorMin = filters.valorMin;
-    if (filters?.valorMax) params.valorMax = filters.valorMax;
+    if (filters?.valorMin !== undefined) params.valorMin = String(filters.valorMin);
+    if (filters?.valorMax !== undefined) params.valorMax = String(filters.valorMax);
+    if (filters?.page) params.page = String(filters.page);
+    if (filters?.limit) params.limit = String(filters.limit);
 
-    const { data } = await api.get<Convenio[]>('/convenios', { params });
+    const { data } = await api.get<PaginatedResult<Convenio>>('/convenios', { params });
     return data;
   },
 

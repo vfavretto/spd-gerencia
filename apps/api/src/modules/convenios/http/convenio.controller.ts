@@ -56,26 +56,41 @@ const commonSchema = {
 const createSchema = z.object(commonSchema);
 const updateSchema = createSchema.partial();
 
+const ConvenioFiltersQuerySchema = z.object({
+  search: z.string().optional(),
+  status: z.enum(['RASCUNHO', 'EM_ANALISE', 'APROVADO', 'EM_EXECUCAO', 'CONCLUIDO', 'CANCELADO']).optional(),
+  secretariaId: z.string().optional(),
+  esfera: z.enum(['FEDERAL', 'ESTADUAL']).optional(),
+  modalidadeRepasseId: z.string().optional(),
+  dataInicioVigencia: z.preprocess(
+    (arg) => (arg === '' || arg === undefined || arg === null) ? undefined : new Date(arg as string),
+    z.date().optional()
+  ).optional(),
+  dataFimVigencia: z.preprocess(
+    (arg) => (arg === '' || arg === undefined || arg === null) ? undefined : new Date(arg as string),
+    z.date().optional()
+  ).optional(),
+  valorMin: z.preprocess(
+    (arg) => (arg === '' || arg === undefined || arg === null) ? undefined : Number(arg),
+    z.number().min(0).optional()
+  ).optional(),
+  valorMax: z.preprocess(
+    (arg) => (arg === '' || arg === undefined || arg === null) ? undefined : Number(arg),
+    z.number().min(0).optional()
+  ).optional(),
+  page: z.coerce.number().min(1).default(1),
+  limit: z.coerce.number().min(1).max(100).default(10),
+});
+
 export class ConvenioController {
   private readonly repository = new PrismaConvenioRepository();
 
   async index(req: Request, res: Response) {
-    const search = req.query.search?.toString();
-    const status = req.query.status?.toString();
-    const secretariaId = req.query.secretariaId?.toString();
-    const esfera = req.query.esfera?.toString();
-    const modalidadeRepasseId = req.query.modalidadeRepasseId?.toString();
-    const dataInicioVigencia = req.query.dataInicioVigencia?.toString();
-    const dataFimVigencia = req.query.dataFimVigencia?.toString();
-    const valorMin = req.query.valorMin ? Number(req.query.valorMin) : undefined;
-    const valorMax = req.query.valorMax ? Number(req.query.valorMax) : undefined;
-
+    const query = ConvenioFiltersQuerySchema.parse(req.query);
+    const { page, limit, ...filters } = query;
 
     const useCase = new ListConveniosLiteUseCase(this.repository);
-    const convenios = await useCase.execute({
-      search, status, secretariaId, esfera, modalidadeRepasseId,
-      dataInicioVigencia, dataFimVigencia, valorMin, valorMax
-    });
+    const convenios = await useCase.execute(filters, page, limit);
     return res.json(convenios);
   }
 

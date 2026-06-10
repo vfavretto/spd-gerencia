@@ -16,8 +16,7 @@ const ITEMS_PER_PAGE = 10;
 
 export const ConveniosListaPage = () => {
   const navigate = useNavigate();
-  const [filters, setFilters] = useState<ConvenioFilters>({});
-  const [currentPage, setCurrentPage] = useState(1);
+  const [filters, setFilters] = useState<ConvenioFilters>({ page: 1, limit: ITEMS_PER_PAGE });
   const [resumoModal, setResumoModal] = useState<{ id: string; titulo: string } | null>(null);
 
   const { data: catalogs } = useQuery({
@@ -30,22 +29,23 @@ export const ConveniosListaPage = () => {
     queryFn: () => convenioService.list(filters)
   });
 
-  const convenios = conveniosQuery.data ?? [];
+  const paginatedResult = conveniosQuery.data;
+  const convenios = paginatedResult?.data ?? [];
   const { isExporting, exportCsv, exportExcel } = useConveniosExport(convenios);
 
-  const totalPages = Math.ceil(convenios.length / ITEMS_PER_PAGE);
+  const currentPage = paginatedResult?.page ?? 1;
+  const totalPages = paginatedResult?.totalPages ?? 1;
+  const totalItems = paginatedResult?.total ?? 0;
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const endIndex = startIndex + ITEMS_PER_PAGE;
-  const paginatedConvenios = convenios.slice(startIndex, endIndex);
+  const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, totalItems);
 
   const handlePageChange = (page: number) => {
-    setCurrentPage(page);
+    setFilters((prev) => ({ ...prev, page }));
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleFilterChange = (newFilters: Partial<ConvenioFilters>) => {
-    setFilters((prev) => ({ ...prev, ...newFilters }));
-    setCurrentPage(1);
+    setFilters((prev) => ({ ...prev, ...newFilters, page: 1 }));
   };
 
   return (
@@ -104,7 +104,7 @@ export const ConveniosListaPage = () => {
         <ConveniosListFilters filters={filters} catalogs={catalogs} onChange={handleFilterChange} />
 
         <ConveniosListTable
-          convenios={paginatedConvenios}
+          convenios={convenios}
           onOpenDetails={(id) => navigate(`/convenios/${id}`)}
           onOpenSummary={(convenio) => setResumoModal(convenio)}
         />
@@ -114,7 +114,7 @@ export const ConveniosListaPage = () => {
           totalPages={totalPages}
           startIndex={startIndex}
           endIndex={endIndex}
-          totalItems={convenios.length}
+          totalItems={totalItems}
           onPageChange={handlePageChange}
         />
       </section>

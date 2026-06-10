@@ -3,7 +3,8 @@ import type { Prisma } from '@prisma/client';
 import type {
   ConvenioFilters,
   ConvenioRepository,
-  ConvenioLite
+  ConvenioLite,
+  PaginatedResult
 } from '../ConvenioRepository';
 import type {
   CreateConvenioDTO,
@@ -40,25 +41,26 @@ const includeRelations = {
 } as const satisfies Prisma.ConvenioInclude;
 
 export class PrismaConvenioRepository implements ConvenioRepository {
-  async listLite(filters?: ConvenioFilters): Promise<ConvenioLite[]> {
-    const where: Record<string, unknown> = {};
+  private buildWhere(filters?: ConvenioFilters): Prisma.ConvenioWhereInput {
+    const where: Prisma.ConvenioWhereInput = {};
 
-    if (filters?.status) where.status = filters.status;
+    if (filters?.status) where.status = filters.status as Prisma.EnumConvenioStatusFilter<'Convenio'>;
     if (filters?.secretariaId) where.secretariaId = filters.secretariaId;
-    if (filters?.esfera) where.esfera = filters.esfera;
+    if (filters?.esfera) where.esfera = filters.esfera as Prisma.ConvenioWhereInput['esfera'];
     if (filters?.modalidadeRepasseId) where.modalidadeRepasseId = filters.modalidadeRepasseId;
 
     if (filters?.search) {
+      const searchLower = filters.search.toLowerCase();
       where.OR = [
-        { titulo: { contains: filters.search, mode: 'insensitive' } },
-        { codigo: { contains: filters.search, mode: 'insensitive' } }
+        { titulo: { contains: searchLower } },
+        { codigo: { contains: searchLower } }
       ];
     }
 
     if (filters?.dataInicioVigencia || filters?.dataFimVigencia) {
       where.dataInicioVigencia = {};
       if (filters.dataInicioVigencia) {
-        (where.dataInicioVigencia as Record<string, unknown>).gte = new Date(filters.dataInicioVigencia + 'T00:00:00');
+        where.dataInicioVigencia.gte = new Date(filters.dataInicioVigencia + 'T00:00:00');
       }
       if (filters.dataFimVigencia) {
         where.dataFimVigencia = { lte: new Date(filters.dataFimVigencia + 'T23:59:59') };
@@ -72,32 +74,46 @@ export class PrismaConvenioRepository implements ConvenioRepository {
       where.valorGlobal = valorFilter;
     }
 
-    const convenios = await prisma.convenio.findMany({
-      where,
-      select: {
-        id: true,
-        codigo: true,
-        titulo: true,
-        objeto: true,
-        status: true,
-        valorGlobal: true,
-        dataInicioVigencia: true,
-        dataFimVigencia: true,
-        atualizadoEm: true,
-        secretaria: {
-          select: { nome: true, sigla: true }
-        },
-        _count: {
-          select: {
-            pendencias: true,
-            contratos: true
-          }
-        }
-      },
-      orderBy: { atualizadoEm: 'desc' }
-    });
+    return where;
+  }
 
-    return convenios.map((conv) => ({
+  async listLite(filters?: ConvenioFilters, page?: number, limit?: number): Promise<PaginatedResult<ConvenioLite>> {
+    const where = this.buildWhere(filters);
+    const currentPage = page ?? 1;
+    const itemsPerPage = limit ?? 10;
+    const skip = (currentPage - 1) * itemsPerPage;
+
+    const [convenios, total] = await Promise.all([
+      prisma.convenio.findMany({
+        where,
+        select: {
+          id: true,
+          codigo: true,
+          titulo: true,
+          objeto: true,
+          status: true,
+          valorGlobal: true,
+          dataInicioVigencia: true,
+          dataFimVigencia: true,
+          atualizadoEm: true,
+          secretaria: {
+            select: { nome: true, sigla: true }
+          },
+          _count: {
+            select: {
+              pendencias: true,
+              contratos: true
+            }
+          }
+        },
+        orderBy: { atualizadoEm: 'desc' },
+        skip: limit ? skip : undefined,
+        take: limit ? itemsPerPage : undefined
+      }),
+      prisma.convenio.count({ where })
+    ]);
+
+    const data = convenios.map((conv) => ({
       id: conv.id,
       codigo: conv.codigo,
       titulo: conv.titulo,
@@ -110,6 +126,13 @@ export class PrismaConvenioRepository implements ConvenioRepository {
       secretaria: conv.secretaria,
       _count: conv._count
     }));
+
+    return {
+      data,
+      total,
+      page: currentPage,
+      totalPages: Math.ceil(total / itemsPerPage)
+    };
   }
 
   private mapToDomain(
@@ -170,22 +193,29 @@ export class PrismaConvenioRepository implements ConvenioRepository {
     } as IConvenio;
   }
 
-  async list(filters?: ConvenioFilters): Promise<IConvenio[]> {
-    const convenios = await prisma.convenio.findMany({
-      where: {
-        status: filters?.status as Prisma.EnumConvenioStatusFilter<'Convenio'> | undefined,
-        secretariaId: filters?.secretariaId,
-        OR: filters?.search
-          ? [
-            { titulo: { contains: filters.search } },
-            { codigo: { contains: filters.search } }
-          ]
-          : undefined
-      },
-      include: includeRelations,
-      orderBy: { atualizadoEm: 'desc' }
-    });
-    return convenios.map(c => this.mapToDomain(c));
+  async list(filters?: ConvenioFilters, page?: number, limit?: number): Promise<PaginatedResult<IConvenio>> {
+    const where = this.buildWhere(filters);
+    const currentPage = page ?? 1;
+    const itemsPerPage = limit ?? 10;
+    const skip = (currentPage - 1) * itemsPerPage;
+
+    const [convenios, total] = await Promise.all([
+      prisma.convenio.findMany({
+        where,
+        include: includeRelations,
+        orderBy: { atualizadoEm: 'desc' },
+        skip: limit ? skip : undefined,
+        take: limit ? itemsPerPage : undefined
+      }),
+      prisma.convenio.count({ where })
+    ]);
+
+    return {
+      data: convenios.map(c => this.mapToDomain(c)),
+      total,
+      page: currentPage,
+      totalPages: Math.ceil(total / itemsPerPage)
+    };
   }
 
   async findById(id: string): Promise<IConvenio | null> {

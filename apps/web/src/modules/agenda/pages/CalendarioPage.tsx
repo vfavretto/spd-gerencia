@@ -324,7 +324,7 @@ export const CalendarioPage = () => {
         onToggleConcluidos={() => setShowConcluidos((c) => !c)}
         totalConcluidos={totalConcluidos}
         filteredCount={filteredEventos.length}
-        convenios={conveniosQuery.data ?? []}
+        convenios={conveniosQuery.data?.data ?? []}
       />
 
       <section className="grid gap-4 xl:grid-cols-4">
@@ -383,7 +383,7 @@ export const CalendarioPage = () => {
         editorMode={editorMode}
         selectedEvento={selectedEvento}
         isSubmitting={isSubmitting}
-        convenios={conveniosQuery.data ?? []}
+        convenios={conveniosQuery.data?.data ?? []}
         onSubmit={onSubmit}
       />
     </div>

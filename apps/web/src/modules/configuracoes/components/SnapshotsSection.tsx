@@ -30,7 +30,7 @@ export function SnapshotsSection() {
     enabled: Boolean(selectedConvenioId && compareVersions)
   });
 
-  const convenios = conveniosQuery.data ?? [];
+  const convenios = conveniosQuery.data?.data ?? [];
   const snapshots = snapshotsQuery.data ?? [];
   const diff = compareQuery.data;
 

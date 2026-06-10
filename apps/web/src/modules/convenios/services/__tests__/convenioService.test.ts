@@ -27,16 +27,23 @@ describe("convenioService", () => {
 
   describe("list", () => {
     it("should call api.get with /convenios and no params when no filters", async () => {
-      mockedApi.get.mockResolvedValueOnce({ data: [fakeConvenio] });
+      mockedApi.get.mockResolvedValueOnce({
+        data: { data: [fakeConvenio], total: 1, page: 1, totalPages: 1 }
+      });
 
       const result = await convenioService.list();
 
       expect(mockedApi.get).toHaveBeenCalledWith("/convenios", { params: {} });
-      expect(result).toEqual([fakeConvenio]);
+      expect(result.data).toEqual([fakeConvenio]);
+      expect(result.total).toBe(1);
+      expect(result.page).toBe(1);
+      expect(result.totalPages).toBe(1);
     });
 
     it("should pass only truthy filters as params", async () => {
-      mockedApi.get.mockResolvedValueOnce({ data: [] });
+      mockedApi.get.mockResolvedValueOnce({
+        data: { data: [], total: 0, page: 1, totalPages: 0 }
+      });
 
       const filters: ConvenioFilters = {
         search: "pavimentação",
@@ -56,7 +63,9 @@ describe("convenioService", () => {
     });
 
     it("should pass all provided filters as params", async () => {
-      mockedApi.get.mockResolvedValueOnce({ data: [] });
+      mockedApi.get.mockResolvedValueOnce({
+        data: { data: [], total: 0, page: 1, totalPages: 0 }
+      });
 
       const filters: ConvenioFilters = {
         search: "test",
@@ -66,8 +75,10 @@ describe("convenioService", () => {
         modalidadeRepasseId: "mod-1",
         dataInicioVigencia: "2026-01-01",
         dataFimVigencia: "2026-12-31",
-        valorMin: "1000",
-        valorMax: "50000",
+        valorMin: 1000,
+        valorMax: 50000,
+        page: 2,
+        limit: 5,
       };
 
       await convenioService.list(filters);
@@ -83,6 +94,8 @@ describe("convenioService", () => {
           dataFimVigencia: "2026-12-31",
           valorMin: "1000",
           valorMax: "50000",
+          page: "2",
+          limit: "5",
         },
       });
     });

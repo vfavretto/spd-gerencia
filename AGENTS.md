@@ -101,6 +101,18 @@ The project knowledge base lives in `/Documentos/SPD/SPD-Second-Brain` as an Obs
 2. **Execution** (`/dev-team` skill): specialized agents (arquiteto, tech-lead, dev-frontend, dev-backend, qa) execute the approved battleplan
 3. **Retrospective** (`/retro` skill): closes the learning cycle, updates `SUMMARY.md`, and records patterns in `patterns/`
 
+### Battleplan Lifecycle
+
+| Diretório | Status dos battleplans |
+|-----------|------------------------|
+| `docs/battleplan/` | Ativos: `draft`, `aprovado`, `em execução` |
+| `docs/battleplan/concluidos/` | Finalizados: `concluído` ou `cancelado` |
+
+**Regra de arquivamento:**
+- Quando um battleplan muda para `status: concluído`, mover o arquivo `.md` para `docs/battleplan/concluidos/` via `git mv`.
+- Atualizar todas as referências no `SUMMARY.md` do second-brain para apontar para o novo caminho.
+- Nunca deixar battleplans concluídos no diretório raiz de `docs/battleplan/`.
+
 ### Agent Team
 
 | Agent | Role | Scope |
@@ -118,6 +130,17 @@ The project knowledge base lives in `/Documentos/SPD/SPD-Second-Brain` as an Obs
 - Reference specs/ADRs by ID (`ADR-003`, `SPEC-012`) — never repeat content
 - Handoffs between agents use compact YAML schema
 - Agents output without preamble; updates use diffs
+
+### Subagent Execution Patterns
+
+Subagents (`task` tool) iniciam com **contexto isolado** — não herdam arquivos lidos pelo agente pai. Isso significa que, para tarefas que exigem múltiplas edições coordenadas em arquivos conhecidos, o subagent pode falhar silenciosamente (retornar vazio sem alterar arquivos).
+
+**Regra prática:**
+- **Use subagents para:** pesquisa, análise de código, exploração de padrões, revisão de arquitetura, tarefas em arquivos únicos bem definidos.
+- **Execute diretamente pelo agente principal para:** múltiplas edições coordenadas (ex: alterar interface + repository + controller + use cases), refactoring que toca dependências cruzadas, ou qualquer tarefa onde o contexto já está carregado no agente pai.
+- **Quando usar subagents para código:** forneça caminhos absolutos completos dos arquivos, conteúdo já lido via `read`, e instruções explícitas de `edit`/`write` com `oldString`/`newString` exatos.
+
+**Lição aprendida (BP-002):** Subagents `dev-backend` e `dev-frontend` retornaram `completed` vazio após receber prompts detalhados. O agente principal assumiu a execução manual e concluiu com sucesso.
 
 ### Commands
 

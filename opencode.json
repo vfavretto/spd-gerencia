@@ -16,6 +16,7 @@
     "arquiteto": {
       "description": "Guardião da integridade arquitetural. Valida decisões antes da execução. Produz ADRs, contratos e diagramas.",
       "mode": "subagent",
+      "model": "opencode-go/deepseek-v4-flash",
       "permission": {
         "edit": "allow",
         "bash": "ask",
@@ -25,6 +26,7 @@
     "tech-lead": {
       "description": "Dev sênior que orquestra o time. Distribui tarefas, revisa handoffs e atualiza o second-brain.",
       "mode": "subagent",
+      "model": "opencode-go/deepseek-v4-flash",
       "permission": {
         "edit": "allow",
         "bash": "ask",
@@ -34,6 +36,7 @@
     "dev-frontend": {
       "description": "Especialista em React, Vite, TypeScript e UI/UX. Executa demandas frontend delegadas.",
       "mode": "subagent",
+      "model": "opencode-go/deepseek-v4-flash",
       "permission": {
         "edit": "allow",
         "bash": "ask",
@@ -43,6 +46,7 @@
     "dev-backend": {
       "description": "Especialista em Express, Prisma, TypeScript e Clean Architecture. Executa demandas backend delegadas.",
       "mode": "subagent",
+      "model": "opencode-go/deepseek-v4-flash",
       "permission": {
         "edit": "allow",
         "bash": "ask",
@@ -52,6 +56,7 @@
     "qa": {
       "description": "Especialista em Jest, Vitest e qualidade. Valida entregas com TDD antes da revisão final.",
       "mode": "subagent",
+      "model": "opencode-go/deepseek-v4-flash",
       "permission": {
         "edit": "allow",
         "bash": "ask",
